@@ -535,18 +535,18 @@ let LiveModel = {
 		}
 	},
 
-	// Runs analysis of the update funciton asynchronously on server.
+	// Runs analysis of the update function asynchronously on server.
 	_validateUpdateFunction(id) {
 		if (this._disable_dynamic_validation) return;
 		let modelFragment = this._updateFunctionModelFragment(id);
 		if (modelFragment !== undefined) {
 			ComputeEngineEndpoints.validateUpdateFunction(modelFragment, (error, response) => {
 				if (error !== undefined) {
-					let errorMessage = error.message;
+					let errorMessage = error['message'];
 					ModelEditor.setUpdateFunctionStatus(id, "Error: " + errorMessage, true);
 				} else {
-					let result = JSON.parse(response.result);
-					ModelEditor.setUpdateFunctionStatus(id, "Possible instantiations: " + result.cardinality, false);
+					let result = JSON.parse(response['result']);
+					ModelEditor.setUpdateFunctionStatus(id, "Possible instantiations: " + result['cardinality'], false);
 				}
 			});
 		} else {

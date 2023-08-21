@@ -362,14 +362,14 @@ let UI = {
 	        fr.onload = (e) => {
 	        	let sbml_file = e.target.result;
 	        	this.isLoading(true);
-	        	ComputeEngine.sbmlToAeon(sbml_file, (error, result) => {        		
+	        	ComputeEngineEndpoints.sbmlToAeon(sbml_file, (error, response) => {
 	        		this.isLoading(false);
-		        	if (result !== undefined) {
-		        		let aeonModel = result.model;
-		        		error = LiveModel.importAeon(aeonModel);
+		        	if (response !== undefined) {
+						let result = JSON.parse(response['result']);
+		        		error = LiveModel.importAeon(result['model']);
 		        	}
 		        	if (error !== undefined) {
-		        		alert(error);
+		        		alert(error['message']);
 		        	}
 					element.value = null;
 	        	});        	

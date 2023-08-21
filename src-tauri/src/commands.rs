@@ -5,7 +5,8 @@ use biodivine_lib_param_bn::{BooleanNetwork, FnUpdate};
 use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
 use json::object;
 use lazy_static::lazy_static;
-use serde::{Serialize, Serializer};
+use crate::common::BackendResponse;
+
 
 
 lazy_static! {
@@ -75,35 +76,26 @@ pub fn check_update_function(data: &str) -> Result<BackendResponse, BackendRespo
     }
 }
 
-pub struct BackendResponse {
-    response: String,
-}
 
-impl BackendResponse {
-    fn ok(result: &str) -> Self {
-        BackendResponse {
-            response: object! {
-            "status" => true,
-            "result" => result,
-            }.to_string(),
+
+/// Accept an SBML (XML) file and try to parse it into a `BooleanNetwork`.
+/// If everything goes well, return a standard result object with a parsed model, or
+/// error if something fails.
+#[tauri::command]
+pub fn sbml_to_aeon(data: &str) -> Result<BackendResponse, BackendResponse> {
+    match BooleanNetwork::try_from_sbml(data) {
+        Ok((model, layout)) => {
+            let mut model_string = format!("{}", model); // convert back to aeon
+            model_string += "\n";
+            for (var, (x, y)) in layout {
+                model_string += format!("#position:{}:{},{}\n", var, x, y).as_str();
+            }
+            Ok(BackendResponse::ok(&object! { "model" => model_string }.to_string()))
         }
-    }
-
-    fn err(message: &str) -> Self {
-        BackendResponse {
-            response: object! {
-            "status" => false,
-            "message" => message.replace("\n", "<br>"),
-            }.to_string(),
-        }
+        Err(error) => Err(BackendResponse::err(&error)),
     }
 }
 
-impl Serialize for BackendResponse {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
-    {
-        self.response.serialize(serializer)
-    }
-}
+
+
+
