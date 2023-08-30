@@ -41,6 +41,7 @@
         <script src="script/CytoscapeEditor.js"></script>        
         <script src="script/ModelEditor.js"></script>        
         <script src="script/main.js"></script>
+        <script src="script/MessageDialog.js"></script>
 
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-HTCNPH6WMB"></script>
@@ -208,12 +209,10 @@
 
                     <button id="import-local" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="LiveModel.loadFromLocalStorage();"><span class="main">Local<br>Storage</span><span class="desc">Last loaded model</span></button>
 
-                    <label for="import-aeon-input" id="import-aeon" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;"><span class="main">.AEON</span><span class="desc">Simple text format</span></label>                    
-
-                    <label for="import-sbml-input" id="import-sbml" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;"><span class="main">.SBML</span><span class="desc">Standard<br>SBML L3</span></label>
-
+                    <label for="import-aeon-input" id="import-aeon" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;"><span class="main">.AEON</span><span class="desc">Simple text format</span></label>
                     <input onchange='UI.importAeon(this)' id='import-aeon-input' style='display:none' type='file'>
-                    <input onchange='UI.importSBML(this)' id='import-sbml-input' style='display:none' type='file'>
+
+                    <button id='import-sbml-input' class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="UI.importSBML();"><span class="main">.SBML</span><span class="desc">Standard<br>SBML L3</span></button>
                 </div>
                 <div style="width: 244px; display: inline-block; margin-left: 6px; float: right;">
                     <h3 style="display: block; margin: 0 auto; text-align: center; margin-top: 8px; margin-bottom: 8px;">Export</h3>

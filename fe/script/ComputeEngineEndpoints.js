@@ -1,27 +1,27 @@
 let ComputeEngineEndpoints = {
 
-    validateUpdateFunction(modelFragment, callback) {
-        window.__TAURI__.invoke('check_update_function', { data: modelFragment })
+    invokeComputeEngineEndpoint(endpointName, data, callback) {
+        TAURI.invoke(endpointName, { data: data })
             .then((responseOk) => {
-                let responseObject = JSON.parse(responseOk);
-                return callback(undefined, responseObject);
+                let responseOkObject = JSON.parse(responseOk);
+                return callback(undefined, responseOkObject);
             })
             .catch((responseError) => {
-                let responseObject = JSON.parse(responseError);
-                return callback(responseObject, undefined)
+                let responseErrorObject = JSON.parse(responseError);
+                return callback(responseErrorObject, undefined)
             });
     },
 
+    validateUpdateFunction(modelFragment, callback) {
+        this.invokeComputeEngineEndpoint('check_update_function', modelFragment, callback);
+    },
+
     sbmlToAeon(sbmlString, callback) {
-        window.__TAURI__.invoke('sbml_to_aeon', { data: sbmlString})
-            .then((responseOk) => {
-                let responseObject = JSON.parse(responseOk);
-                return callback(undefined, responseObject);
-            })
-            .catch((responseError) => {
-                let responseObject = JSON.parse(responseError);
-                return callback(responseObject, undefined)
-            });
+        this.invokeComputeEngineEndpoint('sbml_to_aeon', sbmlString, callback);
+    },
+
+    aeonToSbml(aeonString, callback) {
+        this.invokeComputeEngineEndpoint('aeon_to_sbml', aeonString, callback);
     }
 }
 

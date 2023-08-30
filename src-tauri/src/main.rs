@@ -9,7 +9,11 @@ mod common;
 
 fn main() {
   tauri::Builder::default()
-      .invoke_handler(tauri::generate_handler![commands::check_update_function, commands::sbml_to_aeon])
+      .invoke_handler(tauri::generate_handler![
+        commands::check_update_function,
+        commands::sbml_to_aeon,
+        commands::aeon_to_sbml
+      ])
       .run(tauri::generate_context!())
       .expect("error while running tauri application");
 }

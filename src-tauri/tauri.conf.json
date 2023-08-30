@@ -15,6 +15,9 @@
     "allowlist": {
       "dialog": {
         "all": true
+      },
+      "fs": {
+        "all": true
       }
     },
     "bundle": {

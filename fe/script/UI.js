@@ -293,14 +293,14 @@ let UI = {
         	filename = "model";
         }
         this.isLoading(true);
-		ComputeEngine.aeonToSbml(modelFile, (error, result) => {
+		ComputeEngineEndpoints.aeonToSbml(modelFile, (error, response) => {
 			this.isLoading(false);
 			if (error !== undefined) {
-				alert(error);
+				MessageDialog.errorMessage(error['message'])
 			}
-			if (result !== undefined) {
-				let sbml = result.model;
-				this._downloadFile(filename + ".sbml", sbml);
+			if (response !== undefined) {
+				let result = JSON.parse(response['result']);
+				this._downloadFile(filename + ".sbml", result['model']);
 			}
 		});
 	},
@@ -329,14 +329,13 @@ let UI = {
 		});
 	},
 
-	_downloadFile(name, content) {
-		var el = document.createElement('a');
-        el.setAttribute('href', 'data:text/plain;charset=utf-8,'+encodeURIComponent(content));
-        el.setAttribute('download', name);
-        el.style.display = 'none';
-        document.body.appendChild(el);
-        el.click();
-        document.body.removeChild(el);
+	async _downloadFile(name, content) {
+		const saveLocation = await TAURI.dialog.save({
+			defaultPath: name,
+		});
+		if (saveLocation !== null) {
+			await TAURI.fs.writeTextFile(saveLocation, content);
+		}
 	},
 
 	// Import Aeon file from the given file input element (if possible)
@@ -355,27 +354,35 @@ let UI = {
 		}        
 	},
 
-	importSBML(element) {
-		var file = element.files[0];
-		if (file) {
-			var fr = new FileReader();
-	        fr.onload = (e) => {
-	        	let sbml_file = e.target.result;
-	        	this.isLoading(true);
-	        	ComputeEngineEndpoints.sbmlToAeon(sbml_file, (error, response) => {
-	        		this.isLoading(false);
-		        	if (response !== undefined) {
-						let result = JSON.parse(response['result']);
-		        		error = LiveModel.importAeon(result['model']);
-		        	}
-		        	if (error !== undefined) {
-		        		alert(error['message']);
-		        	}
-					element.value = null;
-	        	});        	
-	        };
-	        fr.readAsText(file);
-		}        
+	async importSBML() {
+		const filePath = await TAURI.dialog.open({
+			multiple: false,
+			directory: false,
+			// TODO - Should we allow only these extensions to be selected in dialog?
+			filters: [{
+				name: 'SBML file',
+				extensions: ['sbml', 'xml']
+			}],
+			title: 'Import .SBML'
+		});
+		if (!filePath || filePath.length === 0) {
+			return;
+		}
+
+		const sbmlFileContent = await TAURI.fs.readTextFile(filePath);
+
+		this.isLoading(true);
+
+		ComputeEngineEndpoints.sbmlToAeon(sbmlFileContent, (error, response) => {
+			this.isLoading(false);
+			if (response !== undefined) {
+				let result = JSON.parse(response['result']);
+				error = LiveModel.importAeon(result['model']);
+			}
+			if (error !== undefined) {
+				MessageDialog.errorMessage(error['message']);
+			}
+		});
 	},
 
 	openWitness(witness) {

@@ -69,6 +69,7 @@ dependencies = [
  "biodivine-lib-param-bn",
  "json",
  "lazy_static",
+ "regex",
  "rocket",
  "serde",
  "serde_json",

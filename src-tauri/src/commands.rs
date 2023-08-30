@@ -5,6 +5,8 @@ use biodivine_lib_param_bn::{BooleanNetwork, FnUpdate};
 use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
 use json::object;
 use lazy_static::lazy_static;
+use regex::Regex;
+use std::collections::{HashMap};
 use crate::common::BackendResponse;
 
 
@@ -96,6 +98,34 @@ pub fn sbml_to_aeon(data: &str) -> Result<BackendResponse, BackendResponse> {
     }
 }
 
+/// Try to read the model layout metadata from the given aeon file.
+fn read_layout(aeon_string: &str) -> HashMap<String, (f64, f64)> {
+    let re = Regex::new(r"^\s*#position:(?P<var>[a-zA-Z0-9_]+):(?P<x>.+?),(?P<y>.+?)\s*$").unwrap();
+    let mut layout = HashMap::new();
+    for line in aeon_string.lines() {
+        if let Some(captures) = re.captures(line) {
+            let var = captures["var"].to_string();
+            let x = captures["x"].parse::<f64>();
+            let y = captures["y"].parse::<f64>();
+            if let (Ok(x), Ok(y)) = (x, y) {
+                layout.insert(var, (x, y));
+            }
+        }
+    }
+    layout
+}
 
-
-
+/// Accept an Aeon file, try to parse it into a `BooleanNetwork`
+/// which will then be translated into SBML (XML) representation.
+/// Preserve layout metadata.
+#[tauri::command]
+pub fn aeon_to_sbml(data: &str) -> Result<BackendResponse, BackendResponse> {
+    match BooleanNetwork::try_from(data) {
+        Ok(network) => {
+            let layout = read_layout(&data);
+            let sbml_string = network.to_sbml(Some(&layout));
+            Ok(BackendResponse::ok(&object! { "model" => sbml_string }.to_string()))
+        }
+        Err(error) => Err(BackendResponse::err(&error)),
+    }
+}
