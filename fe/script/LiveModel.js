@@ -364,11 +364,15 @@ let LiveModel = {
 
 	// Import model from Aeon file. If the import is successful, return undefined,
 	// otherwise return an error string.
-	importAeon(modelString) {
-		if (!this.isEmpty() && !confirm(Strings.modelWillBeErased)) {
-			// If there is some model loaded, let the user know it will be
-			// overwritten. If he decides not to do it, just return...
-			return undefined;
+	async importAeon(modelString) {
+
+		// If there is some model loaded, let the user know it will be
+		// overwritten. If he decides not to do it, just return...
+		if (!this.isEmpty()) {
+			let confirmImport = await TAURI.dialog.confirm(Strings.modelWillBeErased, {title: 'Model overwrite', type: 'warning'});
+			if (!confirmImport) {
+				return undefined;
+			}
 		}
 		// Disable on-the-fly server checks.
 		this._disable_dynamic_validation = true;
@@ -483,7 +487,7 @@ let LiveModel = {
 			ModelEditor.setUpdateFunction(variable, updateFunctions[key]);			
 			let error = this.setUpdateFunction(variable, updateFunctions[key]);
 			if (error !== undefined) {
-				alert(error);
+				MessageDialog.errorMessage(error);
 			}
 		}
 

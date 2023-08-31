@@ -272,7 +272,7 @@ let UI = {
 	downloadAeon() {
 		let modelFile = LiveModel.exportAeon();
 		if (modelFile === undefined) {
-			alert(Strings.modelEmpty);
+			MessageDialog.errorMessage(Strings.modelEmpty);
 			return;
 		}
 		let filename = ModelEditor.getModelName();
@@ -285,7 +285,7 @@ let UI = {
 	downloadSBML() {
 		let modelFile = LiveModel.exportAeon();
 		if (modelFile === undefined) {
-			alert(Strings.modelEmpty);
+			MessageDialog.errorMessage(Strings.modelEmpty)
 			return;
 		}
 		let filename = ModelEditor.getModelName();
@@ -332,6 +332,7 @@ let UI = {
 	async _downloadFile(name, content) {
 		const saveLocation = await TAURI.dialog.save({
 			defaultPath: name,
+			title: 'Download model'
 		});
 		if (saveLocation !== null) {
 			await TAURI.fs.writeTextFile(saveLocation, content);
@@ -339,19 +340,27 @@ let UI = {
 	},
 
 	// Import Aeon file from the given file input element (if possible)
-	importAeon(element) {
-		var file = element.files[0];
-		if (file) {
-			var fr = new FileReader();
-	        fr.onload = (e) => {
-	        	let error = LiveModel.importAeon(e.target.result);
-	        	if (error !== undefined) {
-	        		alert(error);
-	        	}
-				element.value = null;
-	        };
-	        fr.readAsText(file);
-		}        
+	async importAeon() {
+		const filePath = await TAURI.dialog.open({
+			multiple: false,
+			directory: false,
+			// TODO - Should we allow only these extensions to be selected in dialog?
+			filters: [{
+				name: 'AEON file',
+				extensions: ['aeon', 'txt']
+			}],
+			title: 'Import .AEON'
+		});
+		if (!filePath || filePath.length === 0) {
+			return;
+		}
+
+		const aeonFileContent = await TAURI.fs.readTextFile(filePath);
+
+		let error = await LiveModel.importAeon(aeonFileContent);
+		if (error !== undefined) {
+			MessageDialog.errorMessage(error);
+		}
 	},
 
 	async importSBML() {
@@ -373,11 +382,11 @@ let UI = {
 
 		this.isLoading(true);
 
-		ComputeEngineEndpoints.sbmlToAeon(sbmlFileContent, (error, response) => {
+		ComputeEngineEndpoints.sbmlToAeon(sbmlFileContent, async (error, response) => {
 			this.isLoading(false);
 			if (response !== undefined) {
 				let result = JSON.parse(response['result']);
-				error = LiveModel.importAeon(result['model']);
+				error = await LiveModel.importAeon(result['model']);
 			}
 			if (error !== undefined) {
 				MessageDialog.errorMessage(error['message']);

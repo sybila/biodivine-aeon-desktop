@@ -209,8 +209,7 @@
 
                     <button id="import-local" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="LiveModel.loadFromLocalStorage();"><span class="main">Local<br>Storage</span><span class="desc">Last loaded model</span></button>
 
-                    <label for="import-aeon-input" id="import-aeon" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;"><span class="main">.AEON</span><span class="desc">Simple text format</span></label>
-                    <input onchange='UI.importAeon(this)' id='import-aeon-input' style='display:none' type='file'>
+                    <button id="import-aeon-input" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick='UI.importAeon()'><span class="main">.AEON</span><span class="desc">Simple text format</span></button>
 
                     <button id='import-sbml-input' class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="UI.importSBML();"><span class="main">.SBML</span><span class="desc">Standard<br>SBML L3</span></button>
                 </div>
