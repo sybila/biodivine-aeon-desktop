@@ -344,7 +344,6 @@ let UI = {
 		const filePath = await TAURI.dialog.open({
 			multiple: false,
 			directory: false,
-			// TODO - Should we allow only these extensions to be selected in dialog?
 			filters: [{
 				name: 'AEON file',
 				extensions: ['aeon', 'txt']
@@ -357,7 +356,7 @@ let UI = {
 
 		const aeonFileContent = await TAURI.fs.readTextFile(filePath);
 
-		let error = await LiveModel.importAeon(aeonFileContent);
+		let error = await LiveModel.handleAeonModelImport(aeonFileContent);
 		if (error !== undefined) {
 			MessageDialog.errorMessage(error);
 		}
@@ -367,7 +366,6 @@ let UI = {
 		const filePath = await TAURI.dialog.open({
 			multiple: false,
 			directory: false,
-			// TODO - Should we allow only these extensions to be selected in dialog?
 			filters: [{
 				name: 'SBML file',
 				extensions: ['sbml', 'xml']
@@ -386,7 +384,7 @@ let UI = {
 			this.isLoading(false);
 			if (response !== undefined) {
 				let result = JSON.parse(response['result']);
-				error = await LiveModel.importAeon(result['model']);
+				error = await LiveModel.handleAeonModelImport(result['model']);
 			}
 			if (error !== undefined) {
 				MessageDialog.errorMessage(error['message']);

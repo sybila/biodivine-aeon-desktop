@@ -17,7 +17,7 @@ tauri-build = { version = "1.4.0", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.4.0", features = [ "fs-all", "dialog-all"] }
+tauri = { version = "1.4.0", features = [ "window-all", "fs-all", "dialog-all"] }
 biodivine-lib-param-bn = "0.3.0"
 rocket = "0.5.0-rc.1"
 tokio = "1.18.1"

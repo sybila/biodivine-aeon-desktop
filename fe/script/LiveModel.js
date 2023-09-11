@@ -362,18 +362,59 @@ let LiveModel = {
 		return result;
 	},
 
-	// Import model from Aeon file. If the import is successful, return undefined,
-	// otherwise return an error string.
-	async importAeon(modelString) {
+	openModelInNewWindow(modelString) {
+		const newModelWindow = new TAURI.window.WebviewWindow('model-window' + Date.now(), {
+			url: 'model-window.html',
+		})
 
-		// If there is some model loaded, let the user know it will be
-		// overwritten. If he decides not to do it, just return...
-		if (!this.isEmpty()) {
-			let confirmImport = await TAURI.dialog.confirm(Strings.modelWillBeErased, {title: 'Model overwrite', type: 'warning'});
-			if (!confirmImport) {
+		// Wait until the new window is initialized
+		newModelWindow.once('ready', () => {
+			// Emit model string to the new window
+			newModelWindow.emit('import-model', {modelString: modelString})
+		})
+	},
+
+	// Ask the user if he wants to open model in a new window - if Yes, return true.
+	// If he decides No, ask him if he wants to overwrite current model - if Yes, return false.
+	// Return undefined if the user answers No or closes the dialog window.
+	async askToOpenInNewWindow() {
+		const openNewWindow = await TAURI.dialog.ask(Strings.openNewWindow, {
+			title: 'New window',
+			type: 'warning',
+		});
+		if (!openNewWindow) {
+			const overwriteCurrentModel = await TAURI.dialog.ask(Strings.modelWillBeOverwritten, {
+				title: 'Model overwrite',
+				type: 'warning',
+			});
+			if (!overwriteCurrentModel) {
 				return undefined;
 			}
+			return false;
 		}
+		return true;
+	},
+
+	async handleAeonModelImport(modelString) {
+		if (!this.isEmpty()) {
+			const userDecision = await this.askToOpenInNewWindow();
+			switch (userDecision) {
+				case true:
+					this.openModelInNewWindow(modelString)
+					break;
+				case false:
+					return this.importAeon(modelString)
+				default:
+					break;
+			}
+			return undefined;
+		}
+		return this.importAeon(modelString)
+	},
+
+	// Import model from Aeon file. If the import is successful, return undefined,
+	// otherwise return an error string.
+	importAeon(modelString) {
 		// Disable on-the-fly server checks.
 		this._disable_dynamic_validation = true;
 
@@ -531,7 +572,7 @@ let LiveModel = {
 		try {
 			let modelString = localStorage.getItem('last_model');
 			if (modelString !== undefined && modelString !== null && modelString.length > 0) {
-				this.importAeon(modelString);
+				this.handleAeonModelImport(modelString);
 			}			
 		} catch (e) {
 			alert("No recent model available. Make sure 'Block third-party cookies and site data' is disabled in your browser.");
