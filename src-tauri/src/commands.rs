@@ -1,19 +1,11 @@
 use std::cmp::max;
-use std::time::SystemTime;
-use std::sync::{Arc, RwLock};
 use biodivine_lib_param_bn::{BooleanNetwork, FnUpdate};
 use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
 use json::object;
-use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::{HashMap};
 use crate::common::BackendResponse;
 
-
-
-lazy_static! {
-    static ref CHECK_UPDATE_FUNCTION_LOCK: Arc<RwLock<bool>> = Arc::new(RwLock::new(true));
-}
 
 fn max_parameter_cardinality(function: &FnUpdate) -> usize {
     match function {
@@ -33,9 +25,6 @@ fn max_parameter_cardinality(function: &FnUpdate) -> usize {
 /// or error if the update function (or model) is invalid.
 #[tauri::command]
 pub fn check_update_function(data: &str) -> Result<BackendResponse, BackendResponse> {
-    let lock = CHECK_UPDATE_FUNCTION_LOCK.clone();
-    let mut lock = lock.write().unwrap();
-    let start = SystemTime::now();
     let graph = BooleanNetwork::try_from(data)
         .and_then(|model| {
             let mut max_size = 0;
@@ -64,8 +53,6 @@ pub fn check_update_function(data: &str) -> Result<BackendResponse, BackendRespo
     //     graph
     // );
 
-    (*lock) = !(*lock);
-
     match graph {
         Ok(cardinality) => {
             Ok(BackendResponse::ok(object! {
@@ -77,8 +64,6 @@ pub fn check_update_function(data: &str) -> Result<BackendResponse, BackendRespo
         }
     }
 }
-
-
 
 /// Accept an SBML (XML) file and try to parse it into a `BooleanNetwork`.
 /// If everything goes well, return a standard result object with a parsed model, or
@@ -125,6 +110,21 @@ pub fn aeon_to_sbml(data: &str) -> Result<BackendResponse, BackendResponse> {
             let layout = read_layout(&data);
             let sbml_string = network.to_sbml(Some(&layout));
             Ok(BackendResponse::ok(&object! { "model" => sbml_string }.to_string()))
+        }
+        Err(error) => Err(BackendResponse::err(&error)),
+    }
+}
+
+/// Accept an Aeon file and create an SBML version with all parameters instantiated (a witness model).
+/// Note that this can take quite a while for large models since we have to actually build
+/// the unit BDD right now (in the future, we might opt to use a SAT solver which might be faster).
+#[tauri::command]
+pub fn aeon_to_sbml_instantiated(data: &str) -> Result<BackendResponse, BackendResponse> {
+    match BooleanNetwork::try_from(data).and_then(SymbolicAsyncGraph::new) {
+        Ok(graph) => {
+            let witness = graph.pick_witness(graph.unit_colors());
+            let layout = read_layout(&data);
+            Ok(BackendResponse::ok(&object! { "model" => witness.to_sbml(Some(&layout)) }.to_string(), ))
         }
         Err(error) => Err(BackendResponse::err(&error)),
     }
