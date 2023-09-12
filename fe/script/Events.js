@@ -5,4 +5,7 @@ TAURI.event.listen('import-model', (event) => {
         MessageDialog.errorMessage(error)
         TAURI.window.appWindow.close();
     }
+    const currentWindow = TAURI.window.getCurrent();
+    console.log(currentWindow.label);
+    TAURI.invoke('get_window_instance', { window: currentWindow })
 });

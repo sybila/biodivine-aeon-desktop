@@ -4,6 +4,7 @@ use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
 use json::object;
 use regex::Regex;
 use std::collections::{HashMap};
+use tauri::Window;
 use crate::common::BackendResponse;
 
 
@@ -128,4 +129,9 @@ pub fn aeon_to_sbml_instantiated(data: &str) -> Result<BackendResponse, BackendR
         }
         Err(error) => Err(BackendResponse::err(&error)),
     }
+}
+
+#[tauri::command]
+pub fn get_window_instance(window: Window) {
+    println!("Window label: {}", window.label());
 }
