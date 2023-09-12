@@ -305,11 +305,10 @@ let UI = {
 		});
 	},
 
-	// TODO: Join the with the standard export SBML function - they do almost the same thing anyway.
 	downloadSBMLInstantiated() {
 		let modelFile = LiveModel.exportAeon();
 		if (modelFile === undefined) {
-			alert(Strings.modelEmpty);
+			MessageDialog.errorMessage(Strings.modelEmpty);
 			return;
 		}
 		let filename = ModelEditor.getModelName();
@@ -317,14 +316,14 @@ let UI = {
         	filename = "model";
         }
         this.isLoading(true);
-		ComputeEngine.aeonToSbmlInstantiated(modelFile, (error, result) => {
+		ComputeEngineEndpoints.aeonToSbmlInstantiated(modelFile, (error, response) => {
 			this.isLoading(false);
 			if (error !== undefined) {
-				alert(error);
+				MessageDialog.errorMessage(error['message']);
 			}
-			if (result !== undefined) {
-				let sbml = result.model;
-				this._downloadFile(filename + "_instantiated.sbml", sbml);
+			if (response !== undefined) {
+				let result = JSON.parse(response['result']);
+				this._downloadFile(filename + "_instantiated.sbml", result['model']);
 			}
 		});
 	},
