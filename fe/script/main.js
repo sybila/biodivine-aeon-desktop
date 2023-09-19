@@ -117,7 +117,7 @@ let Strings = {
 	modelEmpty: "Cannot export an empty model.",
 	modelWillBeOverwritten: "Would you like to overwrite your current model?",
 	closePrompt: "There may be unsaved changes. Close window?",
-	openNewWindow: "Editor is not empty. Do you want to open model in new window?",
+	openNewWindow: "Editor is not empty. Do you want to open the model in a new window?",
 }
 
 /* This can be used to properly show placeholder for content editable stuff */
