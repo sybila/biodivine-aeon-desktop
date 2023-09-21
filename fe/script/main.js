@@ -99,6 +99,9 @@ function init() {
             ComputeEngine._backendRequest('/get_stability_witness/' + requestedTreeWitness + '/' + encodeURI(requestedBehaviour) + '/' + encodeURI(requestedVariable) + '/' + encodeURI("["+requestedVector+"]"), witnessCallback, 'GET', null);
         }		
 	}
+
+	// Emit when the window is fully initialized and ready
+	TAURI.event.emit('ready', {});
 }
 
 let Strings = {
@@ -112,8 +115,9 @@ let Strings = {
 		return "Cannot set update function for '"+name+"'.";
 	},
 	modelEmpty: "Cannot export an empty model.",
-	modelWillBeErased: "This operation will overwrite your current model. Do you want to continue?",
+	modelWillBeOverwritten: "Would you like to overwrite your current model?",
 	closePrompt: "There may be unsaved changes. Close window?",
+	openNewWindow: "Editor is not empty. Do you want to open the model in a new window?",
 }
 
 /* This can be used to properly show placeholder for content editable stuff */

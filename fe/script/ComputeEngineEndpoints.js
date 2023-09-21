@@ -22,6 +22,10 @@ let ComputeEngineEndpoints = {
 
     aeonToSbml(aeonString, callback) {
         this.invokeComputeEngineEndpoint('aeon_to_sbml', aeonString, callback);
+    },
+
+    aeonToSbmlInstantiated(aeonString, callback) {
+        this.invokeComputeEngineEndpoint('aeon_to_sbml_instantiated', aeonString, callback)
     }
 }
 
