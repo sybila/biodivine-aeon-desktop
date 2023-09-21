@@ -404,7 +404,7 @@ let LiveModel = {
 					break;
 				case false:
 					return this.importAeon(modelString)
-				default:
+				default: // userDecision could be undefined/null
 					break;
 			}
 			return undefined;

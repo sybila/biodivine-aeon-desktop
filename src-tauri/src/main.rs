@@ -8,13 +8,6 @@ mod commands;
 mod common;
 
 
-// the payload type must implement `Serialize` and `Clone`.
-#[derive(Clone, serde::Serialize)]
-struct Payload {
-    message: String,
-}
-
-
 fn main() {
   tauri::Builder::default()
       .invoke_handler(tauri::generate_handler![
