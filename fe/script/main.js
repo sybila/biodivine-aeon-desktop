@@ -100,6 +100,10 @@ function init() {
         }		
 	}
 
+	// Creates new computation session
+	const currentWindowLabel = TAURI.window.getCurrent().label;
+	TAURI.invoke('add_window_session', { windowLabel: currentWindowLabel })
+
 	// Emit when the window is fully initialized and ready
 	TAURI.event.emit('ready', {});
 }

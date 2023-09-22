@@ -6,6 +6,7 @@ extern crate lazy_static;
 
 mod commands;
 mod common;
+mod computation;
 
 
 fn main() {
@@ -15,7 +16,9 @@ fn main() {
         commands::sbml_to_aeon,
         commands::aeon_to_sbml,
         commands::aeon_to_sbml_instantiated,
-        commands::get_window_instance,
+        computation::add_window_session,
+        computation::remove_window_session,
+        computation::start_computation,
       ])
       .run(tauri::generate_context!())
       .expect("error while running tauri application");

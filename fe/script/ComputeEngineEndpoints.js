@@ -26,7 +26,23 @@ let ComputeEngineEndpoints = {
 
     aeonToSbmlInstantiated(aeonString, callback) {
         this.invokeComputeEngineEndpoint('aeon_to_sbml_instantiated', aeonString, callback)
-    }
+    },
+
+    startComputation(aeonString) {
+        if (aeonString === undefined) {
+            MessageDialog.errorMessage("Empty model.")
+            return undefined;
+        }
+
+        const currentWindowLabel = TAURI.window.getCurrent().label;
+        console.log(currentWindowLabel);
+        TAURI.invoke('start_computation', { windowLabel: currentWindowLabel, aeonString: aeonString })
+            .catch((responseError) => {
+                let errorObject = JSON.parse(responseError)
+                MessageDialog.errorMessage(errorObject['message'])
+            });
+
+    },
 }
 
 
