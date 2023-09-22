@@ -1,35 +1,51 @@
 use serde::{Serialize, Serializer};
 use json::object;
 
-pub struct BackendResponse {
+
+pub struct OkResponse {
     response: String,
 }
 
-impl BackendResponse {
-    pub fn ok(result: &str) -> Self {
-        BackendResponse {
+pub struct ErrResponse {
+    error: String,
+}
+
+
+impl OkResponse {
+    pub fn new(result: &str) -> Self {
+        OkResponse {
             response: object! {
-            "status" => true,
             "result" => result,
             }.to_string(),
         }
     }
+}
 
-    pub fn err(message: &str) -> Self {
-        BackendResponse {
-            response: object! {
-            "status" => false,
-            "message" => message.replace("\n", "<br>"),
+impl ErrResponse {
+    pub fn new(error_message: &str) -> Self {
+        ErrResponse {
+            error: object! {
+            "message" => error_message.replace("\n", "<br>"),
             }.to_string(),
         }
     }
 }
 
-impl Serialize for BackendResponse {
+
+impl Serialize for OkResponse {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: Serializer,
     {
         self.response.serialize(serializer)
+    }
+}
+
+impl Serialize for ErrResponse {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+    {
+        self.error.serialize(serializer)
     }
 }

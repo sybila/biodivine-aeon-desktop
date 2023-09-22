@@ -5,7 +5,7 @@ use json::object;
 use regex::Regex;
 use std::collections::{HashMap};
 use tauri::Window;
-use crate::common::BackendResponse;
+use crate::common::{ErrResponse, OkResponse};
 
 
 fn max_parameter_cardinality(function: &FnUpdate) -> usize {
@@ -25,7 +25,7 @@ fn max_parameter_cardinality(function: &FnUpdate) -> usize {
 /// Return cardinality of such model (i.e. the number of instantiations of this update function)
 /// or error if the update function (or model) is invalid.
 #[tauri::command]
-pub fn check_update_function(data: &str) -> Result<BackendResponse, BackendResponse> {
+pub fn check_update_function(data: &str) -> Result<OkResponse, ErrResponse> {
     let graph = BooleanNetwork::try_from(data)
         .and_then(|model| {
             let mut max_size = 0;
@@ -56,12 +56,12 @@ pub fn check_update_function(data: &str) -> Result<BackendResponse, BackendRespo
 
     match graph {
         Ok(cardinality) => {
-            Ok(BackendResponse::ok(object! {
+            Ok(OkResponse::new(object! {
                 "cardinality" => cardinality
             }.to_string().as_str()))
         },
         Err(error) => {
-            Err(BackendResponse::err(&error))
+            Err(ErrResponse::new(&error))
         }
     }
 }
@@ -70,7 +70,7 @@ pub fn check_update_function(data: &str) -> Result<BackendResponse, BackendRespo
 /// If everything goes well, return a standard result object with a parsed model, or
 /// error if something fails.
 #[tauri::command]
-pub fn sbml_to_aeon(data: &str) -> Result<BackendResponse, BackendResponse> {
+pub fn sbml_to_aeon(data: &str) -> Result<OkResponse, ErrResponse> {
     match BooleanNetwork::try_from_sbml(data) {
         Ok((model, layout)) => {
             let mut model_string = format!("{}", model); // convert back to aeon
@@ -78,9 +78,9 @@ pub fn sbml_to_aeon(data: &str) -> Result<BackendResponse, BackendResponse> {
             for (var, (x, y)) in layout {
                 model_string += format!("#position:{}:{},{}\n", var, x, y).as_str();
             }
-            Ok(BackendResponse::ok(&object! { "model" => model_string }.to_string()))
+            Ok(OkResponse::new(&object! { "model" => model_string }.to_string()))
         }
-        Err(error) => Err(BackendResponse::err(&error)),
+        Err(error) => Err(ErrResponse::new(&error)),
     }
 }
 
@@ -105,14 +105,14 @@ fn read_layout(aeon_string: &str) -> HashMap<String, (f64, f64)> {
 /// which will then be translated into SBML (XML) representation.
 /// Preserve layout metadata.
 #[tauri::command]
-pub fn aeon_to_sbml(data: &str) -> Result<BackendResponse, BackendResponse> {
+pub fn aeon_to_sbml(data: &str) -> Result<OkResponse, ErrResponse> {
     match BooleanNetwork::try_from(data) {
         Ok(network) => {
             let layout = read_layout(&data);
             let sbml_string = network.to_sbml(Some(&layout));
-            Ok(BackendResponse::ok(&object! { "model" => sbml_string }.to_string()))
+            Ok(OkResponse::new(&object! { "model" => sbml_string }.to_string()))
         }
-        Err(error) => Err(BackendResponse::err(&error)),
+        Err(error) => Err(ErrResponse::new(&error)),
     }
 }
 
@@ -120,14 +120,14 @@ pub fn aeon_to_sbml(data: &str) -> Result<BackendResponse, BackendResponse> {
 /// Note that this can take quite a while for large models since we have to actually build
 /// the unit BDD right now (in the future, we might opt to use a SAT solver which might be faster).
 #[tauri::command]
-pub fn aeon_to_sbml_instantiated(data: &str) -> Result<BackendResponse, BackendResponse> {
+pub fn aeon_to_sbml_instantiated(data: &str) -> Result<OkResponse, ErrResponse> {
     match BooleanNetwork::try_from(data).and_then(SymbolicAsyncGraph::new) {
         Ok(graph) => {
             let witness = graph.pick_witness(graph.unit_colors());
             let layout = read_layout(&data);
-            Ok(BackendResponse::ok(&object! { "model" => witness.to_sbml(Some(&layout)) }.to_string(), ))
+            Ok(OkResponse::new(&object! { "model" => witness.to_sbml(Some(&layout)) }.to_string(), ))
         }
-        Err(error) => Err(BackendResponse::err(&error)),
+        Err(error) => Err(ErrResponse::new(&error)),
     }
 }
 
