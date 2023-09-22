@@ -19,6 +19,7 @@ fn main() {
         computation::add_window_session,
         computation::remove_window_session,
         computation::start_computation,
+        computation::cancel_computation,
       ])
       .run(tauri::generate_context!())
       .expect("error while running tauri application");

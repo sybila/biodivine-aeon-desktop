@@ -33,16 +33,29 @@ let ComputeEngineEndpoints = {
             MessageDialog.errorMessage("Empty model.")
             return undefined;
         }
-
+        this.waitingForResult = true;
         const currentWindowLabel = TAURI.window.getCurrent().label;
-        console.log(currentWindowLabel);
         TAURI.invoke('start_computation', { windowLabel: currentWindowLabel, aeonString: aeonString })
+            .then((responseOk) => {
+                let responseObject = JSON.parse(responseOk)
+                let resultObject = JSON.parse(responseObject['result'])
+                console.log("Started computation ", resultObject.timestamp);
+                this._lastComputation = resultObject.timestamp;
+            })
             .catch((responseError) => {
                 let errorObject = JSON.parse(responseError)
                 MessageDialog.errorMessage(errorObject['message'])
             });
+    },
 
+    cancelComputation() {
+        const currentWindowLabel = TAURI.window.getCurrent().label;
+        TAURI.invoke('cancel_computation', { windowLabel: currentWindowLabel })
+            .then((responseOK) => {
+                // TODO - add some dialog that cancel was successfully finished
+            })
+            .catch((responseError) => {
+                // TODO - add some dialog that cancel was not successful
+            });
     },
 }
-
-

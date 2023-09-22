@@ -71,10 +71,22 @@ pub fn add_window_session(window_label: &str) {
 }
 
 
-/// Removes a window session from the collection of sessions
+/// Removes a window session from the collection of sessions when the window is destroyed
 #[tauri::command]
 pub fn remove_window_session(window_label: &str) {
     println!("Window with label: {} will be removed", window_label);
+
+    // First, found out if there is running computation.
+    // If yes, cancel the computation.
+    let locked_computation = get_locked_computation(window_label);
+    {
+        let cmp = locked_computation.read().unwrap();
+        if let Some(computation) = &*cmp {
+            if computation.thread.is_some() {
+                cancel_computation(window_label);
+            }
+        }
+    }
 
     let mut sessions = SESSIONS.write().unwrap();
     sessions.remove(window_label);
@@ -239,3 +251,35 @@ pub fn start_computation(window_label: &str, aeon_string: &str) -> Result<OkResp
     }
 }
 
+
+#[tauri::command]
+pub fn cancel_computation(window_label: &str) -> Result<OkResponse, ErrResponse> {
+    let locked_computation = get_locked_computation(window_label);
+    {
+        // first just check there is something to cancel
+        let cmp = locked_computation.read().unwrap();
+        if let Some(cmp) = &*cmp {
+            if cmp.thread.is_none() {
+                return Err(ErrResponse::new("Nothing to cancel. Computation already done."));
+            }
+            if cmp.task.is_cancelled() {
+                return Err(ErrResponse::new("Computation already cancelled."));
+            }
+        } else {
+            return Err(ErrResponse::new("No computation to cancel."));
+        }
+    }
+    let cmp = locked_computation.read().unwrap();
+    if let Some(cmp) = &*cmp {
+        if cmp.thread.is_none() {
+            return Err(ErrResponse::new("Nothing to cancel. Computation already done."));
+        }
+        if cmp.task.cancel() {
+            Ok(OkResponse::new(&"\"ok\"".to_string()))
+        } else {
+            Err(ErrResponse::new("Computation already cancelled."))
+        }
+    } else {
+        Err(ErrResponse::new("No computation to cancel."))
+    }
+}
