@@ -12,6 +12,10 @@ let ComputeEngineEndpoints = {
             });
     },
 
+    getCurrentWindowLabel() {
+        return TAURI.window.getCurrent().label;
+    },
+
     validateUpdateFunction(modelFragment, callback) {
         this.invokeComputeEngineEndpoint('check_update_function', modelFragment, callback);
     },
@@ -34,7 +38,7 @@ let ComputeEngineEndpoints = {
             return undefined;
         }
         this.waitingForResult = true;
-        const currentWindowLabel = TAURI.window.getCurrent().label;
+        const currentWindowLabel = this.getCurrentWindowLabel();
         TAURI.invoke('start_computation', { windowLabel: currentWindowLabel, aeonString: aeonString })
             .then((responseOk) => {
                 let responseObject = JSON.parse(responseOk)
@@ -49,13 +53,29 @@ let ComputeEngineEndpoints = {
     },
 
     cancelComputation() {
-        const currentWindowLabel = TAURI.window.getCurrent().label;
+        const currentWindowLabel = this.getCurrentWindowLabel();
         TAURI.invoke('cancel_computation', { windowLabel: currentWindowLabel })
             .then((responseOK) => {
-                // TODO - add some dialog that cancel was successfully finished
+                let responseOkObject = JSON.parse(responseOK)
+                MessageDialog.infoMessage(responseOkObject['result'])
             })
             .catch((responseError) => {
-                // TODO - add some dialog that cancel was not successful
+                let responseErrorObject = JSON.parse(responseError)
+                MessageDialog.errorMessage(responseErrorObject['message'])
+            });
+    },
+
+    // For now, test by calling it from console
+    getResults() {
+        const currentWindowLabel = this.getCurrentWindowLabel();
+        TAURI.invoke('get_results', { windowLabel: currentWindowLabel })
+            .then((responseOK) => {
+                let responseOkObject = JSON.parse(responseOK)
+                console.log(responseOkObject)
+            })
+            .catch((responseError) => {
+                let responseErrorObject = JSON.parse(responseError)
+                console.log(responseErrorObject)
             });
     },
 }

@@ -1,4 +1,4 @@
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tauri::Window;
 use lazy_static::lazy_static;
 use std::sync::{RwLock, Arc};
@@ -16,6 +16,15 @@ use biodivine_lib_param_bn::BooleanNetwork;
 use json::object;
 use biodivine_aeon_desktop::bdt::Bdt;
 use crate::common::{ErrResponse, OkResponse};
+
+
+pub struct Session {
+    computation: ArcComputation,
+    tree: ArcBdt
+}
+
+/// Locked type of Bifurcation decision tree
+type ArcBdt = Arc<RwLock<Option<Bdt>>>;
 
 
 /// Locked type of Computation
@@ -51,9 +60,10 @@ impl Computation {
     }
 }
 
+
 /// Hashmap with all sessions: key = window label, value = ArcComputation
 lazy_static! {
-    static ref SESSIONS: Arc<RwLock<HashMap<String, ArcComputation>>> = Arc::new(RwLock::new(HashMap::new()));
+    static ref SESSIONS: Arc<RwLock<HashMap<String, Session>>> = Arc::new(RwLock::new(HashMap::new()));
 }
 
 
@@ -63,8 +73,15 @@ pub fn add_window_session(window_label: &str) {
     println!("Window with label: {} was created", window_label);
 
     let mut sessions = SESSIONS.write().unwrap();
+
     let empty_computation: ArcComputation = Arc::new(RwLock::new(None));
-    sessions.insert(window_label.to_string(), empty_computation);
+    let empty_tree: ArcBdt = Arc::new(RwLock::new(None));
+    let new_session = Session {
+        computation: empty_computation,
+        tree: empty_tree,
+    };
+
+    sessions.insert(window_label.to_string(), new_session);
 
     println!("Number of sessions: {}", sessions.len());
     println!();
@@ -96,11 +113,26 @@ pub fn remove_window_session(window_label: &str) {
 }
 
 
-/// Gets Arc pointer of locked Computation.
-fn get_locked_computation(window_label: &str) -> Arc<RwLock<Option<Computation>>> {
+/// Checks if window has session.
+fn is_there_session(window_label: &str) -> bool {
     let sessions = SESSIONS.read().unwrap();
-    let locked_session = sessions.get(window_label).unwrap();
-    locked_session.clone()
+    sessions.contains_key(window_label)
+}
+
+
+/// Gets Arc pointer of locked Computation.
+fn get_locked_computation(window_label: &str) -> ArcComputation {
+    let sessions = SESSIONS.read().unwrap();
+    let locked_computation= &sessions.get(window_label).unwrap().computation;
+    locked_computation.clone()
+}
+
+
+/// Get Arc pointer of locked Tree.
+fn get_locked_tree(window_label: &str) -> ArcBdt {
+    let sessions = SESSIONS.read().unwrap();
+    let locked_tree= &sessions.get(window_label).unwrap().tree;
+    locked_tree.clone()
 }
 
 
@@ -109,7 +141,6 @@ fn get_locked_computation(window_label: &str) -> Arc<RwLock<Option<Computation>>
 pub fn start_computation(window_label: &str, aeon_string: &str) -> Result<OkResponse, ErrResponse> {
     match BooleanNetwork::try_from(aeon_string) {
         Ok(network) => {
-
             let locked_computation = get_locked_computation(window_label);
             // Now we can try to start the computation...
             {
@@ -141,14 +172,14 @@ pub fn start_computation(window_label: &str, aeon_string: &str) -> Result<OkResp
                     finished_timestamp: None,
                 };
 
-                // Create copy of window_label for thread
-                let cloned_window_label = window_label.to_string();
+                // Change to String, so the thread can use it while running
+                let window_label = window_label.to_string();
 
                 // Prepare thread - note that we have computation locked, so the thread
                 // will have to wait for us to end before writing down the graph and other
                 // stuff.
                 let cmp_thread = std::thread::spawn(move || {
-                    let cmp: Arc<RwLock<Option<Computation>>> = get_locked_computation(cloned_window_label.as_str());
+                    let cmp: Arc<RwLock<Option<Computation>>> = get_locked_computation(window_label.as_str());
                     match SymbolicAsyncGraph::new(network) {
                         Ok(graph) => {
                             // Now that we have graph, we can create classifier and progress
@@ -209,11 +240,17 @@ pub fn start_computation(window_label: &str, aeon_string: &str) -> Result<OkResp
                             }
 
                             {
-                                let result = classifier.export_result();
-                                // let tree = TREE.clone();
-                                // let mut tree = tree.write().unwrap();
-                                // *tree = Some(Bdt::new_from_graph(result, &graph));
-                                // println!("Saved decision tree");
+                                // Check if the session still exists because window might be already closed
+                                if is_there_session(window_label.as_str()) {
+                                    let result = classifier.export_result();
+                                    let tree = get_locked_tree(window_label.as_str());
+                                    let mut tree = tree.write().unwrap();
+                                    *tree = Some(Bdt::new_from_graph(result, &graph));
+                                    println!("Saved decision tree");
+                                } else {
+                                    // Is there a better way to kill this thread?
+                                    panic!("Cannot save tree. No session with computation found.")
+                                }
                             }
 
                             println!("Component search done...");
@@ -275,11 +312,77 @@ pub fn cancel_computation(window_label: &str) -> Result<OkResponse, ErrResponse>
             return Err(ErrResponse::new("Nothing to cancel. Computation already done."));
         }
         if cmp.task.cancel() {
-            Ok(OkResponse::new(&"\"ok\"".to_string()))
+            Ok(OkResponse::new("Computation successfully canceled."))
         } else {
             Err(ErrResponse::new("Computation already cancelled."))
         }
     } else {
         Err(ErrResponse::new("No computation to cancel."))
     }
+}
+
+
+#[tauri::command]
+pub fn get_results(window_label: &str) -> Result<OkResponse, ErrResponse> {
+    let is_partial;
+    let (data, elapsed) = {
+        let cmp: Arc<RwLock<Option<Computation>>> = get_locked_computation(window_label);
+        let cmp = cmp.read().unwrap();
+        if let Some(cmp) = &*cmp {
+            is_partial = cmp.thread.is_some();
+            if let Some(classes) = &cmp.classifier {
+                let mut result = None;
+                for _ in 0..5 {
+                    if let Some(data) = classes.try_export_result() {
+                        result = Some(data);
+                        break;
+                    }
+                    // wait a little - maybe the lock will become free
+                    std::thread::sleep(Duration::new(1, 0));
+                }
+                if let Some(result) = result {
+                    (
+                        result,
+                        cmp.end_timestamp().map(|t| t - cmp.start_timestamp()),
+                    )
+                } else {
+                    return Err(ErrResponse::new(
+                        &"Classification running. Cannot export components right now.".to_string(),
+                    ));
+                }
+            } else {
+                return Err(ErrResponse::new("Results not available yet."));
+            }
+        } else {
+            return Err(ErrResponse::new("No results available."));
+        }
+    };
+    let lines: Vec<String> = data
+        .iter()
+        .map(|(c, p)| {
+            format!(
+                "{{\"sat_count\":{},\"phenotype\":{}}}",
+                p.approx_cardinality(),
+                c
+            )
+        })
+        .collect();
+
+    println!("Result {:?}", lines);
+
+    let elapsed = if let Some(e) = elapsed { e } else { 0 };
+
+    let mut json = String::new();
+    for line in lines.iter().take(lines.len() - 1) {
+        json += &format!("{},", line);
+    }
+    json = format!(
+        "{{ \"isPartial\":{}, \"data\":[{}{}], \"elapsed\":{} }}",
+        is_partial,
+        json,
+        lines.last().unwrap(),
+        elapsed,
+    );
+
+    Ok(OkResponse::new(&json))
 }
