@@ -1,10 +1,9 @@
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
-use tauri::Window;
 use lazy_static::lazy_static;
 use std::sync::{RwLock, Arc};
 use biodivine_aeon_desktop::GraphTaskContext;
-use biodivine_aeon_desktop::scc::{Behaviour, Class, Classifier};
-use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
+use biodivine_aeon_desktop::scc::{Classifier};
+use biodivine_lib_param_bn::symbolic_async_graph::{SymbolicAsyncGraph};
 use std::thread::JoinHandle;
 use std::collections::HashMap;
 
@@ -61,8 +60,8 @@ impl Computation {
 }
 
 
-/// Hashmap with all sessions: key = window label, value = ArcComputation
 lazy_static! {
+    /// Hashmap with all sessions: key = window label, value = ArcComputation
     static ref SESSIONS: Arc<RwLock<HashMap<String, Session>>> = Arc::new(RwLock::new(HashMap::new()));
 }
 
@@ -100,7 +99,7 @@ pub fn remove_window_session(window_label: &str) {
         let cmp = locked_computation.read().unwrap();
         if let Some(computation) = &*cmp {
             if computation.thread.is_some() {
-                cancel_computation(window_label);
+                let _ = cancel_computation(window_label);
             }
         }
     }
