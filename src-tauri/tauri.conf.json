@@ -32,9 +32,13 @@
       },
       "externalBin": [],
       "icon": [
-        "icons/favicon-96x96.png"
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "cz.fi.muni.sybila.aeon",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
