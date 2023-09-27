@@ -22,6 +22,16 @@ pub struct Session {
     tree: ArcBdt
 }
 
+/// Create an empty session with no data.
+impl Default for Session {
+    fn default() -> Self {
+        Session {
+            computation: Arc::new(RwLock::default()),
+            tree: Arc::new(Default::default()),
+        }
+    }
+}
+
 /// Locked type of Bifurcation decision tree
 type ArcBdt = Arc<RwLock<Option<Bdt>>>;
 
@@ -72,15 +82,7 @@ pub fn add_window_session(window_label: &str) {
     println!("Window with label: {} was created", window_label);
 
     let mut sessions = SESSIONS.write().unwrap();
-
-    let empty_computation: ArcComputation = Arc::new(RwLock::new(None));
-    let empty_tree: ArcBdt = Arc::new(RwLock::new(None));
-    let new_session = Session {
-        computation: empty_computation,
-        tree: empty_tree,
-    };
-
-    sessions.insert(window_label.to_string(), new_session);
+    sessions.insert(window_label.to_string(), Session::default());
 
     println!("Number of sessions: {}", sessions.len());
     println!();
@@ -97,8 +99,9 @@ pub fn remove_window_session(window_label: &str) {
     let locked_computation = get_locked_computation(window_label);
     {
         let cmp = locked_computation.read().unwrap();
-        if let Some(computation) = &*cmp {
+        if let Some(computation) = cmp.as_ref() {
             if computation.thread.is_some() {
+                // TODO: Ideally, we should do some error handling here in the future.
                 let _ = cancel_computation(window_label);
             }
         }
@@ -146,7 +149,7 @@ pub fn start_computation(window_label: &str, aeon_string: &str) -> Result<OkResp
                 // First, just try to read the computation, if there is something
                 // there, we just want to quit fast...
                 let cmp = locked_computation.read().unwrap();
-                if let Some(computation) = &*cmp {
+                if let Some(computation) = cmp.as_ref() {
                     if computation.thread.is_some() {
                         return Err(ErrResponse::new("Previous computation is still running. Cancel it before starting a new one."));
                     }
