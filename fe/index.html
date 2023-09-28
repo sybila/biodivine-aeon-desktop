@@ -184,7 +184,7 @@
 
                     <div style="margin-top: 16px; text-align: center;">
                         
-                        <button id="computation-cancel" class="image-button" onclick="ComputeEngine.cancelComputation();" style="margin-right: 4px;">Cancel job <img src="img/cancel-24px.svg"></button>
+                        <button id="computation-cancel" class="image-button" onclick="ComputeEngineEndpoints.cancelComputation();" style="margin-right: 4px;">Cancel job <img src="img/cancel-24px.svg"></button>
 
                         <button id="computation-download" class="image-button" onclick="Results.download();" style="margin-left: 4px;">Show result <img src="img/cloud_download-24px.svg"></button>
 
@@ -285,7 +285,7 @@
             <div id="side-menu">
                 <div class="button-group-fake">
                     <img alt="Compute Bifurcation" id="side-menu-compute" src="img/play_circle_filled-48px.svg" 
-                    onclick="ComputeEngine.startComputation(LiveModel.exportAeon());" class="button-fake">
+                    onclick="ComputeEngineEndpoints.startComputation(LiveModel.exportAeon());" class="button-fake">
                     <span class="hint invisible">Start Analysis</span>
                 </div> 
 

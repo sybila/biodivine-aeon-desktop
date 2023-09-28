@@ -18,6 +18,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
 
 [[package]]
+name = "ahash"
+version = "0.7.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fcb51a0695d8f838b1ee009b3fbf66bda078cd64590202a864a8f3e8c4315c47"
+dependencies = [
+ "getrandom 0.2.10",
+ "once_cell",
+ "version_check",
+]
+
+[[package]]
 name = "aho-corasick"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -61,22 +72,6 @@ name = "anyhow"
 version = "1.0.75"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
-
-[[package]]
-name = "app"
-version = "0.1.0"
-dependencies = [
- "biodivine-lib-param-bn",
- "json",
- "lazy_static",
- "regex",
- "rocket",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tokio",
-]
 
 [[package]]
 name = "async-stream"
@@ -181,10 +176,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "383d29d513d8764dcdc42ea295d979eb99c3c9f00607b3692cf68a431f7dca72"
 
 [[package]]
+name = "biodivine-aeon-desktop"
+version = "0.1.0"
+dependencies = [
+ "biodivine-lib-bdd",
+ "biodivine-lib-param-bn",
+ "fixed-map",
+ "futures",
+ "json",
+ "lazy_static",
+ "regex",
+ "rocket",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tokio",
+]
+
+[[package]]
 name = "biodivine-lib-bdd"
-version = "0.4.2"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6788c9f2c86e8189b4f622f8c6e10febfef7fa66d796a09f6074f5339ba3bae3"
+checksum = "e0189459a969313e2f150a6003777dc4797686e36659fd93fc263166d8bd7d90"
 dependencies = [
  "fxhash",
  "num-bigint",
@@ -193,9 +207,9 @@ dependencies = [
 
 [[package]]
 name = "biodivine-lib-param-bn"
-version = "0.3.0"
+version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "699cd9c3482e301c2ebcedbbbfbbf448a519a19cfeeb00055b7730338bb45ea1"
+checksum = "514a1f8c99f6da9b5fc27f7cae2d675e9e5f8ca0f9b139047528fc6ae432d4ca"
 dependencies = [
  "biodivine-lib-bdd",
  "bitvector",
@@ -841,6 +855,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "fixed-map"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2f44d950b8f284f5f5623cf28d3d88a18e7971ae6d0f5b504e31bf5aabf2bef"
+dependencies = [
+ "fixed-map-derive",
+ "hashbrown 0.11.2",
+]
+
+[[package]]
+name = "fixed-map-derive"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7ad3b14ed65a0a9d71facfd6c846ab7da35693be84375d739e68426d270cf26a"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "flate2"
 version = "1.0.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -898,6 +933,7 @@ checksum = "23342abe12aba583913b2e62f22225ff9c950774065e4bfb61a19cd9770fec40"
 dependencies = [
  "futures-channel",
  "futures-core",
+ "futures-executor",
  "futures-io",
  "futures-sink",
  "futures-task",
@@ -1301,6 +1337,15 @@ dependencies = [
  "tokio",
  "tokio-util",
  "tracing",
+]
+
+[[package]]
+name = "hashbrown"
+version = "0.11.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab5ef0d4909ef3724cc8cce6ccc8572c5c817592e9285f5464f8e86f8bd3726e"
+dependencies = [
+ "ahash",
 ]
 
 [[package]]
@@ -2595,9 +2640,9 @@ dependencies = [
 
 [[package]]
 name = "roxmltree"
-version = "0.14.1"
+version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "921904a62e410e37e215c40381b7117f830d9d89ba60ab5236170541dd25646b"
+checksum = "6b9de9831a129b122e7e61f242db509fa9d0838008bf0b29bb0624669edfe48a"
 dependencies = [
  "xmlparser",
 ]
