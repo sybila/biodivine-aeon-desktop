@@ -61,28 +61,38 @@ let UI = {
 		}		
 	},
 
-	updateComputeEngineStatus(status, data) {
-		let connectButton = document.getElementById("button-connect");
-		let statusLabel = document.getElementById("compute-engine-status");
-		let addressInput = document.getElementById("engine-address");
-		let dot = document.getElementById("engine-dot");
+	openHelpWindow() {
+		const helpWindow = TAURI.window.WebviewWindow.getByLabel("help-window")
+
+		// If the window is already opened, just focus on it
+		if (helpWindow !== null) {
+			helpWindow.setFocus()
+			return
+		}
+
+		new TAURI.window.WebviewWindow('help-window', {
+			url: 'help-window.html',
+			title: 'About & Help',
+			width: 530,
+			height: 700,
+		})
+	},
+
+	updateComputationStatus(activeStatus, data) {
 		let cmp = document.getElementById("computation");
+		let cmpLabel = document.getElementById("compute-engine-status");
 		let cmpStatus = document.getElementById("computation-status");
 		let cmpProgress = document.getElementById("computation-progress");
 		let cmpClasses = document.getElementById("computation-classes");
 		let cmpCancel = document.getElementById("computation-cancel");
 		let cmpDownload = document.getElementById("computation-download");
+		let resultsWindow = document.getElementById("tab-results");
+
 		// Reset classes
-		statusLabel.classList.remove("red", "green", "orange");
-		dot.classList.remove("red", "green", "orange");
+		cmpLabel.classList.remove("green", "orange");
 		cmpStatus.classList.remove("red", "green", "orange");
-		if (status == "connected") {			
-			addressInput.setAttribute("disabled", "1");
-			// Also do this for parent, because we want to apply some css based on this
-			// to the container as well.
-			addressInput.parentElement.setAttribute("disabled", "1");
-			statusLabel.textContent = " ● Connected";			
-			connectButton.innerHTML = "Disconnect <img src='img/cloud_off-24px.svg'>";
+
+		if (activeStatus) {
 			if (data !== undefined) {
 				// data about computation available
 				let status = "(none)";
@@ -92,69 +102,69 @@ let UI = {
 					// ...but, if it is cancelled, we are awaiting cancellation...
 					if (data["is_cancelled"]) {
 						status = "awaiting cancellation";
+						resultsWindow.classList.add("gone");
 					}
-					// ...but, if it is not running and it is not cancelled, then it must be done...
+					// ...but, if it is not running, and it is not cancelled, then it must be done...
 					if (!data["is_running"] && !data["is_cancelled"]) {
 						status = "done";
 					}
-					// ...and, if it is not running and it is cancelled, the it is actualy cancelled.
+					// ...and, if it is not running, and it is cancelled, then it is actually cancelled.
 					if (!data["is_running"] && data["is_cancelled"]) {
 						status = "cancelled";
 					}
 				}
-				// Update server status color depending on current computation status.
-				if (status == "(none)" || status == "done" || status == "cancelled") {
-					statusLabel.classList.add("green");
-					dot.classList.add("green");																
+
+				// Update computation label color depending on current computation status.
+				if (status === "(none)" || status === "done" || status === "cancelled") {
+					cmpLabel.classList.add("green");
 				} else {
-					statusLabel.classList.add("orange");
-					dot.classList.add("orange");
+					cmpLabel.classList.add("orange");
 				}
+
 				// Make status green/orange depending on state of computation.
-				if (status == "done") {
+				if (status === "done") {
 					cmpStatus.classList.add("green");
-				} else if (status != "(none)") {
+				} else if (status !== "(none)") {
 					cmpStatus.classList.add("orange");
 				}
-				// Progress is only shown when we are runnign...
-				if (data["is_running"]) {
+
+				// Progress is only shown when we are running...
+				if (status === "running") {
 					cmpProgress.parentElement.classList.remove("gone");
 				} else {
 					cmpProgress.parentElement.classList.add("gone");
 				}
 				cmp.classList.remove("gone");
 				if (data.error !== null) {
-					status += ", error: "+data.error;
+					status += ", error: " + data.error;
 				}
 				cmpStatus.innerHTML = status;
 				cmpProgress.textContent = data.progress;
-				if (data.num_classes !== null) {
-					cmpClasses.textContent = data.num_classes;
+				if (data["num_classes"] !== null) {
+					cmpClasses.textContent = data["num_classes"];
 				} else {
 					cmpClasses.textContent = "-";
-				}			
+				}
+
 				// Show cancel button if job is running and not cancelled 
 				if (data["is_running"] && !data["is_cancelled"]) {
 					cmpCancel.classList.remove("gone");
 				} else {
 					cmpCancel.classList.add("gone");
 				}
-				// Show download button if there is a job, but unless it is done, show "partial" in the button
-				if (data["timestamp"] !== null) {
+
+				// Show download "partial" button if there is running or cancelled job
+				if (data["is_running"] || data["is_cancelled"]) {
 					cmpDownload.classList.remove("gone");
-					if (status == "done") {
-						cmpDownload.innerHTML = "Show result <img src=\"img/cloud_download-24px.svg\">";
-					} else {
-						cmpDownload.innerHTML = "Show partial result <img src=\"img/cloud_download-24px.svg\">";
-					}
+					cmpDownload.innerHTML = "Show partial result <img src=\"img/cloud_download-24px.svg\">";
 				} else {
 					cmpDownload.classList.add("gone");
 				}
 
 				if (data["timestamp"] !== undefined && Results.hasResults()) {
 					// show warning if data is out of date
-					ComputeEngine.setActiveComputation(data["timestamp"]);
-					if (ComputeEngine.hasActiveComputation()) {
+					Computation.setActiveComputation(data["timestamp"]);
+					if (Computation.isActiveComputation()) {
 						document.getElementById("results-expired").classList.add("gone");
 					} else {
 						document.getElementById("results-expired").classList.remove("gone");
@@ -163,18 +173,11 @@ let UI = {
 					document.getElementById("results-expired").classList.add("gone");
 				}			
 
-				if (status == "done" && ComputeEngine.waitingForResult) {
-					ComputeEngine.waitingForResult = false;
-					Results.download();
+				if (status === "done") {
+					Results.show();
 				}
 			}
 		} else {
-			addressInput.removeAttribute("disabled");
-			addressInput.parentElement.removeAttribute("disabled");
-			statusLabel.textContent = " ● Disconnected";
-			statusLabel.classList.add("red");
-			dot.classList.add("red");
-			connectButton.innerHTML = "Connect <img src='img/cloud-24px.svg'>";
 			cmp.classList.add("gone");
 		}
 	},
@@ -293,7 +296,7 @@ let UI = {
         	filename = "model";
         }
         this.isLoading(true);
-		ComputeEngineEndpoints.aeonToSbml(modelFile, (error, response) => {
+		ModelEndpoints.aeonToSbml(modelFile, (error, response) => {
 			this.isLoading(false);
 			if (error !== undefined) {
 				MessageDialog.errorMessage(error['message'])
@@ -316,7 +319,7 @@ let UI = {
         	filename = "model";
         }
         this.isLoading(true);
-		ComputeEngineEndpoints.aeonToSbmlInstantiated(modelFile, (error, response) => {
+		ModelEndpoints.aeonToSbmlInstantiated(modelFile, (error, response) => {
 			this.isLoading(false);
 			if (error !== undefined) {
 				MessageDialog.errorMessage(error['message']);
@@ -379,7 +382,7 @@ let UI = {
 
 		this.isLoading(true);
 
-		ComputeEngineEndpoints.sbmlToAeon(sbmlFileContent, async (error, response) => {
+		ModelEndpoints.sbmlToAeon(sbmlFileContent, async (error, response) => {
 			this.isLoading(false);
 			if (response !== undefined) {
 				let result = JSON.parse(response['result']);

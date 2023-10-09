@@ -9,16 +9,15 @@ let Results = {
 		return document.getElementById("results").getElementsByClassName("table-head").length > 0;
 	},
 
-	download() {
-		console.log("Download...")
-		UI.isLoading(true);
-		ComputeEngine.getResults((e, json) => {
-			UI.isLoading(false);
-			ComputeEngine.waitingForResult = false;
-			if (e !== undefined) {
-				alert(e);
+	show() {
+		Computation.getResults((error, resultJson) => {
+			if (error !== undefined) {
+				MessageDialog.errorMessage(error);
 			} else {
-		        let result = json.data.sort((a, b) => b.sat_count - a.sat_count);
+				let isPartial = resultJson["isPartial"]
+				let isCancelled = resultJson["isCancelled"]
+
+		        let result = resultJson.data.sort((a, b) => b.sat_count - a.sat_count);
 		        if (!result) {
 		            return false;
 		        }
@@ -30,7 +29,7 @@ let Results = {
 		        result.forEach(({ sat_count, phenotype })=> {
 		            var behavior = phenotype.map(x => x[0]).sort().join('');
 		            let behaviorString = behavior;
-		            if (behaviorString == 0) {
+		            if (behaviorString === 0) {
 		            	behaviorString = "<span style=\"font-family: 'FiraMono'; letter-spacing: normal;\">unclassified</span>";
 		            }
 		            table += `
@@ -54,14 +53,21 @@ let Results = {
 		        		${table}
 		        	</table>
 		        `;
-		        if (json.isPartial) {	// if the computation is not finished, add 
+		        if (isPartial) {	// if the computation is not finished, add
 		        	table = "<h4 class='orange' style='text-align:center;'>Warning: These are partial results from an unfinished computation.</h4>" + table;
 		        } else {
-		        	table = "<div class='center'>Elapsed: " + (json.elapsed/1000) + "s</div>" + table;
+		        	table = "<div class='center'>Elapsed: " + (resultJson["elapsed"] / 1000) + "s</div>" + table;
 		        }
+
+				// Show result window
 		        document.getElementById("results").innerHTML = table;
 		        document.getElementById("open-tree-explorer").classList.remove("gone");
-		        UI.ensureContentTabOpen(ContentTabs.results);
+				document.getElementById("tab-results").classList.remove("gone");
+
+				// Hide "Show partial result" button after it is clicked on cancelled computation
+				if (isCancelled) {
+					document.getElementById("computation-download").classList.add("gone");
+				}
 			}
 		});
 	},

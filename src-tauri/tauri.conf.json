@@ -61,17 +61,6 @@
     },
     "updater": {
       "active": false
-    },
-    "windows": [
-      {
-        "title": "Aeon/BIODIVINE",
-        "label": "main",
-        "url": "index.html",
-        "width": 1000,
-        "height": 700,
-        "fullscreen": false,
-        "resizable": true
-      }
-    ]
+    }
   }
 }
