@@ -3,24 +3,47 @@
 
 extern crate lazy_static;
 
-mod commands;
+use tauri::WindowBuilder;
+use crate::multi_window::menu_init;
+
+mod model_commands;
 mod common;
 mod computation;
+mod session;
+mod computation_commands;
+mod multi_window;
 
 
 fn main() {
-  tauri::Builder::default()
-      .invoke_handler(tauri::generate_handler![
-        commands::check_update_function,
-        commands::sbml_to_aeon,
-        commands::aeon_to_sbml,
-        commands::aeon_to_sbml_instantiated,
-        computation::add_window_session,
-        computation::remove_window_session,
-        computation::start_computation,
-        computation::cancel_computation,
-        computation::get_results,
+    let menu = menu_init();
+    tauri::Builder::default()
+        .setup(|app| {
+            WindowBuilder::new(
+                app,
+                "main-window".to_string(),
+                tauri::WindowUrl::App("index.html".into()),
+            )
+                .menu(menu)
+                .title("Aeon/BIODIVINE")
+                .inner_size(1000 as f64, 700 as f64)
+                .build()?;
+            Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![
+        model_commands::check_update_function,
+        model_commands::sbml_to_aeon,
+        model_commands::aeon_to_sbml,
+        model_commands::aeon_to_sbml_instantiated,
+        session::add_window_session,
+        session::remove_window_session,
+        session::has_running_computation,
+        computation_commands::start_computation,
+        computation_commands::cancel_computation,
+        computation_commands::get_results,
+        computation_commands::get_computation_process_info,
+        multi_window::open_model_window,
+        multi_window::open_computation_window,
       ])
-      .run(tauri::generate_context!())
-      .expect("error while running tauri application");
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }
