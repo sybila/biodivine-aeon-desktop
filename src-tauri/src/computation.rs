@@ -1,21 +1,18 @@
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
-use std::sync::{RwLock, Arc};
-use biodivine_aeon_desktop::GraphTaskContext;
-use biodivine_aeon_desktop::scc::{Class, Classifier};
-use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
-use std::thread::JoinHandle;
-use std::collections::HashMap;
-use json::{JsonValue, object};
 use biodivine_aeon_desktop::bdt::Bdt;
-
+use biodivine_aeon_desktop::scc::{Class, Classifier};
+use biodivine_aeon_desktop::GraphTaskContext;
+use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
+use json::{object, JsonValue};
+use std::collections::HashMap;
+use std::sync::{Arc, RwLock};
+use std::thread::JoinHandle;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 /// Locked type of Bifurcation decision tree.
 pub type ArcBdt = Arc<RwLock<Option<Bdt>>>;
 
-
 /// Locked type of Computation.
 pub type ArcComputation = Arc<RwLock<Option<Computation>>>;
-
 
 /// Computation keeps all information.
 pub struct Computation {
@@ -39,7 +36,6 @@ impl Drop for Computation {
         println!("Computation dropped")
     }
 }
-
 
 impl Computation {
     pub fn new_computation(aeon_string: String) -> Computation {
@@ -71,7 +67,9 @@ impl Computation {
         self.task.get_percent_string()
     }
 
-    pub fn get_results(&self) -> Result<(HashMap<Class, GraphColors>, Option<u128>, bool, bool), &str> {
+    pub fn get_results(
+        &self,
+    ) -> Result<(HashMap<Class, GraphColors>, Option<u128>, bool, bool), &str> {
         let is_partial = self.is_running();
         let is_cancelled = self.is_cancelled();
 
@@ -90,8 +88,8 @@ impl Computation {
                     result,
                     self.end_timestamp().map(|t| t - self.start_timestamp()),
                     is_partial,
-                    is_cancelled
-                ))
+                    is_cancelled,
+                ));
             } else {
                 return Err("Classification running. Cannot export components right now.");
             }
@@ -116,11 +114,7 @@ impl Computation {
         if let Some(error) = &self.error {
             response["error"] = error.clone().into();
         }
-        if let Some(classes) = self
-            .classifier
-            .as_ref()
-            .map(|c| c.try_get_num_classes())
-        {
+        if let Some(classes) = self.classifier.as_ref().map(|c| c.try_get_num_classes()) {
             response["num_classes"] = classes.into();
         }
         return response;
@@ -131,7 +125,7 @@ impl Computation {
             return Err("Nothing to cancel. Computation already done.");
         }
         if self.task.cancel() {
-            return Ok("Computation successfully canceled.")
+            return Ok("Computation successfully canceled.");
         } else {
             return Err("Computation already cancelled.");
         }
