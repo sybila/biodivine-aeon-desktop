@@ -1,7 +1,16 @@
 name: 'test-build'
+
+# This should ensure that the workflow won't run on `dev-*` branches, but will
+# otherwise execute on any other branch and any pull request (including PRs
+# from dev branches).
 on:
   push:
+    branches-ignore:
+      - 'dev-*'
   pull_request:
+    branches:
+      - '*'
+
 env:
   RUST_VERSION: "1.72.0"
   NODE_VERSION: "18"
