@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Biodivine/Aeon</title>
+    <meta charset="utf-8">
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="style.css" type="text/css">
+
+    <!-- TODO - remove unused scripts -->
+    <script src="script/dependencies/cytoscape.min.js"></script>
+    <script src="script/dependencies/lodash.js"></script>
+    <script src="script/dependencies/cytoscape-edgehandles.js"></script>
+    <script src="script/dependencies/hotkeys.min.js"></script>
+
+    <script src="script/const.js"></script>
+    <script src="script/Results.js"></script>
+    <script src="script/ComputeEngine.js"></script>
+    <script src="script/Computation.js"></script>
+    <script src="script/ModelEndpoints.js"></script>
+    <script src="script/Examples.js"></script>
+    <script src="script/LiveModel.js"></script>
+    <script src="script/UI.js"></script>
+    <script src="script/CytoscapeEditor.js"></script>
+    <script src="script/ModelEditor.js"></script>
+    <script src="script/main.js"></script>
+    <script src="script/MessageDialog.js"></script>
+    <script src="script/ComputationWindowEvent.js"></script>
+    <script src="script/Session.js"></script>
+</head>
+
+<body onload="computationWindowInit()" style="background-color: #f5f5f5;">
+
+<div style="position: absolute;">
+
+    <div id="tab-engine" class="new-window-panel">
+        <h3 id="compute-engine-status" style="margin: 0 auto; font-size: 20px; text-align: center;  font-family: 'FiraMono'; text-transform: uppercase;"> ● Computation</h3>
+        <div style="height: 20px;"></div>
+
+        <!-- Computation status -->
+        <div id="computation">
+            Computation: <span id="computation-status">(none)</span><br><span>
+            Progress: <span id="computation-progress">unknown</span><br>
+            Discovered classes: <span id="computation-classes">-</span></span>
+
+            <div style="margin-top: 25px; text-align: center;">
+                <button id="computation-cancel" class="image-button" onclick="Computation.cancelComputation();" style="margin-right: 4px;">Cancel job <img src="img/cancel-24px.svg" alt="cancel"></button>
+                <button id="computation-download" class="image-button" onclick="Results.show();" style="margin-left: 4px;">Show partial result <img src="img/cloud_download-24px.svg" alt="download"></button>
+            </div>
+        </div>
+
+        <div style="clear: both;"></div>
+    </div>
+
+    <div id="tab-results" class="new-window-panel gone">
+        <h2 style="margin: 0 auto; font-size: 20px; text-align: center;">Bifurcation Function</h2>
+
+        <div style="text-align: center; padding: 12px;">
+            <span id="results-expired" class="orange center gone">The computation has been overwritten. <br>These results are no longer available!</span>
+        </div>
+
+        <div id="results">
+            <div style="text-align: center; width: 350px; margin: 0 auto;">No results loaded. Run analysis to show bifurcation function overview for the currently loaded model.</div>
+        </div>
+
+        <div id="open-tree-explorer" class="gone" style="text-align: center; margin: 8px;">
+            <a class="inline-button" onclick="UI.openTreeExplorer()"> >> Explore Bifurcation Function &lt;&lt; </a>
+        </div>
+
+        <div id='result-legend'>
+            <span class='table-behavior'>D</span> disorder | <span class='table-behavior'>O</span> oscillation | <span class='table-behavior'>S</span> stability
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

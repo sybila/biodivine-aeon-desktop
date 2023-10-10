@@ -24,8 +24,9 @@
         <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="stylesheet" href="style.css" type="text/css">        
+        <link rel="stylesheet" href="style.css" type="text/css">
 
+        <!-- TODO - remove unused scripts -->
         <script src="script/dependencies/cytoscape.min.js"></script>
         <script src="script/dependencies/lodash.js"></script>
         <script src="script/dependencies/cytoscape-edgehandles.js"></script>
@@ -34,7 +35,8 @@
         <script src="script/const.js"></script>
         <script src="script/Results.js"></script>
         <script src="script/ComputeEngine.js"></script>
-        <script src="script/ComputeEngineEndpoints.js"></script>
+        <script src="script/Computation.js"></script>
+        <script src="script/ModelEndpoints.js"></script>
         <script src="script/Examples.js"></script>
         <script src="script/LiveModel.js"></script>
         <script src="script/UI.js"></script>
@@ -42,6 +44,8 @@
         <script src="script/ModelEditor.js"></script>        
         <script src="script/main.js"></script>
         <script src="script/MessageDialog.js"></script>
+        <script src="script/Menu.js"></script>
+        <script src="script/ModelWindowEvent.js"></script>
 
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-HTCNPH6WMB"></script>
@@ -165,140 +169,12 @@
                 </div>
             </div>
 
-            <div id="tab-engine" class="main-panel gone">
-                <img alt="close" src="img/close-24px.svg" class="panel-close-button" onclick="UI.closeContent()">
-                <h2 style="margin: 0 auto; font-size: 20px; text-align: center;">Compute Engine</h2>                
-                <div class="invisible-input full-line" style="margin-top: 4px; margin-bottom: 4px; font-size: 16px;">
-                    <input id="engine-address" class="center" type="text" name="engine-address" value="http://localhost:8000" placeholder="(engine address)">
-                </div>
-                <div style="height: 40px;">
-                    <h3 id="compute-engine-status" style="float: left; font-family: 'FiraMono'; text-transform: uppercase;"> ● Disconnected</h3>
-                    <button id="button-connect" class="image-button" onclick="ComputeEngine.toggleConnection((e,r) => { if (e !== undefined) alert(e); });" style="float: right;">Connect <img src="img/cloud-24px.svg"></button>
-                </div>
-                <div style="clear: both;"></div>
-
-                <!-- Computation status -->
-                <div id="computation">
-                    Computation: <span id="computation-status">(none)</span><br>
-                    <span>Progress: <span id="computation-progress">unknown</span><br>Discovered classes: <span id="computation-classes">-</span></span>
-
-                    <div style="margin-top: 16px; text-align: center;">
-                        
-                        <button id="computation-cancel" class="image-button" onclick="ComputeEngineEndpoints.cancelComputation();" style="margin-right: 4px;">Cancel job <img src="img/cancel-24px.svg"></button>
-
-                        <button id="computation-download" class="image-button" onclick="Results.download();" style="margin-left: 4px;">Show result <img src="img/cloud_download-24px.svg"></button>
-
-                    </div>                    
-                </div>
-
-                <div style="clear: both;"></div>
-                <div style="text-align: center; margin-top: 48px;">
-                    <h3 style="margin: 0 auto; font-size: 14px; text-align: center; margin-bottom: 4px;">No engine running? Download binary:</h3>                                        
-                    <a href="https://github.com/sybila/biodivine-aeon-server/releases/download/VERSION/aeon-compute-engine-windows.zip" id="engine-link-windows" target="blank"><button id="download-windows" class="image-button" style="display: inline-block; margin: 4px;">Windows <img src="img/windows-24px.svg"></button></a>
-                    <a href="https://github.com/sybila/biodivine-aeon-server/releases/download/VERSION/aeon-compute-engine-macos.zip" id="engine-link-macos" target="blank"><button id="download-mac" class="image-button" style="display: inline-block; margin: 4px;">MacOS <img src="img/macos-24px.svg"></button></a>
-                    <a href="https://github.com/sybila/biodivine-aeon-server/releases/download/VERSION/aeon-compute-engine-linux.zip" id="engine-link-linux" target="blank"><button id="download-linux" class="image-button" style="display: inline-block; margin: 4px;">Linux <img src="img/linux-24px.svg"></button></a>
-                </div>                
-            </div>
-
-            <div id="tab-import-export" class="main-panel gone">
-                <img alt="close" src="img/close-24px.svg" class="panel-close-button" onclick="UI.closeContent()">
-                <h2 style="margin: 0 auto; font-size: 20px; text-align: center; margin-bottom: 8px;">Model File</h2>
-
-                <div style="width: 244px; display: block; float: left; margin-right: 6px;">
-                    <h3 style="display: block; margin: 0 auto; text-align: center; margin-top: 8px; margin-bottom: 8px;">Import</h3>
-
-                    <button id="import-local" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="LiveModel.loadFromLocalStorage();"><span class="main">Local<br>Storage</span><span class="desc">Last loaded model</span></button>
-
-                    <button id="import-aeon-input" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick='UI.importAeon()'><span class="main">.AEON</span><span class="desc">Simple text format</span></button>
-
-                    <button id='import-sbml-input' class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="UI.importSBML();"><span class="main">.SBML</span><span class="desc">Standard<br>SBML L3</span></button>
-                </div>
-                <div style="width: 244px; display: inline-block; margin-left: 6px; float: right;">
-                    <h3 style="display: block; margin: 0 auto; text-align: center; margin-top: 8px; margin-bottom: 8px;">Export</h3>
-
-                    <button id="export-aeon" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="UI.downloadAeon();"><span class="main">.AEON</span><span class="desc">Simple text format</span></button>
-
-                    <button id="export-sbml" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="UI.downloadSBML();"><span class="main">.SBML<br><small>(parametrized)</small></span><span class="desc">Parametrized model</span></button>
-
-                    <button id="export-sbml" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="UI.downloadSBMLInstantiated();"><span class="main">.SBML<br><small>(instantiated)</small></span><span class="desc">Witness<br>model</span></button>                   
-                </div>                
-                <div style="clear: both;"></div>   
-                <h3 style="display: block; margin: 0 auto; text-align: center; margin-top: 8px; margin-bottom: 8px;">Example Models</h3>  
-
-                <button id="example-1" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="LiveModel.handleAeonModelImport(Examples.g2a);"><span class="main">G2A</span><span class="desc">Cell<br>Division</span></button>
-                <button id="example-2" class="compound-button" style="margin-top: 8px; margin-bottom: 8px; float: right;" onclick="LiveModel.handleAeonModelImport(Examples.g2b);"><span class="main">G2B</span><span class="desc">Cell<br>Division</span></button>
-                <button id="example-3" class="compound-button" style="margin-top: 8px; margin-bottom: 8px;" onclick="LiveModel.handleAeonModelImport(Examples.buddingYeastOrlando);"><span class="main">Orlando</span><span class="desc">Budding<br>Yeast</span></button>
-                <button id="example-4" class="compound-button" style="margin-top: 8px; margin-bottom: 8px; float: right;" onclick="LiveModel.handleAeonModelImport(Examples.buddingYeastIrons);"><span class="main">Irons</span><span class="desc">Budding<br>Yeast</span></button>
-                <div style="clear: both;"></div>   
-            </div>
-
-            <div id="tab-results" class="main-panel gone">
-                <img alt="close" src="img/close-24px.svg" class="panel-close-button" onclick="UI.closeContent()">
-                <h2 style="margin: 0 auto; font-size: 20px; text-align: center; margin-bottom: 8px;">Bifurcation Function</h2>
-                <div style="text-align: center; padding: 12px;"><span id="results-expired" class="orange center gone">The computation has been overwritten. <br>These results are no longer available!</span></div>                
-                <div id="results">
-                    <div style="text-align: center; width: 350px; margin: 0 auto;">No results loaded. Run analysis to show bifurcation function overview for the currently loaded model.</div>
-                </div>
-                <div id="open-tree-explorer" class="gone" style="text-align: center; margin: 8px;"><a class="inline-button" onclick="UI.openTreeExplorer()"> >> Explore Bifurcation Function &lt;&lt; </a></div>
-                <div id='result-legend'><span class='table-behavior'>D</span> disorder | <span class='table-behavior'>O</span> oscillation | <span class='table-behavior'>S</span> stability</div>
-            </div>
-
-            <div id="tab-help" class="main-panel gone" style="font-family: 'FiraMono';">
-                <img alt="close" src="img/close-24px.svg" class="panel-close-button" onclick="UI.closeContent()">
-                <h2 style="margin: 0 auto; font-size: 20px; text-align: center; margin-bottom: 8px;">About & Help</h2>
-                
-                <p>Aeon is a tool for analysing <b style="font-family: 'FiraMonoBold';">long-term behaviour of Boolean networks with parameters</b>. Use the editor to create a new network, or import your own from .sbml or .aeon. You can leave the update functions in the network blank (this will automatically consider all admissible instantiations of such function) or specify an exact update function. In the update function, you can use <b style="font-family: 'FiraMonoBold';">arbitrary uninterpreted functions as parameters</b> (see Budding Yeast-Irons example). Aeon will then automatically consider all admissible instantiations of such functions when analysing the model.</p>
-
-                <p>Once your network is ready, you can run the long-term behaviour analysis which will show you the behaviour classes of the model. The classes are separated based on <b style="font-family: 'FiraMonoBold';">stable, oscillating or disordered</b> behaviour. For each class, you can generate a <b style="font-family: 'FiraMonoBold';">witness network</b> that exihibits the specified behaviour.</p>
-
-                <h3>Manual</h3>
-
-                Full description of the functionality Aeon provides is available in the <a href="https://biodivine.fi.muni.cz/aeon/manual/v0.4.0/">tool manual</a>.
-
-
-                <h3>Quick Help</h3>
-                <b>Network editor actions:</b>
-                <ul>
-                    <li>Double click to create a new variable.</li>
-                    <li>Drag from `+` to create a new regulation.</li>
-                    <li>Select element (click) to show the context menu.</li>
-                </ul>
-                <b>Keyboard shortcuts:</b>
-                <ul>
-                    <li>(⌫) Remove selected element.</li>
-                    <li>(N) Add new variable.</li>
-                    <li>(E) Edit name of the selected variable.</li>
-                    <li>(F) Edit update function of the selected variable.</li>
-                    <li>(O) Change observability of the selected regulation.</li>
-                    <li>(M) Change monotonicity of the selected regulation.</li>
-                    <li>(H) Show this help message.</li>                
-                </ul>
-
-                <h3>Attributions</h3>
-
-                <p>Compute Engine: crossbeam, rayon, rocket, json.</p>
-
-                <p>Online client: cytoscape with edgehandles, material icons, hotkeys.</p>
-
-            </div>
-
             <div id="side-menu">
                 <div class="button-group-fake">
-                    <img alt="Compute Bifurcation" id="side-menu-compute" src="img/play_circle_filled-48px.svg" 
-                    onclick="ComputeEngineEndpoints.startComputation(LiveModel.exportAeon());" class="button-fake">
+                    <img alt="Compute Bifurcation" id="side-menu-compute" src="img/play_circle_filled-48px.svg"
+                         onclick="LiveModel.startAnalysis(LiveModel.exportAeon());" class="button-fake">
                     <span class="hint invisible">Start Analysis</span>
-                </div> 
-
-                <div class="button-group">
-                    <img alt="Engine" id="side-menu-engine" src="img/engine-48px.svg" class="button" tab-id="tab-engine">
-                    <span id="engine-dot">●</span>
-                    <span class="hint invisible">Compute Engine</span>
                 </div>
-
-                <div class="button-group">
-                    <img alt="Import/Export" id="side-menu-import-export" src="img/file_copy-48px.svg" class="button" tab-id="tab-import-export">
-                    <span class="hint invisible">Import/Export</span>
-                </div> 
 
                 <div class="button-group">
                     <img alt="Model" id="side-menu-model" src="img/model-48px.svg" class="button" tab-id="tab-model-editor">
@@ -309,17 +185,7 @@
                     <img alt="Auto Layout" id="side-menu-layout" src="img/view_quilt-48px.svg" 
                     onclick="CytoscapeEditor.layoutCose();" class="button-fake">
                     <span class="hint invisible">Apply Layout</span>
-                </div> 
-
-                <div class="button-group">
-                    <img alt="Model" id="side-menu-results" src="img/call_split-48px.svg" class="button" tab-id="tab-results">
-                    <span class="hint invisible">Results</span>
-                </div>  
-
-                <div class="button-group">
-                    <img alt="Help" id="side-menu-help" src="img/help-48px.svg" class="button" tab-id="tab-help">
-                    <span class="hint invisible">About and Help</span>
-                </div>  
+                </div>
             </div>
 
             <div id="loading-indicator" class="invisible"><img src="img/progress.gif"/><br><br>Waiting for server...</div>

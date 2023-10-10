@@ -32,20 +32,21 @@ function init() {
 		return Strings.closePrompt;
 	};
 
+	// TODO - What about version when there is no server anymore?
 	// Update version links and label to match expected engine version:
-	let version_string = "v"+EXPECTED_ENGINE_VERSION;
-	document.getElementById("version").innerHTML = version_string;
-	document.getElementById("engine-link-windows").href = document
-		.getElementById("engine-link-windows")
-		.href.replace("VERSION", version_string);
-	
-	document.getElementById("engine-link-macos").href = document
-		.getElementById("engine-link-macos")
-		.href.replace("VERSION", version_string);
-
-	document.getElementById("engine-link-linux").href = document
-		.getElementById("engine-link-linux")
-		.href.replace("VERSION", version_string);
+	// let version_string = "v"+EXPECTED_ENGINE_VERSION;
+	// document.getElementById("version").innerHTML = version_string;
+	// document.getElementById("engine-link-windows").href = document
+	// 	.getElementById("engine-link-windows")
+	// 	.href.replace("VERSION", version_string);
+	//
+	// document.getElementById("engine-link-macos").href = document
+	// 	.getElementById("engine-link-macos")
+	// 	.href.replace("VERSION", version_string);
+	//
+	// document.getElementById("engine-link-linux").href = document
+	// 	.getElementById("engine-link-linux")
+	// 	.href.replace("VERSION", version_string);
 
 	try {
 		localStorage.setItem('testing', '1');
@@ -65,7 +66,7 @@ function init() {
 	UI.init();
 	ModelEditor.init();
 	CytoscapeEditor.init();			
-	ComputeEngine.openConnection();	// Try to automatically connect when first opened.
+	//ComputeEngine.openConnection();	// Try to automatically connect when first opened.
 
 	let witnessCallback = function(e, r) {
 		UI.isLoading(false);
@@ -100,10 +101,11 @@ function init() {
         }		
 	}
 
-	// Creates new computation session
-	const currentWindowLabel = TAURI.window.getCurrent().label;
-	TAURI.invoke('add_window_session', { windowLabel: currentWindowLabel })
+	// Emit when the window is fully initialized and ready
+	TAURI.event.emit('ready', {});
+}
 
+function computationWindowInit() {
 	// Emit when the window is fully initialized and ready
 	TAURI.event.emit('ready', {});
 }
@@ -122,6 +124,7 @@ let Strings = {
 	modelWillBeOverwritten: "Would you like to overwrite your current model?",
 	closePrompt: "There may be unsaved changes. Close window?",
 	openNewWindow: "Editor is not empty. Do you want to open the model in a new window?",
+	runningComputation: "Computation is still running. Do you want to close window?"
 }
 
 /* This can be used to properly show placeholder for content editable stuff */

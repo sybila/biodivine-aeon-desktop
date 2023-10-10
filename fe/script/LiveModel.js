@@ -363,14 +363,21 @@ let LiveModel = {
 	},
 
 	openModelInNewWindow(modelString) {
-		const newModelWindow = new TAURI.window.WebviewWindow('model-window' + Date.now(), {
-			url: 'model-window.html',
-		})
+		let windowLabel = 'model-window:' + Date.now()
 
-		// Wait until the new window is initialized
-		newModelWindow.once('ready', () => {
-			// Emit model string to the new window
-			newModelWindow.emit('import-model', {modelString: modelString})
+		TAURI.invoke("open_model_window", {
+			label: windowLabel
+		})
+			.then(() => {
+				const newModelWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel)
+
+				// Wait until the new window is initialized
+				newModelWindow.once('ready', () => {
+					// Emit model string to the new window
+					newModelWindow.emit('import-model', { modelString: modelString })
+				})
+			}).catch((errorMessage) => {
+				MessageDialog.errorMessage(errorMessage)
 		})
 	},
 
@@ -410,6 +417,33 @@ let LiveModel = {
 			return undefined;
 		}
 		return this.importAeon(modelString)
+	},
+
+	startAnalysis(aeonString) {
+		if (aeonString === undefined) {
+			MessageDialog.errorMessage("Empty model.")
+			return undefined;
+		}
+		this.openComputationInNewWindow(aeonString)
+	},
+
+	openComputationInNewWindow(aeonString) {
+		let windowLabel = 'computation-window:' + Date.now()
+
+		TAURI.invoke("open_computation_window", {
+			label: windowLabel
+		})
+			.then(() => {
+				const newComputationWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel)
+
+				// Wait until the new window is initialized
+				newComputationWindow.once('ready', () => {
+					// Emit to the new computation window to start computation
+					newComputationWindow.emit('start-computation', { aeonString: aeonString })
+				})
+			}).catch((errorMessage) => {
+			MessageDialog.errorMessage(errorMessage)
+		})
 	},
 
 	// Import model from Aeon file. If the import is successful, return undefined,
@@ -585,7 +619,7 @@ let LiveModel = {
 		if (this._disable_dynamic_validation) return;
 		let modelFragment = this._updateFunctionModelFragment(id);
 		if (modelFragment !== undefined) {
-			ComputeEngineEndpoints.validateUpdateFunction(modelFragment, (error, response) => {
+			ModelEndpoints.validateUpdateFunction(modelFragment, (error, response) => {
 				if (error !== undefined) {
 					let errorMessage = error['message'];
 					ModelEditor.setUpdateFunctionStatus(id, "Error: " + errorMessage, true);

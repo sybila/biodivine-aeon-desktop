@@ -1,3 +1,6 @@
+// File will be removed
+// Keeping as inspiration and placeholder for now
+
 /*
 	Compute engine object maintains connection to the rust backend that will actually
 	do the work for us.
@@ -68,7 +71,7 @@ let ComputeEngine = {
 			this._pingRepeatToken = undefined;
 			this._connected = false;
 			if (typeof UI !== 'undefined') {
-				UI.updateComputeEngineStatus("disconnected");
+				UI.updateComputationStatus("disconnected");
 			}			
 			return true;
 		} else {
@@ -284,7 +287,7 @@ let ComputeEngine = {
 			}
 			//console.log("...ping..."+status+"...");
 			if (typeof UI !== 'undefined') {
-				UI.updateComputeEngineStatus(status, response);
+				UI.updateComputationStatus(status, response);
 			}			
 			// Schedule a ping for later if requested.
 			if (keepAlive && error === undefined) {
