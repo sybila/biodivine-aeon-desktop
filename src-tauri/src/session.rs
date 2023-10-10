@@ -47,7 +47,7 @@ pub fn has_running_computation(window_session_key: &str) -> bool {
         return computation.is_running();
     }
 
-    return false;
+    false
 }
 
 /// Create new session when Tauri window is created.
@@ -92,5 +92,5 @@ pub fn remove_window_session(window_session_key: &str) -> Result<String, String>
 
     println!("Session with key: '{}' was removed", window_session_key);
 
-    return Ok("Window session was successfully removed".to_string());
+    Ok("Window session was successfully removed".to_string())
 }

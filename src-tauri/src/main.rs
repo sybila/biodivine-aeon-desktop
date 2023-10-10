@@ -24,7 +24,7 @@ fn main() {
             )
             .menu(menu)
             .title("Aeon/BIODIVINE")
-            .inner_size(1000 as f64, 700 as f64)
+            .inner_size(1000f64, 700f64)
             .build()?;
             Ok(())
         })

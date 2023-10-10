@@ -26,6 +26,13 @@ pub struct Computation {
     pub finished_timestamp: Option<SystemTime>, // A timestamp when the computation was completed (if done)
 }
 
+pub struct ComputationResults {
+    pub classification_map: HashMap<Class, GraphColors>,
+    pub elapsed_ms: Option<u128>,
+    pub is_partial: bool,
+    pub is_cancelled: bool,
+}
+
 impl Drop for Computation {
     fn drop(&mut self) {
         if self.is_running() {
@@ -67,9 +74,7 @@ impl Computation {
         self.task.get_percent_string()
     }
 
-    pub fn get_results(
-        &self,
-    ) -> Result<(HashMap<Class, GraphColors>, Option<u128>, bool, bool), &str> {
+    pub fn get_results(&self) -> Result<ComputationResults, &str> {
         let is_partial = self.is_running();
         let is_cancelled = self.is_cancelled();
 
@@ -84,17 +89,18 @@ impl Computation {
                 std::thread::sleep(Duration::new(1, 0));
             }
             if let Some(result) = result {
-                return Ok((
-                    result,
-                    self.end_timestamp().map(|t| t - self.start_timestamp()),
+                let elapsed_ms = self.end_timestamp().map(|t| t - self.start_timestamp());
+                Ok(ComputationResults {
+                    classification_map: result,
+                    elapsed_ms,
                     is_partial,
                     is_cancelled,
-                ));
+                })
             } else {
-                return Err("Classification running. Cannot export components right now.");
+                Err("Classification running. Cannot export components right now.")
             }
         } else {
-            return Err("Results not available yet.");
+            Err("Results not available yet.")
         }
     }
 
@@ -117,7 +123,8 @@ impl Computation {
         if let Some(classes) = self.classifier.as_ref().map(|c| c.try_get_num_classes()) {
             response["num_classes"] = classes.into();
         }
-        return response;
+
+        response
     }
 
     pub fn cancel(&self) -> Result<&str, &str> {
@@ -125,9 +132,9 @@ impl Computation {
             return Err("Nothing to cancel. Computation already done.");
         }
         if self.task.cancel() {
-            return Ok("Computation successfully canceled.");
+            Ok("Computation successfully canceled.")
         } else {
-            return Err("Computation already cancelled.");
+            Err("Computation already cancelled.")
         }
     }
 

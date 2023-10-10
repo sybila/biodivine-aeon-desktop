@@ -23,9 +23,15 @@ impl<F: Feature, S: Set> IncrementalClassifier<F, S> {
         }
     }
 
-    /// Returns the number of unique features currently tracked by this classifier.
+    /// Returns the number of unique features currently tracked by this classifier, including
+    /// the default "empty" feature.
     pub fn len(&self) -> usize {
         self.items.len()
+    }
+
+    /// True if this classifier only tracks the default "empty" feature an nothing else.
+    pub fn is_empty(&self) -> bool {
+        self.items.len() == 1
     }
 
     /// Get the underlying list of features tracked by  this `IncrementalClassifier`.
@@ -61,7 +67,7 @@ impl<F: Feature, S: Set> IncrementalClassifier<F, S> {
         for (f, s) in self.items.iter() {
             add(&mut new_items, (f.clone(), s.minus(&remaining)));
             add(&mut new_items, (f.extend(feature), s.intersect(&remaining)));
-            remaining = remaining.minus(&s);
+            remaining = remaining.minus(s);
         }
 
         assert!(remaining.is_empty());

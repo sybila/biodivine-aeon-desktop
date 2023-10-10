@@ -7,7 +7,7 @@ use biodivine_aeon_desktop::scc::algo_xie_beerel::xie_beerel_attractors;
 use biodivine_aeon_desktop::scc::Classifier;
 use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
 use biodivine_lib_param_bn::BooleanNetwork;
-use json::object;
+use json::{object, JsonValue};
 use std::sync::{Arc, RwLock};
 use std::thread::JoinHandle;
 use std::time::SystemTime;
@@ -31,7 +31,7 @@ fn prepare_computation_thread(
     window_session_key: String,
     network: BooleanNetwork,
 ) -> JoinHandle<()> {
-    let cmp_thread = std::thread::spawn(move || {
+    std::thread::spawn(move || {
         let cmp: Arc<RwLock<Option<Computation>>> =
             get_locked_computation(window_session_key.as_str());
         match SymbolicAsyncGraph::new(network) {
@@ -95,16 +95,14 @@ fn prepare_computation_thread(
                         let mut tree = tree.write().unwrap();
                         *tree = Some(Bdt::new_from_graph(result, &graph));
                         println!("Saved decision tree.");
-                    } else {
-                        if let Some(cmp) = cmp.read().unwrap().as_ref() {
-                            if cmp.is_cancelled() {
-                                return;
-                            } else {
-                                panic!("Computation lost session but is not cancelled.");
-                            }
+                    } else if let Some(cmp) = cmp.read().unwrap().as_ref() {
+                        if cmp.is_cancelled() {
+                            return;
                         } else {
-                            panic!("Cannot save tree. Thread lost its computation")
+                            panic!("Computation lost session but is not cancelled.");
                         }
+                    } else {
+                        panic!("Cannot save tree. Thread lost its computation")
                     }
                 }
 
@@ -126,8 +124,7 @@ fn prepare_computation_thread(
                 panic!("Cannot finalize thread. No computation found.");
             };
         }
-    });
-    return cmp_thread;
+    })
 }
 
 /// Accept an Aeon model, parse it and start a new computation (if there is no computation running).
@@ -193,11 +190,11 @@ pub fn cancel_computation(window_session_key: &str) -> Result<String, String> {
 
     if let Some(computation) = read_computation.as_ref() {
         match computation.cancel() {
-            Ok(ok_message) => return Ok(ok_message.to_string()),
-            Err(error_message) => return Err(error_message.to_string()),
+            Ok(ok_message) => Ok(ok_message.to_string()),
+            Err(error_message) => Err(error_message.to_string()),
         }
     } else {
-        return Err("No computation found.".to_string());
+        Err("No computation found.".to_string())
     }
 }
 
@@ -208,44 +205,42 @@ pub fn get_results(window_session_key: &str) -> Result<OkResponse, ErrResponse> 
         get_locked_computation(window_session_key);
     let read_computation = locked_computation.read().unwrap();
 
-    if let Some(computation) = read_computation.as_ref() {
-        match computation.get_results() {
-            Ok((data, elapsed, is_partial, is_cancelled)) => {
-                // Format result data to json object
-                let lines: Vec<String> = data
-                    .iter()
-                    .map(|(c, p)| {
-                        format!(
-                            "{{\"sat_count\":{},\"phenotype\":{}}}",
-                            p.approx_cardinality(),
-                            c
-                        )
-                    })
-                    .collect();
+    let Some(computation) = read_computation.as_ref() else {
+        return Err(ErrResponse::new("No computation found."));
+    };
 
-                println!("Result {:?}", lines);
+    match computation.get_results() {
+        Err(message) => Err(ErrResponse::new(message)),
+        Ok(results) => {
+            // Format result data to json object
+            let classification_map: Vec<JsonValue> = results
+                .classification_map
+                .iter()
+                .map(|(c, p)| {
+                    object! {
+                        sat_count: p.approx_cardinality(),
+                        phenotype: c.to_json()
+                    }
+                })
+                .collect();
 
-                let elapsed = if let Some(e) = elapsed { e } else { 0 };
+            println!("Result {:?}", classification_map);
 
-                let mut json = String::new();
-                for line in lines.iter().take(lines.len() - 1) {
-                    json += &format!("{},", line);
-                }
-                json = format!(
-                    "{{ \"isPartial\":{}, \"isCancelled\":{}, \"data\":[{}{}], \"elapsed\":{} }}",
-                    is_partial,
-                    is_cancelled,
-                    json,
-                    lines.last().unwrap(),
-                    elapsed,
-                );
+            // Truncate the elapsed time to u64 as u128 is not supported in json right now.
+            let elapsed = results.elapsed_ms.unwrap_or(0);
+            let elapsed = u64::try_from(elapsed).unwrap_or(u64::MAX);
 
-                return Ok(OkResponse::new(&json));
-            }
-            Err(error_message) => return Err(ErrResponse::new(error_message)),
+            let json = object! {
+                isPartial: results.is_partial,
+                isCancelled: results.is_cancelled,
+                elapsed: elapsed,
+                data: JsonValue::Array(classification_map)
+            };
+
+            let json_string = json.to_string();
+
+            Ok(OkResponse::new(json_string.as_str()))
         }
-    } else {
-        Err(ErrResponse::new("No computation found."))
     }
 }
 
@@ -257,8 +252,8 @@ pub fn get_computation_process_info(window_session_key: &str) -> String {
     let read_computation = locked_computation.read().unwrap();
 
     if let Some(computation) = read_computation.as_ref() {
-        return computation.get_info().to_string();
+        computation.get_info().to_string()
     } else {
-        return String::from("No computation found.");
+        String::from("No computation found.")
     }
 }

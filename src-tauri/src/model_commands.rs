@@ -108,7 +108,7 @@ fn read_layout(aeon_string: &str) -> HashMap<String, (f64, f64)> {
 pub fn aeon_to_sbml(data: &str) -> Result<OkResponse, ErrResponse> {
     match BooleanNetwork::try_from(data) {
         Ok(network) => {
-            let layout = read_layout(&data);
+            let layout = read_layout(data);
             let sbml_string = network.to_sbml(Some(&layout));
             Ok(OkResponse::new(
                 &object! { "model" => sbml_string }.to_string(),
@@ -126,7 +126,7 @@ pub fn aeon_to_sbml_instantiated(data: &str) -> Result<OkResponse, ErrResponse> 
     match BooleanNetwork::try_from(data).and_then(SymbolicAsyncGraph::new) {
         Ok(graph) => {
             let witness = graph.pick_witness(graph.unit_colors());
-            let layout = read_layout(&data);
+            let layout = read_layout(data);
             Ok(OkResponse::new(
                 &object! { "model" => witness.to_sbml(Some(&layout)) }.to_string(),
             ))

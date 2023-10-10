@@ -15,7 +15,7 @@ pub struct Class(Set<AsymptoticBehaviour>);
 
 impl Feature for Class {
     fn extend(&self, other: &Self) -> Self {
-        let mut set = self.0.clone();
+        let mut set = self.0;
         for value in other.0.iter() {
             set.insert(value);
         }
@@ -94,9 +94,14 @@ impl AsymptoticBehaviourClassifier {
         }
     }
 
-    /// Number of classes encountered so far.
+    /// See [IncrementalClassifier::len].
     pub fn len(&self) -> usize {
         self.classifier.len()
+    }
+
+    /// See [IncrementalClassifier::is_empty].
+    pub fn is_empty(&self) -> bool {
+        self.classifier.is_empty()
     }
 
     /// Extend this classifier using a full behaviour classification map.

@@ -181,7 +181,7 @@ fn attributes_for_implicit_function_tables(graph: &SymbolicAsyncGraph, out: &mut
                     .collect();
                 let name = format!("{}{:?}", graph.as_network().get_variable_name(v), ctx);
                 out.push(Attribute {
-                    name: name.replace("\"", ""),
+                    name: name.replace('\"', ""),
                     negative: graph.mk_empty_colors().copy(bdd.not()),
                     positive: graph.mk_empty_colors().copy(bdd),
                     context: None,
@@ -209,7 +209,7 @@ fn attributes_for_explicit_function_tables(graph: &SymbolicAsyncGraph, out: &mut
                     .collect();
                 let name = format!("{}{:?}", parameter.get_name(), ctx);
                 out.push(Attribute {
-                    name: name.replace("\"", ""),
+                    name: name.replace('\"', ""),
                     negative: graph.mk_empty_colors().copy(bdd.not()),
                     positive: graph.mk_empty_colors().copy(bdd),
                     context: None,

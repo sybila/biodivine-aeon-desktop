@@ -24,7 +24,7 @@ impl ErrResponse {
     pub fn new(error_message: &str) -> Self {
         ErrResponse {
             error: object! {
-            "message" => error_message.replace("\n", "<br>"),
+            "message" => error_message.replace('\n', "<br>"),
             }
             .to_string(),
         }

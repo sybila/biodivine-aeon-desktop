@@ -55,8 +55,7 @@ pub fn menu_init() -> Menu {
             .add_submenu(export_submenu),
     );
 
-    let menu = Menu::new().add_item(help).add_submenu(model_submenu);
-    return menu;
+    Menu::new().add_item(help).add_submenu(model_submenu)
 }
 
 /// Open new window with model editor.
@@ -64,7 +63,7 @@ pub fn menu_init() -> Menu {
 pub async fn open_model_window(label: &str, handle: tauri::AppHandle) -> Result<(), ()> {
     tauri::WindowBuilder::new(&handle, label, tauri::WindowUrl::App("index.html".into()))
         .menu(menu_init())
-        .inner_size(1000 as f64, 700 as f64)
+        .inner_size(1000f64, 700f64)
         .title("Aeon/BIODIVINE")
         .build()
         .expect("Error while creating new model window.");
@@ -79,8 +78,8 @@ pub async fn open_computation_window(label: &str, handle: tauri::AppHandle) -> R
         label,
         tauri::WindowUrl::App("computation-window.html".into()),
     )
-    .inner_size(550 as f64, 600 as f64)
-    .min_inner_size(400 as f64, 400 as f64)
+    .inner_size(550f64, 600f64)
+    .min_inner_size(400f64, 400f64)
     .title("Computation")
     .build()
     .expect("Error while creating computation window.");

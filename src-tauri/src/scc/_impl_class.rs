@@ -1,4 +1,5 @@
 use super::{Behaviour, Class};
+use json::JsonValue;
 use std::cmp::Ordering;
 use std::fmt::{Display, Error, Formatter};
 
@@ -21,6 +22,17 @@ impl Class {
 
     pub fn get_vector(&self) -> Vec<Behaviour> {
         self.0.clone()
+    }
+
+    pub fn to_json(&self) -> JsonValue {
+        self.0
+            .iter()
+            .map(|it| {
+                let string = format!("{:?}", it);
+                JsonValue::String(string)
+            })
+            .collect::<Vec<_>>()
+            .into()
     }
 }
 

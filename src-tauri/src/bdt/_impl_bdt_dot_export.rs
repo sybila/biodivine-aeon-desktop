@@ -29,7 +29,7 @@ impl Bdt {
     ) -> Result<(), std::io::Error> {
         match &self[node] {
             BdtNode::Leaf { class, params } => {
-                let class = format!("{}", class).replace("\"", "");
+                let class = format!("{}", class).replace('\"', "");
                 writeln!(
                     out,
                     "{}[label=\"{}({})\"];",
@@ -41,9 +41,9 @@ impl Bdt {
             BdtNode::Unprocessed { classes } => {
                 let classes: Vec<String> = classes
                     .iter()
-                    .map(|(c, p)| format!("({},{})", c, p.approx_cardinality()).replace("\"", ""))
+                    .map(|(c, p)| format!("({},{})", c, p.approx_cardinality()).replace('\"', ""))
                     .collect();
-                let classes = format!("{:?}", classes).replace("\"", "");
+                let classes = format!("{:?}", classes).replace('\"', "");
                 writeln!(out, "{}[label=\"Unprocessed({})\"]", node, classes)?;
             }
             BdtNode::Decision {

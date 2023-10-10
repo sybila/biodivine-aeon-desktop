@@ -26,7 +26,7 @@ pub async fn schedule_reductions(
         // Put processes with the smallest weight at the end of the vector.
         processes.sort_by_cached_key(|p| -(p.weight() as isize));
 
-        while futures.len() < fork_limit && processes.len() > 0 {
+        while futures.len() < fork_limit && !processes.is_empty() {
             let mut process = processes.pop().unwrap();
 
             // Before queueing up the process, check if it has all the latest updates.
@@ -56,7 +56,7 @@ pub async fn schedule_reductions(
 
         if let Some(to_remove) = to_remove {
             universe.0 = universe.0.minus(&to_remove);
-            universe.1 = universe.1 + 1;
+            universe.1 += 1;
         }
 
         if !done {
