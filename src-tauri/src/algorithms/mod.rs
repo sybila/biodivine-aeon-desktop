@@ -34,18 +34,20 @@ mod asymptotic_behaviour_classifier;
 
 // Re-export stuff from private modules to public scope as part of `algorithms` module:
 
+pub use asymptotic_behaviour_classifier::AsymptoticBehaviourClassifier;
+pub use asymptotic_behaviour_counter::AsymptoticBehaviourCounter;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
 use biodivine_lib_param_bn::VariableId;
-pub use asymptotic_behaviour_classifier::AsymptoticBehaviourClassifier;
-pub use asymptotic_behaviour_counter::AsymptoticBehaviourCounter;
 pub use symbolic_counter::SymbolicCounter;
 
 /// Identify the `VariableId` objects for which the given `stg` can perform *some* transition.
 pub fn non_constant_variables(stg: &SymbolicAsyncGraph) -> Vec<VariableId> {
-    stg.as_network().variables()
+    stg.as_network()
+        .variables()
         .filter(|var| {
-            !stg.var_can_post(*var, stg.unit_colored_vertices()).is_empty()
+            !stg.var_can_post(*var, stg.unit_colored_vertices())
+                .is_empty()
         })
         .collect()
 }

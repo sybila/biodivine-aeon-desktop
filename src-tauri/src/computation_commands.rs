@@ -1,38 +1,39 @@
-use std::time::SystemTime;
-use std::sync::{RwLock, Arc};
-use biodivine_aeon_desktop::scc::Classifier;
-use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
-use std::thread::JoinHandle;
-use biodivine_aeon_desktop::scc::algo_interleaved_transition_guided_reduction::interleaved_transition_guided_reduction;
-use biodivine_aeon_desktop::scc::algo_xie_beerel::xie_beerel_attractors;
-use biodivine_lib_param_bn::BooleanNetwork;
-use json::{object};
-use biodivine_aeon_desktop::bdt::Bdt;
 use crate::common::{ErrResponse, OkResponse};
 use crate::computation::{ArcBdt, ArcComputation, Computation};
-use crate::session::{SESSIONS, is_there_session};
-
+use crate::session::{is_there_session, SESSIONS};
+use biodivine_aeon_desktop::bdt::Bdt;
+use biodivine_aeon_desktop::scc::algo_interleaved_transition_guided_reduction::interleaved_transition_guided_reduction;
+use biodivine_aeon_desktop::scc::algo_xie_beerel::xie_beerel_attractors;
+use biodivine_aeon_desktop::scc::Classifier;
+use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
+use biodivine_lib_param_bn::BooleanNetwork;
+use json::{object, JsonValue};
+use std::sync::{Arc, RwLock};
+use std::thread::JoinHandle;
+use std::time::SystemTime;
 
 /// Get Arc pointer of locked Computation.
 pub fn get_locked_computation(window_session_key: &str) -> ArcComputation {
     let sessions = SESSIONS.read().unwrap();
-    let locked_computation= &sessions.get(window_session_key).unwrap().computation;
+    let locked_computation = &sessions.get(window_session_key).unwrap().computation;
     locked_computation.clone()
 }
-
 
 /// Get Arc pointer of locked Tree.
 pub fn get_locked_tree(window_session_key: &str) -> ArcBdt {
     let sessions = SESSIONS.read().unwrap();
-    let locked_tree= &sessions.get(window_session_key).unwrap().tree;
+    let locked_tree = &sessions.get(window_session_key).unwrap().tree;
     locked_tree.clone()
 }
 
-
 /// Prepare thread for computation.
-fn prepare_computation_thread(window_session_key: String, network: BooleanNetwork) -> JoinHandle<()> {
-    let cmp_thread = std::thread::spawn(move || {
-        let cmp: Arc<RwLock<Option<Computation>>> = get_locked_computation(window_session_key.as_str());
+fn prepare_computation_thread(
+    window_session_key: String,
+    network: BooleanNetwork,
+) -> JoinHandle<()> {
+    std::thread::spawn(move || {
+        let cmp: Arc<RwLock<Option<Computation>>> =
+            get_locked_computation(window_session_key.as_str());
         match SymbolicAsyncGraph::new(network) {
             Ok(graph) => {
                 // Now that we have graph, we can create classifier and progress
@@ -59,12 +60,11 @@ fn prepare_computation_thread(window_session_key: String, network: BooleanNetwor
                     // Now we can actually start the computation...
 
                     // First, perform ITGR reduction.
-                    let (universe, active_variables) =
-                        interleaved_transition_guided_reduction(
-                            task_context,
-                            &graph,
-                            graph.mk_unit_colored_vertices(),
-                        );
+                    let (universe, active_variables) = interleaved_transition_guided_reduction(
+                        task_context,
+                        &graph,
+                        graph.mk_unit_colored_vertices(),
+                    );
 
                     // Then run Xie-Beerel to actually detect the components.
                     xie_beerel_attractors(
@@ -73,10 +73,7 @@ fn prepare_computation_thread(window_session_key: String, network: BooleanNetwor
                         &universe,
                         &active_variables,
                         |component| {
-                            println!(
-                                "Component {}",
-                                component.approx_cardinality()
-                            );
+                            println!("Component {}", component.approx_cardinality());
                             classifier.add_component(component, &graph);
                         },
                     );
@@ -98,17 +95,14 @@ fn prepare_computation_thread(window_session_key: String, network: BooleanNetwor
                         let mut tree = tree.write().unwrap();
                         *tree = Some(Bdt::new_from_graph(result, &graph));
                         println!("Saved decision tree.");
-                    } else {
-                        if let Some(cmp) = cmp.read().unwrap().as_ref() {
-                            if cmp.is_cancelled() {
-                                return
-                            }
-                            else {
-                                panic!("Computation lost session but is not cancelled.");
-                            }
+                    } else if let Some(cmp) = cmp.read().unwrap().as_ref() {
+                        if cmp.is_cancelled() {
+                            return;
                         } else {
-                            panic!("Cannot save tree. Thread lost its computation")
+                            panic!("Computation lost session but is not cancelled.");
                         }
+                    } else {
+                        panic!("Cannot save tree. Thread lost its computation")
                     }
                 }
 
@@ -130,14 +124,15 @@ fn prepare_computation_thread(window_session_key: String, network: BooleanNetwor
                 panic!("Cannot finalize thread. No computation found.");
             };
         }
-    });
-    return cmp_thread
+    })
 }
-
 
 /// Accept an Aeon model, parse it and start a new computation (if there is no computation running).
 #[tauri::command]
-pub fn start_computation(window_session_key: &str, aeon_string: &str) -> Result<OkResponse, ErrResponse> {
+pub fn start_computation(
+    window_session_key: &str,
+    aeon_string: &str,
+) -> Result<OkResponse, ErrResponse> {
     match BooleanNetwork::try_from(aeon_string) {
         Ok(network) => {
             let locked_computation = get_locked_computation(window_session_key);
@@ -177,95 +172,88 @@ pub fn start_computation(window_session_key: &str, aeon_string: &str) -> Result<
 
                 // Now write the new computation to the global state...
                 *write_computation = Some(new_computation);
-                Ok(OkResponse::new(&object! { "timestamp" => start as u64 }.to_string()))
+                Ok(OkResponse::new(
+                    &object! { "timestamp" => start as u64 }.to_string(),
+                ))
             }
         }
         Err(error) => Err(ErrResponse::new(&error)),
     }
 }
 
-
 /// Cancel running computation.
 #[tauri::command]
 pub fn cancel_computation(window_session_key: &str) -> Result<String, String> {
-    let locked_computation: Arc<RwLock<Option<Computation>>> = get_locked_computation(window_session_key);
+    let locked_computation: Arc<RwLock<Option<Computation>>> =
+        get_locked_computation(window_session_key);
     let read_computation = locked_computation.read().unwrap();
 
     if let Some(computation) = read_computation.as_ref() {
         match computation.cancel() {
-            Ok(ok_message) => {
-                return Ok(ok_message.to_string())
-            },
-            Err(error_message) => {
-                return Err(error_message.to_string())
-            }
+            Ok(ok_message) => Ok(ok_message.to_string()),
+            Err(error_message) => Err(error_message.to_string()),
         }
     } else {
-        return Err("No computation found.".to_string())
+        Err("No computation found.".to_string())
     }
 }
-
 
 /// Get result of computation.
 #[tauri::command]
 pub fn get_results(window_session_key: &str) -> Result<OkResponse, ErrResponse> {
-    let locked_computation: Arc<RwLock<Option<Computation>>> = get_locked_computation(window_session_key);
+    let locked_computation: Arc<RwLock<Option<Computation>>> =
+        get_locked_computation(window_session_key);
     let read_computation = locked_computation.read().unwrap();
 
-    if let Some(computation) = read_computation.as_ref() {
-        match computation.get_results() {
-            Ok((data, elapsed, is_partial, is_cancelled)) => {
+    let Some(computation) = read_computation.as_ref() else {
+        return Err(ErrResponse::new("No computation found."));
+    };
 
-                // Format result data to json object
-                let lines: Vec<String> = data
-                    .iter()
-                    .map(|(c, p)| {
-                        format!(
-                            "{{\"sat_count\":{},\"phenotype\":{}}}",
-                            p.approx_cardinality(),
-                            c
-                        )
-                    })
-                    .collect();
+    match computation.get_results() {
+        Err(message) => Err(ErrResponse::new(message)),
+        Ok(results) => {
+            // Format result data to json object
+            let classification_map: Vec<JsonValue> = results
+                .classification_map
+                .iter()
+                .map(|(c, p)| {
+                    object! {
+                        sat_count: p.approx_cardinality(),
+                        phenotype: c.to_json()
+                    }
+                })
+                .collect();
 
-                println!("Result {:?}", lines);
+            println!("Result {:?}", classification_map);
 
-                let elapsed = if let Some(e) = elapsed { e } else { 0 };
+            // Truncate the elapsed time to u64 as u128 is not supported in json right now.
+            let elapsed = results.elapsed_ms.unwrap_or(0);
+            let elapsed = u64::try_from(elapsed).unwrap_or(u64::MAX);
 
-                let mut json = String::new();
-                for line in lines.iter().take(lines.len() - 1) {
-                    json += &format!("{},", line);
-                }
-                json = format!(
-                    "{{ \"isPartial\":{}, \"isCancelled\":{}, \"data\":[{}{}], \"elapsed\":{} }}",
-                    is_partial,
-                    is_cancelled,
-                    json,
-                    lines.last().unwrap(),
-                    elapsed,
-                );
+            let json = object! {
+                isPartial: results.is_partial,
+                isCancelled: results.is_cancelled,
+                elapsed: elapsed,
+                data: JsonValue::Array(classification_map)
+            };
 
-                return Ok(OkResponse::new(&json))
-            },
-            Err(error_message) => {
-                return Err(ErrResponse::new(error_message))
-            }
+            let json_string = json.to_string();
+
+            Ok(OkResponse::new(json_string.as_str()))
         }
-    } else {
-        Err(ErrResponse::new("No computation found."))
     }
 }
-
 
 /// Get info about computation process.
 #[tauri::command]
 pub fn get_computation_process_info(window_session_key: &str) -> String {
-    let locked_computation: Arc<RwLock<Option<Computation>>> = get_locked_computation(window_session_key);
+    let locked_computation: Arc<RwLock<Option<Computation>>> =
+        get_locked_computation(window_session_key);
     let read_computation = locked_computation.read().unwrap();
 
     if let Some(computation) = read_computation.as_ref() {
-        return computation.get_info().to_string()
+        computation.get_info().to_string()
     } else {
-        return String::from("No computation found.")
+        String::from("No computation found.")
     }
 }

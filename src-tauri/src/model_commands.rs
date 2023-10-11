@@ -1,11 +1,10 @@
-use std::cmp::max;
-use biodivine_lib_param_bn::{BooleanNetwork, FnUpdate};
+use crate::common::{ErrResponse, OkResponse};
 use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
+use biodivine_lib_param_bn::{BooleanNetwork, FnUpdate};
 use json::object;
 use regex::Regex;
-use std::collections::{HashMap};
-use crate::common::{ErrResponse, OkResponse};
-
+use std::cmp::max;
+use std::collections::HashMap;
 
 fn max_parameter_cardinality(function: &FnUpdate) -> usize {
     match function {
@@ -18,7 +17,6 @@ fn max_parameter_cardinality(function: &FnUpdate) -> usize {
         ),
     }
 }
-
 
 /// Accept a partial model containing only the necessary regulations and one update function.
 /// Return cardinality of such model (i.e. the number of instantiations of this update function)
@@ -45,7 +43,8 @@ pub fn check_update_function(data: &str) -> Result<OkResponse, ErrResponse> {
             } else {
                 Err("Function too large for on-the-fly analysis.".to_string())
             }
-        }).map(|g| g.unit_colors().approx_cardinality());
+        })
+        .map(|g| g.unit_colors().approx_cardinality());
 
     // println!(
     //     "Elapsed: {}, result {:?}",
@@ -54,14 +53,14 @@ pub fn check_update_function(data: &str) -> Result<OkResponse, ErrResponse> {
     // );
 
     match graph {
-        Ok(cardinality) => {
-            Ok(OkResponse::new(object! {
+        Ok(cardinality) => Ok(OkResponse::new(
+            object! {
                 "cardinality" => cardinality
-            }.to_string().as_str()))
-        },
-        Err(error) => {
-            Err(ErrResponse::new(&error))
-        }
+            }
+            .to_string()
+            .as_str(),
+        )),
+        Err(error) => Err(ErrResponse::new(&error)),
     }
 }
 
@@ -77,7 +76,9 @@ pub fn sbml_to_aeon(data: &str) -> Result<OkResponse, ErrResponse> {
             for (var, (x, y)) in layout {
                 model_string += format!("#position:{}:{},{}\n", var, x, y).as_str();
             }
-            Ok(OkResponse::new(&object! { "model" => model_string }.to_string()))
+            Ok(OkResponse::new(
+                &object! { "model" => model_string }.to_string(),
+            ))
         }
         Err(error) => Err(ErrResponse::new(&error)),
     }
@@ -107,9 +108,11 @@ fn read_layout(aeon_string: &str) -> HashMap<String, (f64, f64)> {
 pub fn aeon_to_sbml(data: &str) -> Result<OkResponse, ErrResponse> {
     match BooleanNetwork::try_from(data) {
         Ok(network) => {
-            let layout = read_layout(&data);
+            let layout = read_layout(data);
             let sbml_string = network.to_sbml(Some(&layout));
-            Ok(OkResponse::new(&object! { "model" => sbml_string }.to_string()))
+            Ok(OkResponse::new(
+                &object! { "model" => sbml_string }.to_string(),
+            ))
         }
         Err(error) => Err(ErrResponse::new(&error)),
     }
@@ -123,8 +126,10 @@ pub fn aeon_to_sbml_instantiated(data: &str) -> Result<OkResponse, ErrResponse> 
     match BooleanNetwork::try_from(data).and_then(SymbolicAsyncGraph::new) {
         Ok(graph) => {
             let witness = graph.pick_witness(graph.unit_colors());
-            let layout = read_layout(&data);
-            Ok(OkResponse::new(&object! { "model" => witness.to_sbml(Some(&layout)) }.to_string(), ))
+            let layout = read_layout(data);
+            Ok(OkResponse::new(
+                &object! { "model" => witness.to_sbml(Some(&layout)) }.to_string(),
+            ))
         }
         Err(error) => Err(ErrResponse::new(&error)),
     }

@@ -15,7 +15,7 @@ pub struct Count(Map<AsymptoticBehaviour, usize>);
 
 impl Feature for Count {
     fn extend(&self, other: &Self) -> Self {
-        let mut map = self.0.clone();
+        let mut map = self.0;
         for (key, value) in other.0.iter() {
             if let Some(current) = map.get(key) {
                 let new_count = *value + *current;
@@ -98,9 +98,14 @@ impl AsymptoticBehaviourCounter {
         }
     }
 
-    /// Number of classes encountered so far.
+    /// See [IncrementalClassifier::len].
     pub fn len(&self) -> usize {
         self.counter.len()
+    }
+
+    /// See [IncrementalClassifier::is_empty].
+    pub fn is_empty(&self) -> bool {
+        self.counter.is_empty()
     }
 
     /// Extend this classifier using a full behaviour classification map.
