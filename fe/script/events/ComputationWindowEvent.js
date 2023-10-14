@@ -5,7 +5,7 @@ TAURI.event.listen('start-computation', (event) => {
     const windowSessionKey = TAURI.window.getCurrent().label;
     Session.createWindowSession(windowSessionKey)
 
-    Computation.startComputation(aeonString, windowSessionKey)
+    ComputationEndpoints.startComputation(aeonString, windowSessionKey)
 });
 
 

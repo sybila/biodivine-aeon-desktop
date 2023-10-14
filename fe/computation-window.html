@@ -31,21 +31,23 @@
     <script src="script/dependencies/cytoscape-edgehandles.js"></script>
     <script src="script/dependencies/hotkeys.min.js"></script>
 
-    <script src="script/const.js"></script>
+    <script src="script/common/const.js"></script>
     <script src="script/Results.js"></script>
     <script src="script/ComputeEngine.js"></script>
     <script src="script/Computation.js"></script>
-    <script src="script/ModelEndpoints.js"></script>
-    <script src="script/Examples.js"></script>
+    <script src="script/endpoints/ModelEndpoints.js"></script>
+    <script src="script/common/Examples.js"></script>
     <script src="script/LiveModel.js"></script>
     <script src="script/UI.js"></script>
     <script src="script/CytoscapeEditor.js"></script>
     <script src="script/ModelEditor.js"></script>
     <script src="script/main.js"></script>
-    <script src="script/MessageDialog.js"></script>
-    <script src="script/ComputationWindowEvent.js"></script>
+    <script src="script/common/MessageDialog.js"></script>
+    <script src="script/events/ComputationWindowEvent.js"></script>
     <script src="script/Session.js"></script>
-    <script src="script/ComputationResultsEndpoints.js"></script>
+    <script src="script/endpoints/ComputationResultsEndpoints.js"></script>
+    <script src="script/endpoints/ComputationEndpoints.js"></script>
+    <script src="script/Windows.js"></script>
 </head>
 
 <body onload="computationWindowInit()" style="background-color: #f5f5f5;">
@@ -63,7 +65,7 @@
             Discovered classes: <span id="computation-classes">-</span></span>
 
             <div style="margin-top: 25px; text-align: center;">
-                <button id="computation-cancel" class="image-button" onclick="Computation.cancelComputation();" style="margin-right: 4px;">Cancel job <img src="img/cancel-24px.svg" alt="cancel"></button>
+                <button id="computation-cancel" class="image-button" onclick="ComputationEndpoints.cancelComputation();" style="margin-right: 4px;">Cancel job <img src="img/cancel-24px.svg" alt="cancel"></button>
                 <button id="computation-download" class="image-button" onclick="Results.show();" style="margin-left: 4px;">Show partial result <img src="img/cloud_download-24px.svg" alt="download"></button>
             </div>
         </div>

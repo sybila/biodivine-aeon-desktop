@@ -10,7 +10,7 @@ let Results = {
 	},
 
 	show() {
-		Computation.getResults((error, resultJson) => {
+		ComputationEndpoints.getResults((error, resultJson) => {
 			if (error !== undefined) {
 				MessageDialog.errorMessage(error);
 			} else {
@@ -36,8 +36,8 @@ let Results = {
 		            	<tr>
 		            		<td class="table-behavior">${behaviorString}</td>
 		            		<td class="table-sat-count">${sat_count}</td>
-		            		<td><span class="inline-button" onclick="ComputationResultsEndpoints.openWitnessInNewWindow('${behavior}');">Witness</span></td>
-		            		<td><span class="inline-button" onclick="UI.openExplorer('${behavior}');">Attractor</span></td>
+		            		<td><span class="inline-button" onclick="Windows.openWitnessWindow('${behavior}');">Witness</span></td>
+		            		<td><span class="inline-button" onclick="Windows.openExplorerWindow('${behavior}');">Attractor</span></td>
 		            	</tr>
 		            `;
 		        });

@@ -63,7 +63,8 @@ function init() {
     }
     // get the attractors    
     if (reqBeh !== undefined && reqBeh !== null) {
-        var request = ComputeEngine._backendRequest('/get_attractors/' + reqBeh, callback, 'GET', null);
+        //ComputationResultsEndpoints.getAttractors(reqBeh)
+        //var request = ComputeEngine._backendRequest('/get_attractors/' + reqBeh, callback, 'GET', null);
     } else {        
         const requestedTreeWitness = urlParams.get('tree_witness'); // Should be a node id.        
         if (requestedTreeWitness !== undefined && requestedTreeWitness !== null) {
@@ -80,6 +81,8 @@ function init() {
         }
     }
 
+    // Emit when the window is fully initialized and ready
+    TAURI.event.emit('ready', {});
 }
 
 function nodeClick(e) {

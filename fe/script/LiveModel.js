@@ -362,27 +362,6 @@ let LiveModel = {
 		return result;
 	},
 
-	// Open model in new window and return label of this window
-	async openModelInNewWindow(modelString) {
-		let windowLabel = 'model-window:' + Date.now()
-
-		await TAURI.invoke("open_model_window", {
-			label: windowLabel
-		})
-			.then(() => {
-				const newModelWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel)
-
-				// Wait until the new window is initialized
-				newModelWindow.once('ready', () => {
-					// Emit model string to the new window
-					newModelWindow.emit('import-model', { modelString: modelString })
-				})
-			}).catch((errorMessage) => {
-				MessageDialog.errorMessage(errorMessage)
-				windowLabel = null
-		})
-		return windowLabel
-	},
 
 	// Ask the user if he wants to open model in a new window - if Yes, return true.
 	// If he decides No, ask him if he wants to overwrite current model - if Yes, return false.
@@ -410,7 +389,7 @@ let LiveModel = {
 			const userDecision = await this.askToOpenInNewWindow();
 			switch (userDecision) {
 				case true:
-					this.openModelInNewWindow(modelString)
+					Windows.openModelInNewWindow(modelString)
 					break;
 				case false:
 					return this.importAeon(modelString)
@@ -427,27 +406,9 @@ let LiveModel = {
 			MessageDialog.errorMessage("Empty model.")
 			return undefined;
 		}
-		this.openComputationInNewWindow(aeonString)
+		Windows.openComputationWindow(aeonString)
 	},
 
-	openComputationInNewWindow(aeonString) {
-		let windowLabel = 'computation-window:' + Date.now()
-
-		TAURI.invoke("open_computation_window", {
-			label: windowLabel
-		})
-			.then(() => {
-				const newComputationWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel)
-
-				// Wait until the new window is initialized
-				newComputationWindow.once('ready', () => {
-					// Emit to the new computation window to start computation
-					newComputationWindow.emit('start-computation', { aeonString: aeonString })
-				})
-			}).catch((errorMessage) => {
-			MessageDialog.errorMessage(errorMessage)
-		})
-	},
 
 	// Import model from Aeon file. If the import is successful, return undefined,
 	// otherwise return an error string.
