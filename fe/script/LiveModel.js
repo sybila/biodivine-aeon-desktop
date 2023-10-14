@@ -362,10 +362,11 @@ let LiveModel = {
 		return result;
 	},
 
-	openModelInNewWindow(modelString) {
+	// Open model in new window and return label of this window
+	async openModelInNewWindow(modelString) {
 		let windowLabel = 'model-window:' + Date.now()
 
-		TAURI.invoke("open_model_window", {
+		await TAURI.invoke("open_model_window", {
 			label: windowLabel
 		})
 			.then(() => {
@@ -378,7 +379,9 @@ let LiveModel = {
 				})
 			}).catch((errorMessage) => {
 				MessageDialog.errorMessage(errorMessage)
+				windowLabel = null
 		})
+		return windowLabel
 	},
 
 	// Ask the user if he wants to open model in a new window - if Yes, return true.

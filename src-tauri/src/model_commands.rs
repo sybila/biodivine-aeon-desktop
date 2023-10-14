@@ -85,7 +85,7 @@ pub fn sbml_to_aeon(data: &str) -> Result<OkResponse, ErrResponse> {
 }
 
 /// Try to read the model layout metadata from the given aeon file.
-fn read_layout(aeon_string: &str) -> HashMap<String, (f64, f64)> {
+pub fn read_layout(aeon_string: &str) -> HashMap<String, (f64, f64)> {
     let re = Regex::new(r"^\s*#position:(?P<var>[a-zA-Z0-9_]+):(?P<x>.+?),(?P<y>.+?)\s*$").unwrap();
     let mut layout = HashMap::new();
     for line in aeon_string.lines() {

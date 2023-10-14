@@ -12,6 +12,7 @@ mod computation_commands;
 mod model_commands;
 mod multi_window;
 mod session;
+mod computation_results_commands;
 
 fn main() {
     let menu = menu_init();
@@ -42,6 +43,7 @@ fn main() {
             computation_commands::get_computation_process_info,
             multi_window::open_model_window,
             multi_window::open_computation_window,
+            computation_results_commands::get_witness
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

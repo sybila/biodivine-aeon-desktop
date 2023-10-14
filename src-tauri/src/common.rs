@@ -1,6 +1,8 @@
 use json::object;
 use serde::{Serialize, Serializer};
 
+pub type ErrorMessage = String;
+
 pub struct OkResponse {
     response: String,
 }
