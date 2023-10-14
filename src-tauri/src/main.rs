@@ -43,7 +43,9 @@ fn main() {
             computation_commands::get_computation_process_info,
             multi_window::open_model_window,
             multi_window::open_computation_window,
-            computation_results_commands::get_witness
+            multi_window::open_explorer_window,
+            computation_results_commands::get_witness,
+            computation_results_commands::get_attractors
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

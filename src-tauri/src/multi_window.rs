@@ -85,3 +85,18 @@ pub async fn open_computation_window(label: &str, handle: tauri::AppHandle) -> R
     .expect("Error while creating computation window.");
     Ok(())
 }
+
+/// Open new window with attractors explorer.
+#[tauri::command]
+pub async fn open_explorer_window(label: &str, handle: tauri::AppHandle) -> Result<(), ()> {
+    tauri::WindowBuilder::new(
+        &handle,
+        label,
+        tauri::WindowUrl::App("explorer.html".into()),
+    )
+        .inner_size(1000f64, 700f64)
+        .title("Aeon/BIODIVINE")
+        .build()
+        .expect("Error while creating new model window.");
+    Ok(())
+}
