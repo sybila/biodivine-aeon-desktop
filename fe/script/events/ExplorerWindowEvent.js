@@ -1,26 +1,42 @@
 // Listen for 'get-attractors' event to show attractors in explorer window
 TAURI.event.listen('get-attractors', (event) => {
-
-    // Set session key for this window, so other methods can use this info
     Computation.setWindowSessionKey(event.payload['windowSessionKey'])
 
     const behavior = event.payload['behavior']
     ComputationResultsEndpoints.getAttractors(behavior)
         .then((okJson) => {
-            RESULT = okJson;
+            initExplorer(okJson)
+        })
+        .catch((errorMessage) => {
+            MessageDialog.errorMessage(errorMessage)
+        })
+});
 
-            if(okJson['has_large_attractors']) {
-                MessageDialog.infoMessage("Some attractors were too large to draw. These will be shown only as two states with the constant and non-constant variables differentiated.");
-            }
+// Listen for 'get-tree-attractors' event to show attractors in explorer window
+TAURI.event.listen('get-tree-attractors', (event) => {
+    Computation.setWindowSessionKey(event.payload['windowSessionKey'])
 
-            for (let i = 0; i < okJson['attractors'].length; i++) {
-                okJson['attractors'][i].vis = edgesToVisFormat(okJson['attractors'][i].graph);
-            }
+    const node = event.payload['node']
+    ComputationResultsEndpoints.getTreeAttractors(node)
+        .then((okJson) => {
+            initExplorer(okJson)
+        })
+        .catch((errorMessage) => {
+            MessageDialog.errorMessage(errorMessage)
+        })
+});
 
-            addLabels();
-            displayAll();
-            network.on('click', nodeClick);
-            document.getElementById('explorer-update-functions').innerHTML = generateWitness()
+// Listen for 'get-stability-attractors' event to show attractors in explorer window
+TAURI.event.listen('get-stability-attractors', (event) => {
+    Computation.setWindowSessionKey(event.payload['windowSessionKey'])
+
+    const node = event.payload['node']
+    const behavior = event.payload['behavior']
+    const variable = event.payload['variable']
+    const vector = event.payload['vector']
+    ComputationResultsEndpoints.getStabilityAttractors(node, behavior, variable, vector)
+        .then((okJson) => {
+            initExplorer(okJson)
         })
         .catch((errorMessage) => {
             MessageDialog.errorMessage(errorMessage)

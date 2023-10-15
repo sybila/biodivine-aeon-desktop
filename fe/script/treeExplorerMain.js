@@ -26,7 +26,13 @@ function Math_percent(cardinality, total) {
 	return Math.round((cardinality / total) * 100);
 }
 
+function beforeInit() {
+	// Emit when the window is fully initialized and ready
+	TAURI.event.emit('ready', {});
+}
+
 function init() {
+	console.log("started init")
 	// Set engine address according to query parameter
 	const urlParams = new URLSearchParams(window.location.search);
 	const engineAddress = urlParams.get('engine');	
@@ -303,26 +309,32 @@ function autoExpandBifurcationTree(node, depth, fit = true) {
 function loadBifurcationTree(fit = true) {
 	let loading = document.getElementById("loading-indicator");
 	loading.classList.remove("invisible");
-	ComputeEngine.getBifurcationTree((e, r) => {		
-		if (r !== undefined && r.length > 0) {
-			CytoscapeEditor.removeAll();	// remove old tree if present
-			for (node of r) {
-				CytoscapeEditor.ensureNode(node);
-			}
-			for (node of r) {
-				if (node.type == "decision") {
-					CytoscapeEditor.ensureEdge(node.id, node.left, false);
-					CytoscapeEditor.ensureEdge(node.id, node.right, true);
+
+	ComputationResultsEndpoints.getBifurcationTree()
+		.then((okResponse) => {
+			if (okResponse !== undefined && okResponse.length > 0) {
+				CytoscapeEditor.removeAll();	// remove old tree if present
+				let okResponseObject = JSON.parse(okResponse)
+				for (node of okResponseObject) {
+					CytoscapeEditor.ensureNode(node);
+				}
+				for (node of okResponseObject) {
+					if (node.type === "decision") {
+						CytoscapeEditor.ensureEdge(node.id, node.left, false);
+						CytoscapeEditor.ensureEdge(node.id, node.right, true);
+					}
+				}
+
+				CytoscapeEditor.applyTreeLayout();
+				if (fit) {
+					CytoscapeEditor.fit();
 				}
 			}
-
-			CytoscapeEditor.applyTreeLayout();
-			if (fit) {
-				CytoscapeEditor.fit();				
-			}			
-		}			
-		loading.classList.add("invisible");
-	}, true);
+			loading.classList.add("invisible");
+		})
+		.catch((errorMessage) => {
+			MessageDialog.errorMessage(errorMessage)
+		})
 }
 
 function setPrecision(precision) {
@@ -371,8 +383,10 @@ function openTreeWitness() {
 	if (node === undefined) {
 		return;
 	}
-	const url = window.location.pathname.replace("tree_explorer.html", "index.html");
-    window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node));
+	// const url = window.location.pathname.replace("tree_explorer.html", "index.html");
+    // window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node));
+
+	Windows.openTreeWitnessWindow(node)
 }
 
 function openStabilityWitness(variable, behaviour, vector) {
@@ -380,8 +394,10 @@ function openStabilityWitness(variable, behaviour, vector) {
 	if (node === undefined) {
 		return;
 	}
-	const url = window.location.pathname.replace("tree_explorer.html", "index.html");
-    window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node) + "&variable=" + encodeURI(variable) + "&behaviour=" + encodeURI(behaviour) + "&vector=" + encodeURI(vector));
+	// const url = window.location.pathname.replace("tree_explorer.html", "index.html");
+    // window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node) + "&variable=" + encodeURI(variable) + "&behaviour=" + encodeURI(behaviour) + "&vector=" + encodeURI(vector));
+
+	Windows.openStabilityWitnessWindow(node, behaviour, variable, vector)
 }
 
 /* Open attractors for the currently selected tree node. */
@@ -390,8 +406,10 @@ function openTreeAttractor() {
 	if (node === undefined) {
 		return;
 	}
-	const url = window.location.pathname.replace("tree_explorer.html", "explorer.html");
-    window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node));
+	// const url = window.location.pathname.replace("tree_explorer.html", "explorer.html");
+    // window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node));
+
+	Windows.openTreeAttractorExplorerWindow(node)
 }
 
 function openStabilityAttractor(variable, behaviour, vector) {
@@ -399,8 +417,10 @@ function openStabilityAttractor(variable, behaviour, vector) {
 	if (node === undefined) {
 		return;
 	}
-	const url = window.location.pathname.replace("tree_explorer.html", "explorer.html");
-    window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node) + "&variable=" + encodeURI(variable) + "&behaviour=" + encodeURI(behaviour) + "&vector=" + encodeURI(vector));
+	// const url = window.location.pathname.replace("tree_explorer.html", "explorer.html");
+    // window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node) + "&variable=" + encodeURI(variable) + "&behaviour=" + encodeURI(behaviour) + "&vector=" + encodeURI(vector));
+
+	Windows.openStabilityAttractorExplorerWindow(node, behaviour, variable, vector)
 }
 
 function vector_to_string(vector) {

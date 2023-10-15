@@ -65,7 +65,8 @@ function init() {
     if (reqBeh !== undefined && reqBeh !== null) {
         //ComputationResultsEndpoints.getAttractors(reqBeh)
         //var request = ComputeEngine._backendRequest('/get_attractors/' + reqBeh, callback, 'GET', null);
-    } else {        
+    } else {
+        // this is accessible from tree explorer window with each node in the tree
         const requestedTreeWitness = urlParams.get('tree_witness'); // Should be a node id.        
         if (requestedTreeWitness !== undefined && requestedTreeWitness !== null) {
             const requestedVariable = urlParams.get('variable');
@@ -83,6 +84,23 @@ function init() {
 
     // Emit when the window is fully initialized and ready
     TAURI.event.emit('ready', {});
+}
+
+function initExplorer(json) {
+    RESULT = json;
+
+    if(json['has_large_attractors']) {
+        MessageDialog.infoMessage("Some attractors were too large to draw. These will be shown only as two states with the constant and non-constant variables differentiated.");
+    }
+
+    for (let i = 0; i < json['attractors'].length; i++) {
+        json['attractors'][i].vis = edgesToVisFormat(json['attractors'][i].graph);
+    }
+
+    addLabels();
+    displayAll();
+    network.on('click', nodeClick);
+    document.getElementById('explorer-update-functions').innerHTML = generateWitness()
 }
 
 function nodeClick(e) {

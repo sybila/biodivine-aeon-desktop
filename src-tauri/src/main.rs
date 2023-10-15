@@ -44,8 +44,14 @@ fn main() {
             multi_window::open_model_window,
             multi_window::open_computation_window,
             multi_window::open_explorer_window,
+            multi_window::open_tree_explorer_window,
             computation_results_commands::get_witness,
-            computation_results_commands::get_attractors
+            computation_results_commands::get_tree_witness,
+            computation_results_commands::get_stability_witness,
+            computation_results_commands::get_attractors,
+            computation_results_commands::get_tree_attractors,
+            computation_results_commands::get_stability_attractors,
+            computation_results_commands::get_bifurcation_tree,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

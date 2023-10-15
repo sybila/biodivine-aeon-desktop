@@ -100,3 +100,18 @@ pub async fn open_explorer_window(label: &str, handle: tauri::AppHandle) -> Resu
         .expect("Error while creating new model window.");
     Ok(())
 }
+
+/// Open new window with bifurcation decision tree.
+#[tauri::command]
+pub async fn open_tree_explorer_window(label: &str, handle: tauri::AppHandle) -> Result<(), ()> {
+    tauri::WindowBuilder::new(
+        &handle,
+        label,
+        tauri::WindowUrl::App("tree_explorer.html".into()),
+    )
+        .inner_size(1000f64, 700f64)
+        .title("Aeon/BIODIVINE")
+        .build()
+        .expect("Error while creating new model window.");
+    Ok(())
+}
