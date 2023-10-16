@@ -13,6 +13,8 @@ mod model_commands;
 mod multi_window;
 mod session;
 mod computation_results_commands;
+mod tree_explorer_commands;
+mod computation_results;
 
 fn main() {
     let menu = menu_init();
