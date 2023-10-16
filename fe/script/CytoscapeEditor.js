@@ -55,7 +55,7 @@ let CytoscapeEditor = {
 	// Return an id of the selected node, or undefined if nothing is selected.
 	getSelectedNodeId() {
 		let node = CytoscapeEditor._cytoscape.nodes(":selected");
-		if (node.length == 0) return undefined;	// nothing selected
+		if (node.length === 0) return undefined;	// nothing selected
 		return node.id();
 	},
 

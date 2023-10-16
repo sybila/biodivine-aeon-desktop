@@ -4,6 +4,10 @@ use serde::{Serialize, Serializer};
 pub type ErrorMessage = String;
 pub type JsonString = String;
 
+/// It is an array of Json objects as String
+/// TODO - Come up with solution to serialize array of jsons
+pub type JsonArrayString = String;
+
 pub struct OkResponse {
     response: String,
 }

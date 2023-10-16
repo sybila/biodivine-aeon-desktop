@@ -52,6 +52,13 @@ fn main() {
             computation_results_commands::get_tree_attractors,
             computation_results_commands::get_stability_attractors,
             computation_results_commands::get_bifurcation_tree,
+            tree_explorer_commands::auto_expand,
+            tree_explorer_commands::get_attributes,
+            tree_explorer_commands::apply_tree_precision,
+            tree_explorer_commands::get_tree_precision,
+            tree_explorer_commands::apply_attribute,
+            tree_explorer_commands::revert_decision,
+            tree_explorer_commands::get_stability_data,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

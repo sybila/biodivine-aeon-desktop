@@ -72,17 +72,21 @@ function init() {
 		setPrecision(slider.value);
 	}
 
-	ComputeEngine.getTreePrecision((e, r) => {		
-		slider.value = r;
-		output.innerHTML = r/100.0 + "%";
-	})
+	TreeExplorerEndpoints.getTreePrecision()
+		.then((precision) => {
+			slider.value = precision;
+			output.innerHTML = precision / 100.0 + "%";
+		})
+		.catch((errorMessage) => {
+			MessageDialog.errorMessage(errorMessage)
+		})
 
 	var depth = document.getElementById("auto-expand-slider");
 	var autoExpand = document.getElementById("button-auto-expand");
 
 	depth.oninput = function() {
 		let value = depth.value;
-		if (value == 1) {
+		if (value === 1) {
 			autoExpand.innerHTML = "Auto expand (1 level)  <img src='img/graph-24px.svg'>";
 		} else {
 			autoExpand.innerHTML = "Auto expand ("+value+" levels)  <img src='img/graph-24px.svg'>";
@@ -279,37 +283,41 @@ function renderAttributeTable(id, attributes, totalCardinality) {
 	}
 }
 
-function autoExpandBifurcationTree(node, depth, fit = true) {
-	let loading = document.getElementById("loading-indicator");
-	loading.classList.remove("invisible");
-	ComputeEngine.autoExpandBifurcationTree(node, depth, (e, r) => {		
-		if (r !== undefined && r.length > 0) {
-			for (node of r) {
-				CytoscapeEditor.ensureNode(node);
-			}
-			for (node of r) {
-				if (node.type == "decision") {
-					CytoscapeEditor.ensureEdge(node.id, node.left, false);
-					CytoscapeEditor.ensureEdge(node.id, node.right, true);
+function autoExpandBifurcationTree(nodeId, depth, fit = true) {
+	if (nodeId === undefined || nodeId.length < 1) {
+		MessageDialog.errorMessage("No node selected.")
+	}
+
+	TreeExplorerEndpoints.autoExpandBifurcationTree(nodeId, depth)
+		.then((okResponse) => {
+			if (okResponse !== undefined && okResponse.length > 0) {
+
+				// okResponse is an array of json objects as String
+				let okResponseObject = JSON.parse(okResponse)
+
+				for (node of okResponseObject) {
+					CytoscapeEditor.ensureNode(node);
+				}
+				for (node of okResponseObject) {
+					if (node.type === "decision") {
+						CytoscapeEditor.ensureEdge(node.id, node.left, false);
+						CytoscapeEditor.ensureEdge(node.id, node.right, true);
+					}
+				}
+				CytoscapeEditor.applyTreeLayout();
+				if (fit) {
+					CytoscapeEditor.fit();
 				}
 			}
+		})
+		.catch((errorMessage) => {
+			MessageDialog.errorMessage(errorMessage)
+		})
 
-			CytoscapeEditor.applyTreeLayout();
-			if (fit) {
-				CytoscapeEditor.fit();				
-			}
-		} else {
-			alert(e);
-		}
-		loading.classList.add("invisible");
-		CytoscapeEditor.refreshSelection();
-	}, true);
+	CytoscapeEditor.refreshSelection();
 }
 
 function loadBifurcationTree(fit = true) {
-	let loading = document.getElementById("loading-indicator");
-	loading.classList.remove("invisible");
-
 	ComputationResultsEndpoints.getBifurcationTree()
 		.then((okResponse) => {
 			if (okResponse !== undefined && okResponse.length > 0) {
@@ -330,7 +338,6 @@ function loadBifurcationTree(fit = true) {
 					CytoscapeEditor.fit();
 				}
 			}
-			loading.classList.add("invisible");
 		})
 		.catch((errorMessage) => {
 			MessageDialog.errorMessage(errorMessage)
@@ -338,43 +345,56 @@ function loadBifurcationTree(fit = true) {
 }
 
 function setPrecision(precision) {
-	let loading = document.getElementById("loading-indicator");
-	loading.classList.remove("invisible");
-	ComputeEngine.applyTreePrecision(precision, (e, r) => {
-		loadBifurcationTree(false);
-	});
+	TreeExplorerEndpoints.applyTreePrecision(precision)
+		.then((okResponse) => {
+			loadBifurcationTree(false);
+		})
+		.catch((errorMessage) => {
+			MessageDialog.errorMessage(errorMessage)
+		})
 }
 
 function removeNode(nodeId) {
-	ComputeEngine.deleteDecision(nodeId, (e, r) => {
-		console.log(r);		
-		if (r.removed.length > 0) {
-			for (removed of r.removed) {
-				CytoscapeEditor.removeNode(removed);
-			} 
-		}
-		if (r.node !== undefined) {
-			CytoscapeEditor.ensureNode(r.node);
-			CytoscapeEditor.refreshSelection(r.node.id);
-		}
-	});
+	TreeExplorerEndpoints.deleteDecision(nodeId)
+		.then((okResponse) => {
+			let okResponseObject = JSON.parse(okResponse)
+			if (okResponseObject.removed.length > 0) {
+				for (removed of okResponseObject.removed) {
+					CytoscapeEditor.removeNode(removed);
+				}
+			}
+			if (okResponseObject.node !== undefined) {
+				CytoscapeEditor.ensureNode(okResponseObject.node);
+				CytoscapeEditor.refreshSelection(okResponseObject.node.id);
+			}
+		})
+		.catch((errorMessage) => {
+			MessageDialog.errorMessage(errorMessage)
+		})
 }
 
+// TODO:
+//  - From where is this function called/used?
+//  - 'node' and 'attr' parameters should be string but are numeric
 function selectAttribute(node, attr) {
-	ComputeEngine.selectDecisionAttribute(node, attr, (e, r) => {
-		console.log(r);
-		for (node of r) {
-			CytoscapeEditor.ensureNode(node);
-		}
-		for (node of r) {
-			if (node.type == "decision") {
-				CytoscapeEditor.ensureEdge(node.id, node.left, false);
-				CytoscapeEditor.ensureEdge(node.id, node.right, true);
+	TreeExplorerEndpoints.selectDecisionAttribute(node, attr)
+		.then((okResponse) => {
+			let okResponseObject = JSON.parse(okResponse)
+			for (node of okResponseObject) {
+				CytoscapeEditor.ensureNode(node);
 			}
-		}
-		CytoscapeEditor.applyTreeLayout();
-		CytoscapeEditor.refreshSelection();
-	});
+			for (node of okResponseObject) {
+				if (node.type === "decision") {
+					CytoscapeEditor.ensureEdge(node.id, node.left, false);
+					CytoscapeEditor.ensureEdge(node.id, node.right, true);
+				}
+			}
+			CytoscapeEditor.applyTreeLayout();
+			CytoscapeEditor.refreshSelection();
+		})
+		.catch((errorMessage) => {
+			MessageDialog.errorMessage(errorMessage)
+		})
 }
 
 /* Open witness network for the currently selected tree node. */
@@ -446,33 +466,30 @@ function vector_to_string(vector) {
 
 // Used to initialize a stability analysis button in the detail panels.
 function initStabilityButton(id, button, dropdown, container) {
-    let loading = document.getElementById("loading-indicator");
     button.onclick = function() {
-        loading.classList.remove("invisible");
         let behaviour = dropdown.value;
-        ComputeEngine.getStabilityData(id, behaviour, (e, r) => {
-            loading.classList.add("invisible");
-            if (e !== undefined) {
-                console.log(e);
-                alert("Cannot load stability data: "+e);                   
-            } else {
-            	console.log(r);
-            	let content = "<h4>Stability analysis:</h4>";
-            	for (item of r) {
-            		let variableName = item.variable;
-            		if (item.data.length == 1) {            			
-            			content += "<div><b>" + variableName + "</b>: always "+vector_to_string(item.data[0].vector)+"</div>";            			
-            		} else {            			
-            			content += "<div><b>" + variableName + "</b>:</br>";
-            			for (data of item.data) {
-            				content += " - " + vector_to_string(data.vector) + ": " + data.colors + getWitnessPanelForVariable(variableName, behaviour, data.vector) + "</br>";
-            			}
-            			content += "</div>"
-            		}            		
-            	}               
-                container.innerHTML = content;
-            }
-        })
+		TreeExplorerEndpoints.getStabilityData(id, behaviour)
+			.then((okResponse) => {
+				let okResponseObject = JSON.parse(okResponse)
+
+				let content = "<h4>Stability analysis:</h4>";
+				for (item of okResponseObject) {
+					let variableName = item.variable;
+					if (item.data.length === 1) {
+						content += "<div><b>" + variableName + "</b>: always "+vector_to_string(item.data[0].vector)+"</div>";
+					} else {
+						content += "<div><b>" + variableName + "</b>:</br>";
+						for (data of item.data) {
+							content += " - " + vector_to_string(data.vector) + ": " + data.colors + getWitnessPanelForVariable(variableName, behaviour, data.vector) + "</br>";
+						}
+						content += "</div>"
+					}
+				}
+				container.innerHTML = content;
+			})
+			.catch((errorMessage) => {
+				MessageDialog.errorMessage("Cannot load stability data: " + errorMessage)
+			})
     }
 }
 

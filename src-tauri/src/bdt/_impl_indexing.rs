@@ -2,6 +2,7 @@ use crate::bdt::{Attribute, AttributeId, Bdt, BdtNode, BdtNodeId};
 use crate::util::functional::Functional;
 use std::fmt::{Display, Formatter};
 use std::ops::Index;
+use std::ptr::null;
 
 impl BdtNodeId {
     pub fn to_index(&self) -> usize {
@@ -10,6 +11,14 @@ impl BdtNodeId {
 
     pub fn try_from(index: usize, collection: &Bdt) -> Option<Self> {
         BdtNodeId(index).take_if(|i| collection.storage.contains_key(&i.0))
+    }
+
+    pub fn try_from_str(index_str: String, collection: &Bdt) -> Option<Self> {
+        return if let Ok(index) = index_str.parse::<usize>() {
+            BdtNodeId(index).take_if(|i| collection.storage.contains_key(&i.0))
+        } else {
+            None
+        }
     }
 }
 

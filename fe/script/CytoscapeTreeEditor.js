@@ -165,32 +165,31 @@ let CytoscapeEditor = {
 		document.getElementById("mixed-type-label").innerHTML = data.treeData.classes.length + " Phenotypes";
 		let table = document.getElementById("mixed-behavior-table");
 		this._renderBehaviorTable(data.treeData.classes, data.treeData.cardinality, table);
-		let loading = document.getElementById("loading-indicator");
 		let addButton = document.getElementById("button-add-variable");
 		addButton.onclick = function() {			
 			if (data.treeData["attributes"] === undefined) {
-				loading.classList.remove("invisible");			
-				ComputeEngine.getDecisionAttributes(data.id, (e, r) => {
-					loading.classList.add("invisible");
-					addButton.classList.add("gone");				
-					for (attr of r) {
-						// Prepare data:
-						attr.left.sort(function(a, b) { return b.cardinality - a.cardinality; });
-						attr.right.sort(function(a, b) { return b.cardinality - a.cardinality; });
-						let leftTotal = attr.left.reduce((a, b) => a + b.cardinality, 0.0);
-						let rightTotal = attr.right.reduce((a, b) => a + b.cardinality, 0.0);		
-						attr["leftTotal"] = leftTotal;
-						attr["rightTotal"] = rightTotal;
-						for (lElement of attr.left) {
-							lElement["fraction"] = lElement.cardinality / leftTotal;
+				TreeExplorerEndpoints.getDecisionAttributes(data.id)
+					.then((okResponse) => {
+						let okResponseObject = JSON.parse(okResponse)
+						addButton.classList.add("gone");
+						for (attr of okResponseObject) {
+							// Prepare data:
+							attr.left.sort(function(a, b) { return b.cardinality - a.cardinality; });
+							attr.right.sort(function(a, b) { return b.cardinality - a.cardinality; });
+							let leftTotal = attr.left.reduce((a, b) => a + b.cardinality, 0.0);
+							let rightTotal = attr.right.reduce((a, b) => a + b.cardinality, 0.0);
+							attr["leftTotal"] = leftTotal;
+							attr["rightTotal"] = rightTotal;
+							for (lElement of attr.left) {
+								lElement["fraction"] = lElement.cardinality / leftTotal;
+							}
+							for (rElement of attr.right) {
+								rElement["fraction"] = rElement.cardinality / rightTotal;
+							}
 						}
-						for (rElement of attr.right) {
-							rElement["fraction"] = rElement.cardinality / rightTotal;
-						}						
-					}			
-					data.treeData["attributes"] = r;				
-					renderAttributeTable(data.id, r, data.treeData.cardinality);
-				});
+						data.treeData["attributes"] = okResponseObject;
+						renderAttributeTable(data.id, okResponseObject, data.treeData.cardinality);
+					})
 			} else {
 				renderAttributeTable(data.id, data.treeData["attributes"], data.treeData.cardinality);
 			}			
