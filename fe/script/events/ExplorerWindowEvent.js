@@ -5,7 +5,7 @@ TAURI.event.listen('get-attractors', (event) => {
     const behavior = event.payload['behavior']
     ComputationResultsEndpoints.getAttractors(behavior)
         .then((okJson) => {
-            initExplorer(okJson)
+            showInExplorer(okJson)
         })
         .catch((errorMessage) => {
             MessageDialog.errorMessage(errorMessage)
@@ -19,7 +19,7 @@ TAURI.event.listen('get-tree-attractors', (event) => {
     const node = event.payload['node']
     ComputationResultsEndpoints.getTreeAttractors(node)
         .then((okJson) => {
-            initExplorer(okJson)
+            showInExplorer(okJson)
         })
         .catch((errorMessage) => {
             MessageDialog.errorMessage(errorMessage)
@@ -36,7 +36,7 @@ TAURI.event.listen('get-stability-attractors', (event) => {
     const vector = event.payload['vector']
     ComputationResultsEndpoints.getStabilityAttractors(node, behavior, variable, vector)
         .then((okJson) => {
-            initExplorer(okJson)
+            showInExplorer(okJson)
         })
         .catch((errorMessage) => {
             MessageDialog.errorMessage(errorMessage)
