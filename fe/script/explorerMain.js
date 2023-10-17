@@ -35,7 +35,6 @@ function init() {
 	// TODO - Set version number
 	const engineAddress = "v.0.1.0";
     document.getElementById("engine-address").value = engineAddress;
-    ComputeEngine._address = engineAddress;
 
 
     // Emit when the window is fully initialized and ready
