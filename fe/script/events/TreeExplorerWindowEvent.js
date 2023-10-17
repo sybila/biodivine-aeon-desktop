@@ -1,4 +1,4 @@
-// Listen for 'send-window-session-key' event to save window session key and initialize thw window
+// Listen for 'send-window-session-key' event to save window session key and show the tree in window
 TAURI.event.listen('send-window-session-key', (event) => {
 
     // Set session key for this window, so other methods can use this info
@@ -6,5 +6,5 @@ TAURI.event.listen('send-window-session-key', (event) => {
 
     console.log("got event")
     // Initialize the window
-    init()
+    showTree()
 });

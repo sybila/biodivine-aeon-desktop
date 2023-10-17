@@ -141,7 +141,7 @@ let Windows = {
 
                 // Wait until the new explorer window is initialized
                 newExplorerWindow.once('ready', () => {
-                    // Emit to get tree attractors
+                    // Emit to get stability attractors
                     newExplorerWindow.emit('get-stability-attractors', {
                         node: node,
                         behavior: behavior,
@@ -163,12 +163,11 @@ let Windows = {
             label: treeWindowLabel
         })
             .then(() => {
-                console.log("tree window opened")
                 const newTreeWindow = TAURI.window.WebviewWindow.getByLabel(treeWindowLabel)
 
-                // Wait until the new explorer window is initialized
+                // Wait until the new tree explorer window is initialized
                 newTreeWindow.once('ready', () => {
-                    // Emit to get attractors
+                    // Emit to send window session key
                     newTreeWindow.emit('send-window-session-key', { windowSessionKey: Computation.getWindowSessionKey() })
                 })
             }).catch((errorMessage) => {
