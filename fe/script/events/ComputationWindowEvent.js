@@ -30,6 +30,6 @@ TAURI.window.getCurrent().listen("tauri://close-requested", async () => {
             await currentWindow.close();
         })
         .catch((errorMessage) => {
-            MessageDialog.errorMessage(errorMessage)
+            Dialog.errorMessage(errorMessage)
         })
 })

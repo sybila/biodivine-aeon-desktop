@@ -45,7 +45,7 @@ function showInExplorer(json) {
     RESULT = json;
 
     if(json['has_large_attractors']) {
-        MessageDialog.infoMessage("Some attractors were too large to draw. These will be shown only as two states with the constant and non-constant variables differentiated.");
+        Dialog.infoMessage("Some attractors were too large to draw. These will be shown only as two states with the constant and non-constant variables differentiated.");
     }
 
     for (let i = 0; i < json['attractors'].length; i++) {

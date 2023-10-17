@@ -2,7 +2,7 @@
 TAURI.event.listen('import-model', (event) => {
     const error = LiveModel.importAeon(event.payload['modelString'])
     if (error !== undefined) {
-        MessageDialog.errorMessage(error)
+        Dialog.errorMessage(error)
         TAURI.window.appWindow.close();
     }
 });

@@ -16,7 +16,7 @@ let ComputationEndpoints = {
             })
             .catch((responseError) => {
                 let errorObject = JSON.parse(responseError)
-                MessageDialog.errorMessage(errorObject['message'])
+                Dialog.errorMessage(errorObject['message'])
             });
     },
 
@@ -59,7 +59,7 @@ let ComputationEndpoints = {
             windowSessionKey: Computation.getWindowSessionKey()
         })
             .catch((errorMessage) => {
-                MessageDialog.errorMessage(errorMessage)
+                Dialog.errorMessage(errorMessage)
             });
     },
 }

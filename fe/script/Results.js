@@ -12,7 +12,7 @@ let Results = {
 	show() {
 		ComputationEndpoints.getResults((error, resultJson) => {
 			if (error !== undefined) {
-				MessageDialog.errorMessage(error);
+				Dialog.errorMessage(error);
 			} else {
 				let isPartial = resultJson["isPartial"]
 				let isCancelled = resultJson["isCancelled"]

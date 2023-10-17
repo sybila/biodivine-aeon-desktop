@@ -16,7 +16,7 @@ let Windows = {
                     newModelWindow.emit('import-model', { modelString: modelString })
                 })
             }).catch((errorMessage) => {
-                MessageDialog.errorMessage(errorMessage)
+                Dialog.errorMessage(errorMessage)
                 windowLabel = null
             })
 
@@ -38,7 +38,7 @@ let Windows = {
                     newComputationWindow.emit('start-computation', { aeonString: aeonString })
                 })
             }).catch((errorMessage) => {
-            MessageDialog.errorMessage(errorMessage)
+            Dialog.errorMessage(errorMessage)
         })
     },
 
@@ -58,7 +58,7 @@ let Windows = {
                 this.newWitnessWindow(witness)
             })
             .catch((errorMessage) => {
-                MessageDialog.errorMessage(errorMessage)
+                Dialog.errorMessage(errorMessage)
             })
     },
 
@@ -68,7 +68,7 @@ let Windows = {
                 this.newWitnessWindow(witness)
             })
             .catch((errorMessage) => {
-                MessageDialog.errorMessage(errorMessage)
+                Dialog.errorMessage(errorMessage)
             })
     },
 
@@ -78,7 +78,7 @@ let Windows = {
                 this.newWitnessWindow(witness)
             })
             .catch((errorMessage) => {
-                MessageDialog.errorMessage(errorMessage)
+                Dialog.errorMessage(errorMessage)
             })
     },
 
@@ -100,7 +100,7 @@ let Windows = {
                     })
                 })
             }).catch((errorMessage) => {
-                MessageDialog.errorMessage(errorMessage)
+                Dialog.errorMessage(errorMessage)
             })
     },
 
@@ -122,7 +122,7 @@ let Windows = {
                     })
                 })
             }).catch((errorMessage) => {
-            MessageDialog.errorMessage(errorMessage)
+            Dialog.errorMessage(errorMessage)
         })
     },
 
@@ -147,7 +147,7 @@ let Windows = {
                     })
                 })
             }).catch((errorMessage) => {
-            MessageDialog.errorMessage(errorMessage)
+            Dialog.errorMessage(errorMessage)
         })
     },
 
@@ -167,7 +167,7 @@ let Windows = {
                     newTreeWindow.emit('send-window-session-key', { windowSessionKey: Computation.getWindowSessionKey() })
                 })
             }).catch((errorMessage) => {
-            MessageDialog.errorMessage(errorMessage)
+            Dialog.errorMessage(errorMessage)
         })
     },
 

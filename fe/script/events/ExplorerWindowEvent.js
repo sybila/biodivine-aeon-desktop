@@ -8,7 +8,7 @@ TAURI.event.listen('get-attractors', (event) => {
             showInExplorer(okJson)
         })
         .catch((errorMessage) => {
-            MessageDialog.errorMessage(errorMessage)
+            Dialog.errorMessage(errorMessage)
         })
 });
 
@@ -22,7 +22,7 @@ TAURI.event.listen('get-tree-attractors', (event) => {
             showInExplorer(okJson)
         })
         .catch((errorMessage) => {
-            MessageDialog.errorMessage(errorMessage)
+            Dialog.errorMessage(errorMessage)
         })
 });
 
@@ -39,6 +39,6 @@ TAURI.event.listen('get-stability-attractors', (event) => {
             showInExplorer(okJson)
         })
         .catch((errorMessage) => {
-            MessageDialog.errorMessage(errorMessage)
+            Dialog.errorMessage(errorMessage)
         })
 });

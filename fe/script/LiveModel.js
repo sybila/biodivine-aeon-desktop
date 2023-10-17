@@ -91,18 +91,22 @@ let LiveModel = {
 	},
 
 	// Remove the given variable from the model.
-	removeVariable(id, force = false) {
+	async removeVariable(id, force = false) {
 		let variable = this._variables[id];
 		if (variable === undefined) return;	// nothing to remove
+		let confirmRemove = force
 		// prompt user to confirm action
-		if (force || confirm(Strings.removeNodeCheck(variable['name']))) {
+		if (!force) {
+			confirmRemove = await Dialog.confirm("Confirm", Strings.removeNodeCheck(variable['name']))
+		}
+		if (confirmRemove) {
 			// First, explicitly remove all regulations that have something to do with us.
 			let update_regulations_after_delete = [];
 			let to_remove = [];
 			for (var i = 0; i < this._regulations.length; i++) {
 				let reg = this._regulations[i];
 				if (reg.regulator == id || reg.target == id) {
-					to_remove.push(reg);					
+					to_remove.push(reg);
 				}
 			}
 			for (reg of to_remove) {
@@ -116,14 +120,14 @@ let LiveModel = {
 			ModelEditor.updateStats();
 			if (this.isEmpty()) UI.setQuickHelpVisible(true);
 			this.saveToLocalStorage();
-			for (let id of update_regulations_after_delete) { 
+			for (let id of update_regulations_after_delete) {
 				// We also have to recompute the update function - the variable just became a parameter...
-					if (this._updateFunctions[id] !== undefined) {
-						// Set the function - this will mark the variable as parameter in metadata
-						this.setUpdateFunction(id, this._updateFunctions[id].functionString);
-					}
-					// And validate again.
-					this._validateUpdateFunction(id);
+				if (this._updateFunctions[id] !== undefined) {
+					// Set the function - this will mark the variable as parameter in metadata
+					this.setUpdateFunction(id, this._updateFunctions[id].functionString);
+				}
+				// And validate again.
+				this._validateUpdateFunction(id);
 			}
 		}
 	},
@@ -367,15 +371,9 @@ let LiveModel = {
 	// If he decides No, ask him if he wants to overwrite current model - if Yes, return false.
 	// Return undefined if the user answers No or closes the dialog window.
 	async askToOpenInNewWindow() {
-		const openNewWindow = await TAURI.dialog.ask(Strings.openNewWindow, {
-			title: 'New window',
-			type: 'warning',
-		});
+		const openNewWindow = await Dialog.confirm('New window', Strings.openNewWindow)
 		if (!openNewWindow) {
-			const overwriteCurrentModel = await TAURI.dialog.ask(Strings.modelWillBeOverwritten, {
-				title: 'Model overwrite',
-				type: 'warning',
-			});
+			const overwriteCurrentModel = await Dialog.confirm('Model overwrite', Strings.modelWillBeOverwritten)
 			if (!overwriteCurrentModel) {
 				return undefined;
 			}
@@ -403,7 +401,7 @@ let LiveModel = {
 
 	startAnalysis(aeonString) {
 		if (aeonString === undefined) {
-			MessageDialog.errorMessage("Empty model.")
+			Dialog.errorMessage("Empty model.")
 			return undefined;
 		}
 		Windows.openComputationWindow(aeonString)
@@ -526,7 +524,7 @@ let LiveModel = {
 			ModelEditor.setUpdateFunction(variable, updateFunctions[key]);			
 			let error = this.setUpdateFunction(variable, updateFunctions[key]);
 			if (error !== undefined) {
-				MessageDialog.errorMessage(error);
+				Dialog.errorMessage(error);
 			}
 		}
 
@@ -567,14 +565,11 @@ let LiveModel = {
 	},
 
 	loadFromLocalStorage() {
-		try {
-			let modelString = localStorage.getItem('last_model');
-			if (modelString !== undefined && modelString !== null && modelString.length > 0) {
-				this.handleAeonModelImport(modelString);
-			}			
-		} catch (e) {
-			alert("No recent model available. Make sure 'Block third-party cookies and site data' is disabled in your browser.");
-			console.log(e);
+		let modelString = localStorage.getItem('last_model');
+		if (modelString !== undefined && modelString !== null && modelString.length > 0) {
+			this.handleAeonModelImport(modelString);
+		} else {
+			Dialog.errorMessage("No recent model available.")
 		}
 	},
 

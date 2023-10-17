@@ -73,7 +73,7 @@ function showTree() {
 			output.innerHTML = precision / 100.0 + "%";
 		})
 		.catch((errorMessage) => {
-			MessageDialog.errorMessage(errorMessage)
+			Dialog.errorMessage(errorMessage)
 		})
 
 	let depth = document.getElementById("auto-expand-slider");
@@ -280,7 +280,7 @@ function renderAttributeTable(id, attributes, totalCardinality) {
 
 function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 	if (nodeId === undefined || nodeId.length < 1) {
-		MessageDialog.errorMessage("No node selected.")
+		Dialog.errorMessage("No node selected.")
 	}
 
 	TreeExplorerEndpoints.autoExpandBifurcationTree(nodeId, depth)
@@ -306,7 +306,7 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 			}
 		})
 		.catch((errorMessage) => {
-			MessageDialog.errorMessage(errorMessage)
+			Dialog.errorMessage(errorMessage)
 		})
 
 	CytoscapeEditor.refreshSelection();
@@ -335,7 +335,7 @@ function loadBifurcationTree(fit = true) {
 			}
 		})
 		.catch((errorMessage) => {
-			MessageDialog.errorMessage(errorMessage)
+			Dialog.errorMessage(errorMessage)
 		})
 }
 
@@ -345,7 +345,7 @@ function setPrecision(precision) {
 			loadBifurcationTree(false);
 		})
 		.catch((errorMessage) => {
-			MessageDialog.errorMessage(errorMessage)
+			Dialog.errorMessage(errorMessage)
 		})
 }
 
@@ -364,7 +364,7 @@ function removeNode(nodeId) {
 			}
 		})
 		.catch((errorMessage) => {
-			MessageDialog.errorMessage(errorMessage)
+			Dialog.errorMessage(errorMessage)
 		})
 }
 
@@ -388,7 +388,7 @@ function selectAttribute(node, attr) {
 			CytoscapeEditor.refreshSelection();
 		})
 		.catch((errorMessage) => {
-			MessageDialog.errorMessage(errorMessage)
+			Dialog.errorMessage(errorMessage)
 		})
 }
 
@@ -471,7 +471,7 @@ function initStabilityButton(id, button, dropdown, container) {
 				container.innerHTML = content;
 			})
 			.catch((errorMessage) => {
-				MessageDialog.errorMessage("Cannot load stability data: " + errorMessage)
+				Dialog.errorMessage("Cannot load stability data: " + errorMessage)
 			})
     }
 }

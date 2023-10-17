@@ -275,7 +275,7 @@ let UI = {
 	downloadAeon() {
 		let modelFile = LiveModel.exportAeon();
 		if (modelFile === undefined) {
-			MessageDialog.errorMessage(Strings.modelEmpty);
+			Dialog.errorMessage(Strings.modelEmpty);
 			return;
 		}
 		let filename = ModelEditor.getModelName();
@@ -288,7 +288,7 @@ let UI = {
 	downloadSBML() {
 		let modelFile = LiveModel.exportAeon();
 		if (modelFile === undefined) {
-			MessageDialog.errorMessage(Strings.modelEmpty)
+			Dialog.errorMessage(Strings.modelEmpty)
 			return;
 		}
 		let filename = ModelEditor.getModelName();
@@ -299,7 +299,7 @@ let UI = {
 		ModelEndpoints.aeonToSbml(modelFile, (error, response) => {
 			this.isLoading(false);
 			if (error !== undefined) {
-				MessageDialog.errorMessage(error['message'])
+				Dialog.errorMessage(error['message'])
 			}
 			if (response !== undefined) {
 				let result = JSON.parse(response['result']);
@@ -311,7 +311,7 @@ let UI = {
 	downloadSBMLInstantiated() {
 		let modelFile = LiveModel.exportAeon();
 		if (modelFile === undefined) {
-			MessageDialog.errorMessage(Strings.modelEmpty);
+			Dialog.errorMessage(Strings.modelEmpty);
 			return;
 		}
 		let filename = ModelEditor.getModelName();
@@ -322,7 +322,7 @@ let UI = {
 		ModelEndpoints.aeonToSbmlInstantiated(modelFile, (error, response) => {
 			this.isLoading(false);
 			if (error !== undefined) {
-				MessageDialog.errorMessage(error['message']);
+				Dialog.errorMessage(error['message']);
 			}
 			if (response !== undefined) {
 				let result = JSON.parse(response['result']);
@@ -360,7 +360,7 @@ let UI = {
 
 		let error = await LiveModel.handleAeonModelImport(aeonFileContent);
 		if (error !== undefined) {
-			MessageDialog.errorMessage(error);
+			Dialog.errorMessage(error);
 		}
 	},
 
@@ -389,7 +389,7 @@ let UI = {
 				error = await LiveModel.handleAeonModelImport(result['model']);
 			}
 			if (error !== undefined) {
-				MessageDialog.errorMessage(error['message']);
+				Dialog.errorMessage(error['message']);
 			}
 		});
 	},
