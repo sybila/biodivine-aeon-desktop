@@ -46,13 +46,9 @@ let Windows = {
         const witnessWindowLabel = await this.openModelInNewWindow(witness)
         if (witnessWindowLabel !== null) {
             const witnessWindow = TAURI.window.WebviewWindow.getByLabel(witnessWindowLabel)
+
             // Emit to open model editor tab in new witness window
             witnessWindow.emit('open-editor-tab', {})
-
-            // // Wait until the new window is initialized
-            // witnessWindow.once('ready', () => {
-            //
-            // })
         }
     },
 
