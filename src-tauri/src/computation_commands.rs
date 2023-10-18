@@ -8,10 +8,10 @@ use biodivine_aeon_desktop::scc::Classifier;
 use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
 use biodivine_lib_param_bn::BooleanNetwork;
 use json::{object, JsonValue};
+use serde_json::{from_str, Value};
 use std::sync::{Arc, RwLock};
 use std::thread::JoinHandle;
 use std::time::SystemTime;
-use serde_json::{from_str, Value};
 
 /// Get Arc pointer of locked Computation.
 pub fn get_locked_computation(window_session_key: &str) -> ArcComputation {

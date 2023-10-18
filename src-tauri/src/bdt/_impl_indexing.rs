@@ -17,7 +17,7 @@ impl BdtNodeId {
             BdtNodeId(index).take_if(|i| collection.storage.contains_key(&i.0))
         } else {
             None
-        }
+        };
     }
 }
 

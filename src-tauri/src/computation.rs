@@ -2,11 +2,11 @@ use biodivine_aeon_desktop::bdt::Bdt;
 use biodivine_aeon_desktop::scc::{Class, Classifier};
 use biodivine_aeon_desktop::GraphTaskContext;
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
+use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use std::thread::JoinHandle;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
-use serde_json::{json, Value};
 
 /// Locked type of Bifurcation decision tree.
 pub type ArcBdt = Arc<RwLock<Option<Bdt>>>;

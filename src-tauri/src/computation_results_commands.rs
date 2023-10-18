@@ -1,13 +1,14 @@
-use biodivine_lib_param_bn::biodivine_std::traits::Set;
-use biodivine_aeon_desktop::scc::{Behaviour, Class};
-use serde_json::{from_str, Value};
+use crate::common::ErrorMessage;
+use crate::computation_commands::{get_locked_computation, get_locked_tree};
+use crate::computation_results::{
+    get_witness_attractors, get_witness_network, try_get_class_params,
+};
 use biodivine_aeon_desktop::bdt::BdtNodeId;
 use biodivine_aeon_desktop::scc::algo_stability_analysis::{StabilityVector, VariableStability};
+use biodivine_aeon_desktop::scc::{Behaviour, Class};
 use biodivine_aeon_desktop::util::functional::Functional;
-use crate::common::{ErrorMessage};
-use crate::computation_commands::{get_locked_computation, get_locked_tree};
-use crate::computation_results::{get_witness_network, try_get_class_params, get_witness_attractors};
-
+use biodivine_lib_param_bn::biodivine_std::traits::Set;
+use serde_json::{from_str, Value};
 
 #[tauri::command]
 pub fn get_witness(class_str: String, window_session_key: &str) -> Result<String, ErrorMessage> {
@@ -34,7 +35,9 @@ pub fn get_witness(class_str: String, window_session_key: &str) -> Result<String
                         Err(String::from("Specified class has no witness."))
                     }
                 } else {
-                    Err(String::from("Classification in progress. Cannot extract witness right now."))
+                    Err(String::from(
+                        "Classification in progress. Cannot extract witness right now.",
+                    ))
                 }
             } else {
                 Err(String::from("No results available."))
@@ -67,14 +70,13 @@ pub fn get_tree_witness(node_id: String, window_session_key: &str) -> Result<Str
     };
 }
 
-
 #[tauri::command]
 pub fn get_stability_witness(
     node_id: String,
     behaviour_str: String,
     variable_str: String,
     vector_str: String,
-    window_session_key: &str
+    window_session_key: &str,
 ) -> Result<String, ErrorMessage> {
     let behaviour = Behaviour::try_from(behaviour_str.as_str());
     let behaviour = match behaviour {
@@ -111,7 +113,7 @@ pub fn get_stability_witness(
         }
     };
     // Then find all attractors of the graph
-    let locked_computation= get_locked_computation(window_session_key);
+    let locked_computation = get_locked_computation(window_session_key);
     let read_computation = locked_computation.read().unwrap();
     if let Some(computation) = read_computation.as_ref() {
         let components = if let Some(classifier) = &computation.classifier {
@@ -135,7 +137,7 @@ pub fn get_stability_witness(
             let variable = if let Some(variable) = variable {
                 variable
             } else {
-                return Err(format!("Unknown graph variable `{}`.", variable_str), );
+                return Err(format!("Unknown graph variable `{}`.", variable_str));
             };
 
             // Now compute which attractors are actually relevant for the node colors
@@ -163,7 +165,6 @@ pub fn get_stability_witness(
     }
 }
 
-
 #[tauri::command]
 pub fn get_attractors(class_str: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
     let mut class = Class::new_empty();
@@ -172,9 +173,7 @@ pub fn get_attractors(class_str: String, window_session_key: &str) -> Result<Val
             'D' => class.extend(Behaviour::Disorder),
             'O' => class.extend(Behaviour::Oscillation),
             'S' => class.extend(Behaviour::Stability),
-            _ => {
-                return Err(String::from("Invalid class."))
-            }
+            _ => return Err(String::from("Invalid class.")),
         }
     }
     {
@@ -189,7 +188,9 @@ pub fn get_attractors(class_str: String, window_session_key: &str) -> Result<Val
                         Err(String::from("Specified class has no witness."))
                     }
                 } else {
-                    Err(String::from("Classification still in progress. Cannot explore attractors now."))
+                    Err(String::from(
+                        "Classification still in progress. Cannot explore attractors now.",
+                    ))
                 }
             } else {
                 Err(String::from("No results available."))
@@ -201,7 +202,10 @@ pub fn get_attractors(class_str: String, window_session_key: &str) -> Result<Val
 }
 
 #[tauri::command]
-pub fn get_tree_attractors(node_id: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
+pub fn get_tree_attractors(
+    node_id: String,
+    window_session_key: &str,
+) -> Result<Value, ErrorMessage> {
     let locked_tree = get_locked_tree(window_session_key);
     let read_tree = locked_tree.read().unwrap();
     return if let Some(tree) = read_tree.as_ref() {
@@ -228,7 +232,7 @@ pub fn get_stability_attractors(
     behaviour_str: String,
     variable_str: String,
     vector_str: String,
-    window_session_key: &str
+    window_session_key: &str,
 ) -> Result<Value, ErrorMessage> {
     let behaviour = Behaviour::try_from(behaviour_str.as_str());
     let behaviour = match behaviour {
@@ -316,7 +320,6 @@ pub fn get_stability_attractors(
         Err(String::from("No attractor data found."))
     }
 }
-
 
 #[tauri::command]
 pub fn get_bifurcation_tree(window_session_key: &str) -> Result<Value, ErrorMessage> {

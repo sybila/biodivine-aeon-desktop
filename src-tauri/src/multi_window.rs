@@ -94,10 +94,10 @@ pub async fn open_explorer_window(label: &str, handle: tauri::AppHandle) -> Resu
         label,
         tauri::WindowUrl::App("explorer.html".into()),
     )
-        .inner_size(1000f64, 700f64)
-        .title("Aeon/BIODIVINE")
-        .build()
-        .expect("Error while creating new model window.");
+    .inner_size(1000f64, 700f64)
+    .title("Aeon/BIODIVINE")
+    .build()
+    .expect("Error while creating new model window.");
     Ok(())
 }
 
@@ -109,9 +109,9 @@ pub async fn open_tree_explorer_window(label: &str, handle: tauri::AppHandle) ->
         label,
         tauri::WindowUrl::App("tree_explorer.html".into()),
     )
-        .inner_size(1000f64, 700f64)
-        .title("Aeon/BIODIVINE")
-        .build()
-        .expect("Error while creating new model window.");
+    .inner_size(1000f64, 700f64)
+    .title("Aeon/BIODIVINE")
+    .build()
+    .expect("Error while creating new model window.");
     Ok(())
 }

@@ -1,16 +1,16 @@
-use std::collections::HashSet;
-use std::time::Duration;
-use biodivine_lib_param_bn::biodivine_std::bitvector::{ArrayBitVector, BitVector};
-use biodivine_lib_param_bn::biodivine_std::traits::Set;
-use biodivine_lib_param_bn::BooleanNetwork;
-use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
-use json::object;
-use regex::Regex;
-use serde_json::Value;
-use biodivine_aeon_desktop::scc::{Behaviour, Class, Classifier};
 use crate::common::ErrorMessage;
 use crate::computation_commands::get_locked_computation;
 use crate::model_commands::read_layout;
+use biodivine_aeon_desktop::scc::{Behaviour, Class, Classifier};
+use biodivine_lib_param_bn::biodivine_std::bitvector::{ArrayBitVector, BitVector};
+use biodivine_lib_param_bn::biodivine_std::traits::Set;
+use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
+use biodivine_lib_param_bn::BooleanNetwork;
+use json::object;
+use regex::Regex;
+use serde_json::Value;
+use std::collections::HashSet;
+use std::time::Duration;
 
 type EdgeList = Vec<(ArrayBitVector, ArrayBitVector)>;
 
@@ -30,7 +30,10 @@ pub fn read_metadata(aeon_string: &str) -> (Option<String>, Option<String>) {
     (model_name, model_description)
 }
 
-pub fn get_witness_network(colors: &GraphColors, window_session_key: &str) -> Result<String, ErrorMessage> {
+pub fn get_witness_network(
+    colors: &GraphColors,
+    window_session_key: &str,
+) -> Result<String, ErrorMessage> {
     let locked_computation = get_locked_computation(window_session_key);
     let read_computation = locked_computation.read().unwrap();
     if let Some(computation) = read_computation.as_ref() {
@@ -69,10 +72,13 @@ pub fn try_get_class_params(classifier: &Classifier, class: &Class) -> Option<Op
     None
 }
 
-pub fn get_witness_attractors(f_colors: &GraphColors, window_session_key: &str) -> Result<Value, ErrorMessage> {
+pub fn get_witness_attractors(
+    f_colors: &GraphColors,
+    window_session_key: &str,
+) -> Result<Value, ErrorMessage> {
     {
         // Variables prefixed with f_ are from the original fully parametrised graph.
-        let locked_computation= get_locked_computation(window_session_key);
+        let locked_computation = get_locked_computation(window_session_key);
         let read_computation = locked_computation.read().unwrap();
         if let Some(computation) = read_computation.as_ref() {
             if let Some(f_classifier) = &computation.classifier {
@@ -213,4 +219,3 @@ pub fn get_witness_attractors(f_colors: &GraphColors, window_session_key: &str) 
         }
     }
 }
-
