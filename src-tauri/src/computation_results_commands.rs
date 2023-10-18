@@ -155,7 +155,7 @@ pub fn get_stability_witness(
             if let Some(colors) = &variable_stability[vector] {
                 get_witness_network(colors, window_session_key)
             } else {
-                return Err(format!("No witness available for vector `{}`.", vector_str));
+                Err(format!("No witness available for vector `{}`.", vector_str))
             }
         } else {
             Err(String::from("No attractor data found."))
@@ -311,7 +311,7 @@ pub fn get_stability_attractors(
             if let Some(colors) = &variable_stability[vector] {
                 get_witness_attractors(colors, window_session_key)
             } else {
-                return Err(format!("No witness available for vector `{}`.", vector_str));
+                Err(format!("No witness available for vector `{}`.", vector_str))
             }
         } else {
             Err(String::from("No attractor data found."))

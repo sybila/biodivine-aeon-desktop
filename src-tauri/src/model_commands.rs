@@ -22,7 +22,7 @@ fn max_parameter_cardinality(function: &FnUpdate) -> usize {
 /// or error if the update function (or model) is invalid.
 #[tauri::command]
 pub fn check_update_function(data: &str) -> Result<Cardinality, ErrorMessage> {
-    let graph = BooleanNetwork::try_from(data)
+    BooleanNetwork::try_from(data)
         .and_then(|model| {
             let mut max_size = 0;
             for v in model.variables() {
@@ -43,18 +43,7 @@ pub fn check_update_function(data: &str) -> Result<Cardinality, ErrorMessage> {
                 Err(String::from("Function too large for on-the-fly analysis."))
             }
         })
-        .map(|g| g.unit_colors().approx_cardinality());
-
-    // println!(
-    //     "Elapsed: {}, result {:?}",
-    //     start.elapsed().unwrap().as_millis(),
-    //     graph
-    // );
-
-    match graph {
-        Ok(cardinality) => Ok(cardinality),
-        Err(error) => Err(error),
-    }
+        .map(|g| g.unit_colors().approx_cardinality())
 }
 
 /// Accept an SBML (XML) file and try to parse it into a `BooleanNetwork`.
