@@ -1,10 +1,10 @@
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use biodivine_aeon_desktop::scc::{Behaviour, Class};
-use serde_json::{Value};
+use serde_json::{from_str, Value};
 use biodivine_aeon_desktop::bdt::BdtNodeId;
 use biodivine_aeon_desktop::scc::algo_stability_analysis::{StabilityVector, VariableStability};
 use biodivine_aeon_desktop::util::functional::Functional;
-use crate::common::{ErrorMessage, JsonArrayString, JsonString};
+use crate::common::{ErrorMessage};
 use crate::computation_commands::{get_locked_computation, get_locked_tree};
 use crate::computation_results::{get_witness_network, try_get_class_params, get_witness_attractors};
 
@@ -319,11 +319,12 @@ pub fn get_stability_attractors(
 
 
 #[tauri::command]
-pub fn get_bifurcation_tree(window_session_key: &str) -> Result<JsonArrayString, ErrorMessage> {
+pub fn get_bifurcation_tree(window_session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_tree = get_locked_tree(window_session_key);
     let read_tree = locked_tree.read().unwrap();
     if let Some(tree) = read_tree.as_ref() {
-        Ok(tree.to_json().to_string())
+        // Convert JsonValue to serde_json::Value
+        Ok(from_str::<Value>(tree.to_json().to_string().as_ref()).unwrap())
     } else {
         Err(String::from("No tree present. Run computation first."))
     }

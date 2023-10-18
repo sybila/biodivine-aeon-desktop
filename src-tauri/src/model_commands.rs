@@ -1,7 +1,6 @@
-use crate::common::{ErrResponse, OkResponse};
+use crate::common::{Cardinality, ErrorMessage};
 use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
 use biodivine_lib_param_bn::{BooleanNetwork, FnUpdate};
-use json::object;
 use regex::Regex;
 use std::cmp::max;
 use std::collections::HashMap;
@@ -22,7 +21,7 @@ fn max_parameter_cardinality(function: &FnUpdate) -> usize {
 /// Return cardinality of such model (i.e. the number of instantiations of this update function)
 /// or error if the update function (or model) is invalid.
 #[tauri::command]
-pub fn check_update_function(data: &str) -> Result<OkResponse, ErrResponse> {
+pub fn check_update_function(data: &str) -> Result<Cardinality, ErrorMessage> {
     let graph = BooleanNetwork::try_from(data)
         .and_then(|model| {
             let mut max_size = 0;
@@ -41,7 +40,7 @@ pub fn check_update_function(data: &str) -> Result<OkResponse, ErrResponse> {
                 // );
                 SymbolicAsyncGraph::new(model)
             } else {
-                Err("Function too large for on-the-fly analysis.".to_string())
+                Err(String::from("Function too large for on-the-fly analysis."))
             }
         })
         .map(|g| g.unit_colors().approx_cardinality());
@@ -53,14 +52,8 @@ pub fn check_update_function(data: &str) -> Result<OkResponse, ErrResponse> {
     // );
 
     match graph {
-        Ok(cardinality) => Ok(OkResponse::new(
-            object! {
-                "cardinality" => cardinality
-            }
-            .to_string()
-            .as_str(),
-        )),
-        Err(error) => Err(ErrResponse::new(&error)),
+        Ok(cardinality) => Ok(cardinality),
+        Err(error) => Err(error),
     }
 }
 
@@ -68,19 +61,17 @@ pub fn check_update_function(data: &str) -> Result<OkResponse, ErrResponse> {
 /// If everything goes well, return a standard result object with a parsed model, or
 /// error if something fails.
 #[tauri::command]
-pub fn sbml_to_aeon(data: &str) -> Result<OkResponse, ErrResponse> {
-    match BooleanNetwork::try_from_sbml(data) {
+pub fn sbml_to_aeon(sbml_string: &str) -> Result<String, ErrorMessage> {
+    match BooleanNetwork::try_from_sbml(sbml_string) {
         Ok((model, layout)) => {
             let mut model_string = format!("{}", model); // convert back to aeon
             model_string += "\n";
             for (var, (x, y)) in layout {
                 model_string += format!("#position:{}:{},{}\n", var, x, y).as_str();
             }
-            Ok(OkResponse::new(
-                &object! { "model" => model_string }.to_string(),
-            ))
+            Ok(model_string)
         }
-        Err(error) => Err(ErrResponse::new(&error)),
+        Err(error) => Err(error),
     }
 }
 
@@ -105,16 +96,14 @@ pub fn read_layout(aeon_string: &str) -> HashMap<String, (f64, f64)> {
 /// which will then be translated into SBML (XML) representation.
 /// Preserve layout metadata.
 #[tauri::command]
-pub fn aeon_to_sbml(data: &str) -> Result<OkResponse, ErrResponse> {
-    match BooleanNetwork::try_from(data) {
+pub fn aeon_to_sbml(aeon_string: &str) -> Result<String, ErrorMessage> {
+    match BooleanNetwork::try_from(aeon_string) {
         Ok(network) => {
-            let layout = read_layout(data);
+            let layout = read_layout(aeon_string);
             let sbml_string = network.to_sbml(Some(&layout));
-            Ok(OkResponse::new(
-                &object! { "model" => sbml_string }.to_string(),
-            ))
+            Ok(sbml_string)
         }
-        Err(error) => Err(ErrResponse::new(&error)),
+        Err(error) => Err(error),
     }
 }
 
@@ -122,15 +111,13 @@ pub fn aeon_to_sbml(data: &str) -> Result<OkResponse, ErrResponse> {
 /// Note that this can take quite a while for large models since we have to actually build
 /// the unit BDD right now (in the future, we might opt to use a SAT solver which might be faster).
 #[tauri::command]
-pub fn aeon_to_sbml_instantiated(data: &str) -> Result<OkResponse, ErrResponse> {
-    match BooleanNetwork::try_from(data).and_then(SymbolicAsyncGraph::new) {
+pub fn aeon_to_sbml_instantiated(aeon_string: &str) -> Result<String, ErrorMessage> {
+    match BooleanNetwork::try_from(aeon_string).and_then(SymbolicAsyncGraph::new) {
         Ok(graph) => {
             let witness = graph.pick_witness(graph.unit_colors());
-            let layout = read_layout(data);
-            Ok(OkResponse::new(
-                &object! { "model" => witness.to_sbml(Some(&layout)) }.to_string(),
-            ))
+            let layout = read_layout(aeon_string);
+            Ok(witness.to_sbml(Some(&layout)))
         }
-        Err(error) => Err(ErrResponse::new(&error)),
+        Err(error) => Err(error),
     }
 }

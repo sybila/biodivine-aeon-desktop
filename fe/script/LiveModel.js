@@ -578,15 +578,13 @@ let LiveModel = {
 		if (this._disable_dynamic_validation) return;
 		let modelFragment = this._updateFunctionModelFragment(id);
 		if (modelFragment !== undefined) {
-			ModelEndpoints.validateUpdateFunction(modelFragment, (error, response) => {
-				if (error !== undefined) {
-					let errorMessage = error['message'];
+			ModelEndpoints.validateUpdateFunction(modelFragment)
+				.then((cardinality) => {
+					ModelEditor.setUpdateFunctionStatus(id, "Possible instantiations: " + cardinality, false);
+				})
+				.catch((errorMessage) => {
 					ModelEditor.setUpdateFunctionStatus(id, "Error: " + errorMessage, true);
-				} else {
-					let result = JSON.parse(response['result']);
-					ModelEditor.setUpdateFunctionStatus(id, "Possible instantiations: " + result['cardinality'], false);
-				}
-			});
+				})
 		} else {
 			ModelEditor.setUpdateFunctionStatus(id, "", false);
 		}	

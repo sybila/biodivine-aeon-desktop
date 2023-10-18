@@ -286,8 +286,8 @@ let UI = {
 	},
 
 	downloadSBML() {
-		let modelFile = LiveModel.exportAeon();
-		if (modelFile === undefined) {
+		let aeonModel = LiveModel.exportAeon();
+		if (aeonModel === undefined) {
 			Dialog.errorMessage(Strings.modelEmpty)
 			return;
 		}
@@ -295,22 +295,19 @@ let UI = {
         if (filename === undefined) {
         	filename = "model";
         }
-        this.isLoading(true);
-		ModelEndpoints.aeonToSbml(modelFile, (error, response) => {
-			this.isLoading(false);
-			if (error !== undefined) {
-				Dialog.errorMessage(error['message'])
-			}
-			if (response !== undefined) {
-				let result = JSON.parse(response['result']);
-				this._downloadFile(filename + ".sbml", result['model']);
-			}
-		});
+
+		ModelEndpoints.aeonToSbml(aeonModel)
+			.then((sbmlModel) => {
+				this._downloadFile(filename + ".sbml", sbmlModel);
+			})
+			.catch((errorMessage) => {
+				Dialog.errorMessage(errorMessage)
+			})
 	},
 
 	downloadSBMLInstantiated() {
-		let modelFile = LiveModel.exportAeon();
-		if (modelFile === undefined) {
+		let aeonModel = LiveModel.exportAeon();
+		if (aeonModel === undefined) {
 			Dialog.errorMessage(Strings.modelEmpty);
 			return;
 		}
@@ -318,17 +315,14 @@ let UI = {
         if (filename === undefined) {
         	filename = "model";
         }
-        this.isLoading(true);
-		ModelEndpoints.aeonToSbmlInstantiated(modelFile, (error, response) => {
-			this.isLoading(false);
-			if (error !== undefined) {
-				Dialog.errorMessage(error['message']);
-			}
-			if (response !== undefined) {
-				let result = JSON.parse(response['result']);
-				this._downloadFile(filename + "_instantiated.sbml", result['model']);
-			}
-		});
+
+		ModelEndpoints.aeonToSbmlInstantiated(aeonModel)
+			.then((sbmlModel) => {
+				this._downloadFile(filename + "_instantiated.sbml", sbmlModel);
+			})
+			.catch((errorMessage) => {
+				Dialog.errorMessage(errorMessage);
+			})
 	},
 
 	async _downloadFile(name, content) {
@@ -380,18 +374,13 @@ let UI = {
 
 		const sbmlFileContent = await TAURI.fs.readTextFile(filePath);
 
-		this.isLoading(true);
-
-		ModelEndpoints.sbmlToAeon(sbmlFileContent, async (error, response) => {
-			this.isLoading(false);
-			if (response !== undefined) {
-				let result = JSON.parse(response['result']);
-				error = await LiveModel.handleAeonModelImport(result['model']);
-			}
-			if (error !== undefined) {
-				Dialog.errorMessage(error['message']);
-			}
-		});
+		ModelEndpoints.sbmlToAeon(sbmlFileContent)
+			.then((model) => {
+				LiveModel.handleAeonModelImport(model);
+			})
+			.catch((errorMessage) => {
+				Dialog.errorMessage(errorMessage);
+			})
 	},
 
 	// Add a listener to each button to display hint texts when hovered.

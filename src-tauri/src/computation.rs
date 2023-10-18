@@ -2,11 +2,11 @@ use biodivine_aeon_desktop::bdt::Bdt;
 use biodivine_aeon_desktop::scc::{Class, Classifier};
 use biodivine_aeon_desktop::GraphTaskContext;
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
-use json::{object, JsonValue};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use std::thread::JoinHandle;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use serde_json::{json, Value};
 
 /// Locked type of Bifurcation decision tree.
 pub type ArcBdt = Arc<RwLock<Option<Bdt>>>;
@@ -104,15 +104,15 @@ impl Computation {
         }
     }
 
-    pub fn get_info(&self) -> JsonValue {
-        let mut response = object! {
-        "timestamp" => json::Null,          // if there is some computation (not necessarily running, this is the time when it started
-        "is_cancelled" => false,            // true if the computation has been canceled
-        "is_running" => false,              // true if the computation thread is still alive
-        "progress" => "unknown".to_string(),// arbitrary progress string
-        "error" => json::Null,              // arbitrary error string - currently not really used
-        "num_classes" => json::Null,        // number of discovered classes so far
-        };
+    pub fn get_info(&self) -> Value {
+        let mut response = json! ({
+        "timestamp": null,                // if there is some computation (not necessarily running, this is the time when it started
+        "is_cancelled": false,            // true if the computation has been canceled
+        "is_running": false,              // true if the computation thread is still alive
+        "progress": "unknown",            // arbitrary progress string
+        "error": null,                    // arbitrary error string - currently not really used
+        "num_classes": null,              // number of discovered classes so far
+        });
         response["timestamp"] = (self.start_timestamp() as u64).into();
         response["is_cancelled"] = self.is_cancelled().into();
         response["progress"] = self.get_percentage_progress().into();

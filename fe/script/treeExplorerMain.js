@@ -284,12 +284,8 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 	}
 
 	TreeExplorerEndpoints.autoExpandBifurcationTree(nodeId, depth)
-		.then((okResponse) => {
-			if (okResponse !== undefined && okResponse.length > 0) {
-
-				// okResponse is an array of json objects as String
-				let okResponseObject = JSON.parse(okResponse)
-
+		.then((okResponseObject) => {
+			if (okResponseObject.length > 0) {
 				for (node of okResponseObject) {
 					CytoscapeEditor.ensureNode(node);
 				}
@@ -314,10 +310,9 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 
 function loadBifurcationTree(fit = true) {
 	ComputationResultsEndpoints.getBifurcationTree()
-		.then((okResponse) => {
-			if (okResponse !== undefined && okResponse.length > 0) {
+		.then((okResponseObject) => {
+			if (okResponseObject.length > 0) {
 				CytoscapeEditor.removeAll();	// remove old tree if present
-				let okResponseObject = JSON.parse(okResponse)
 				for (node of okResponseObject) {
 					CytoscapeEditor.ensureNode(node);
 				}
@@ -351,8 +346,7 @@ function setPrecision(precision) {
 
 function removeNode(nodeId) {
 	TreeExplorerEndpoints.deleteDecision(nodeId)
-		.then((okResponse) => {
-			let okResponseObject = JSON.parse(okResponse)
+		.then((okResponseObject) => {
 			if (okResponseObject.removed.length > 0) {
 				for (removed of okResponseObject.removed) {
 					CytoscapeEditor.removeNode(removed);
@@ -373,8 +367,7 @@ function removeNode(nodeId) {
 //  - 'node' and 'attr' parameters should be string but are numeric
 function selectAttribute(node, attr) {
 	TreeExplorerEndpoints.selectDecisionAttribute(node, attr)
-		.then((okResponse) => {
-			let okResponseObject = JSON.parse(okResponse)
+		.then((okResponseObject) => {
 			for (node of okResponseObject) {
 				CytoscapeEditor.ensureNode(node);
 			}
@@ -451,10 +444,9 @@ function vector_to_string(vector) {
 function initStabilityButton(id, button, dropdown, container) {
     button.onclick = function() {
         let behaviour = dropdown.value;
+		console.log(id)
 		TreeExplorerEndpoints.getStabilityData(id, behaviour)
-			.then((okResponse) => {
-				let okResponseObject = JSON.parse(okResponse)
-
+			.then((okResponseObject) => {
 				let content = "<h4>Stability analysis:</h4>";
 				for (item of okResponseObject) {
 					let variableName = item.variable;

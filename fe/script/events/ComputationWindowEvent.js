@@ -4,8 +4,17 @@ TAURI.event.listen('start-computation', (event) => {
 
     const windowSessionKey = TAURI.window.getCurrent().label;
     Session.createWindowSession(windowSessionKey)
+    Computation.setWindowSessionKey(windowSessionKey)
 
     ComputationEndpoints.startComputation(aeonString, windowSessionKey)
+        .then((startTimestamp) => {
+            console.log("Started computation ", startTimestamp)
+            Computation.setLastComputation(startTimestamp)
+            Computation.update_computation_process()
+        })
+        .catch((errorMessage) => {
+            Dialog.errorMessage(errorMessage)
+        });
 });
 
 

@@ -2,7 +2,6 @@ use crate::bdt::{Attribute, AttributeId, Bdt, BdtNode, BdtNodeId};
 use crate::util::functional::Functional;
 use std::fmt::{Display, Formatter};
 use std::ops::Index;
-use std::ptr::null;
 
 impl BdtNodeId {
     pub fn to_index(&self) -> usize {

@@ -1,14 +1,15 @@
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use json::{array, object, JsonValue};
+use serde_json::{from_str, Value};
 use biodivine_aeon_desktop::bdt::{AttributeId, BdtNodeId};
 use biodivine_aeon_desktop::scc::algo_stability_analysis::compute_stability;
 use biodivine_aeon_desktop::scc::Behaviour;
 use biodivine_aeon_desktop::util::functional::Functional;
-use crate::common::{ErrorMessage, JsonArrayString, JsonString};
+use crate::common::{ErrorMessage};
 use crate::computation_commands::{get_locked_computation, get_locked_tree};
 
 #[tauri::command]
-pub fn auto_expand(node_id: String, depth: String, window_session_key: &str) -> Result<JsonArrayString, ErrorMessage> {
+pub fn auto_expand(node_id: String, depth: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
     let depth: u32 = {
         let parsed = depth.parse::<u32>();
         if let Ok(depth) = parsed {
@@ -29,14 +30,15 @@ pub fn auto_expand(node_id: String, depth: String, window_session_key: &str) -> 
             return Err(format!("Invalid node id {}.", node_id));
         };
         let changed = tree.auto_expand(node_id, depth);
-        Ok(tree.to_json_partial(&changed).to_string())
+        // Convert JsonValue to serde_json::Value
+        Ok(from_str::<Value>(tree.to_json_partial(&changed).to_string().as_ref()).unwrap())
     } else {
         Err(String::from("Cannot modify decision tree."))
     }
 }
 
 #[tauri::command]
-pub fn get_attributes(node_id: String, window_session_key: &str) -> Result<JsonArrayString, ErrorMessage> {
+pub fn get_attributes(node_id: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_tree = get_locked_tree(window_session_key);
     let read_tree = locked_tree.read().unwrap();
     if let Some(tree) = read_tree.as_ref() {
@@ -46,7 +48,8 @@ pub fn get_attributes(node_id: String, window_session_key: &str) -> Result<JsonA
         } else {
             return Err(format!("Invalid node id {}.", node_id));
         };
-        Ok(tree.attribute_gains_json(node).to_string())
+        // Convert JsonValue to serde_json::Value
+        Ok(from_str::<Value>(tree.attribute_gains_json(node).to_string().as_ref()).unwrap())
     } else {
        Err(String::from("No tree present. Run computation first."))
     }
@@ -81,9 +84,9 @@ pub fn get_tree_precision(window_session_key: &str) -> Result<u32, ErrorMessage>
 }
 
 
-/// TODO - changed node_id and attr_id to usize instead of String because of FE issue
+/// TODO - changed node_id and attr_id to usize instead of String because of FE
 #[tauri::command]
-pub fn apply_attribute(node_id: usize, attribute_id: usize, window_session_key: &str) -> Result<JsonArrayString, ErrorMessage> {
+pub fn apply_attribute(node_id: usize, attribute_id: usize, window_session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_tree = get_locked_tree(window_session_key);
     let mut write_tree = locked_tree.write().unwrap();
     return if let Some(tree) = write_tree.as_mut() {
@@ -105,7 +108,8 @@ pub fn apply_attribute(node_id: usize, attribute_id: usize, window_session_key: 
                 tree.node_to_json(left),
                 tree.node_to_json(right),
             ];
-            Ok(changes.to_string())
+            // Convert JsonValue to serde_json::Value
+            Ok(from_str::<Value>(changes.to_string().as_ref()).unwrap())
         } else {
             Err(String::from("Invalid node or attribute id."))
         }
@@ -115,7 +119,7 @@ pub fn apply_attribute(node_id: usize, attribute_id: usize, window_session_key: 
 }
 
 #[tauri::command]
-pub fn revert_decision(node_id: String, window_session_key: &str) -> Result<JsonString, ErrorMessage> {
+pub fn revert_decision(node_id: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_tree = get_locked_tree(window_session_key);
     let mut write_tree = locked_tree.write().unwrap();
     return if let Some(tree) = write_tree.as_mut() {
@@ -134,7 +138,9 @@ pub fn revert_decision(node_id: String, window_session_key: &str) -> Result<Json
                 "node": tree.node_to_json(node),
                 "removed": JsonValue::from(removed)
         };
-        Ok(response.to_string())
+
+        // Convert JsonValue to serde_json::Value
+        Ok(from_str::<Value>(response.to_string().as_ref()).unwrap())
     } else {
         Err(String::from("No tree present. Run computation first."))
     };
@@ -142,7 +148,7 @@ pub fn revert_decision(node_id: String, window_session_key: &str) -> Result<Json
 
 
 #[tauri::command]
-pub fn get_stability_data(node_id: String, behaviour_str: String, window_session_key: &str) -> Result<JsonString, ErrorMessage> {
+pub fn get_stability_data(node_id: String, behaviour_str: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
     let behaviour = Behaviour::try_from(behaviour_str.as_str());
     let behaviour = match behaviour {
         Ok(behaviour) => Some(behaviour),
@@ -212,7 +218,8 @@ pub fn get_stability_data(node_id: String, behaviour_str: String, window_session
                     })
                     .unwrap();
             }
-            Ok(response.to_string())
+            // Convert JsonValue to serde_json::Value
+            Ok(from_str::<Value>(response.to_string().as_ref()).unwrap())
         } else {
             Err(String::from("No attractor data found."))
         }

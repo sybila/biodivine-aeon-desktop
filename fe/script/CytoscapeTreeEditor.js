@@ -169,8 +169,7 @@ let CytoscapeEditor = {
 		addButton.onclick = function() {			
 			if (data.treeData["attributes"] === undefined) {
 				TreeExplorerEndpoints.getDecisionAttributes(data.id)
-					.then((okResponse) => {
-						let okResponseObject = JSON.parse(okResponse)
+					.then((okResponseObject) => {
 						addButton.classList.add("gone");
 						for (attr of okResponseObject) {
 							// Prepare data:

@@ -1,30 +1,26 @@
 let ModelEndpoints = {
 
-    invokeComputeEngineEndpoint(endpointName, data, callback) {
-        TAURI.invoke(endpointName, { data: data })
-            .then((responseOk) => {
-                let responseOkObject = JSON.parse(responseOk);
-                return callback(undefined, responseOkObject);
-            })
-            .catch((responseError) => {
-                let responseErrorObject = JSON.parse(responseError);
-                return callback(responseErrorObject, undefined)
-            });
+    validateUpdateFunction(modelFragment,) {
+        return TAURI.invoke('check_update_function', {
+            data: modelFragment
+        })
     },
 
-    validateUpdateFunction(modelFragment, callback) {
-        this.invokeComputeEngineEndpoint('check_update_function', modelFragment, callback);
+    sbmlToAeon(sbmlString) {
+        return TAURI.invoke('sbml_to_aeon', {
+            sbmlString: sbmlString
+        })
     },
 
-    sbmlToAeon(sbmlString, callback) {
-        this.invokeComputeEngineEndpoint('sbml_to_aeon', sbmlString, callback);
+    aeonToSbml(aeonString) {
+        return TAURI.invoke('aeon_to_sbml', {
+            aeonString: aeonString
+        })
     },
 
-    aeonToSbml(aeonString, callback) {
-        this.invokeComputeEngineEndpoint('aeon_to_sbml', aeonString, callback);
-    },
-
-    aeonToSbmlInstantiated(aeonString, callback) {
-        this.invokeComputeEngineEndpoint('aeon_to_sbml_instantiated', aeonString, callback)
+    aeonToSbmlInstantiated(aeonString) {
+        return TAURI.invoke('aeon_to_sbml_instantiated', {
+            aeonString: aeonString
+        })
     },
 }
