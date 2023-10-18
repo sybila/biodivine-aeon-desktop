@@ -13,11 +13,11 @@ impl BdtNodeId {
     }
 
     pub fn try_from_str(index_str: String, collection: &Bdt) -> Option<Self> {
-        return if let Ok(index) = index_str.parse::<usize>() {
+        if let Ok(index) = index_str.parse::<usize>() {
             BdtNodeId(index).take_if(|i| collection.storage.contains_key(&i.0))
         } else {
             None
-        };
+        }
     }
 }
 
