@@ -9,9 +9,12 @@ use tauri::WindowBuilder;
 mod common;
 mod computation;
 mod computation_commands;
+mod computation_results;
+mod computation_results_commands;
 mod model_commands;
 mod multi_window;
 mod session;
+mod tree_explorer_commands;
 
 fn main() {
     let menu = menu_init();
@@ -42,6 +45,22 @@ fn main() {
             computation_commands::get_computation_process_info,
             multi_window::open_model_window,
             multi_window::open_computation_window,
+            multi_window::open_explorer_window,
+            multi_window::open_tree_explorer_window,
+            computation_results_commands::get_witness,
+            computation_results_commands::get_tree_witness,
+            computation_results_commands::get_stability_witness,
+            computation_results_commands::get_attractors,
+            computation_results_commands::get_tree_attractors,
+            computation_results_commands::get_stability_attractors,
+            computation_results_commands::get_bifurcation_tree,
+            tree_explorer_commands::auto_expand,
+            tree_explorer_commands::get_attributes,
+            tree_explorer_commands::apply_tree_precision,
+            tree_explorer_commands::get_tree_precision,
+            tree_explorer_commands::apply_attribute,
+            tree_explorer_commands::revert_decision,
+            tree_explorer_commands::get_stability_data,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

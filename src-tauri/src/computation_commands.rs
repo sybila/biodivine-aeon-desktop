@@ -1,4 +1,4 @@
-use crate::common::{ErrResponse, OkResponse};
+use crate::common::{ErrorMessage, Timestamp};
 use crate::computation::{ArcBdt, ArcComputation, Computation};
 use crate::session::{is_there_session, SESSIONS};
 use biodivine_aeon_desktop::bdt::Bdt;
@@ -8,6 +8,7 @@ use biodivine_aeon_desktop::scc::Classifier;
 use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
 use biodivine_lib_param_bn::BooleanNetwork;
 use json::{object, JsonValue};
+use serde_json::{from_str, Value};
 use std::sync::{Arc, RwLock};
 use std::thread::JoinHandle;
 use std::time::SystemTime;
@@ -132,7 +133,7 @@ fn prepare_computation_thread(
 pub fn start_computation(
     window_session_key: &str,
     aeon_string: &str,
-) -> Result<OkResponse, ErrResponse> {
+) -> Result<Timestamp, ErrorMessage> {
     match BooleanNetwork::try_from(aeon_string) {
         Ok(network) => {
             let locked_computation = get_locked_computation(window_session_key);
@@ -143,7 +144,7 @@ pub fn start_computation(
                 let read_computation = locked_computation.read().unwrap();
                 if let Some(computation) = read_computation.as_ref() {
                     if computation.is_running() {
-                        return Err(ErrResponse::new("Previous computation is still running. Cancel it before starting a new one."));
+                        return Err(String::from("Previous computation is still running. Cancel it before starting a new one."));
                     }
                 }
             }
@@ -153,7 +154,7 @@ pub fn start_computation(
                 let mut write_computation = locked_computation.write().unwrap();
                 if let Some(computation) = write_computation.as_ref() {
                     if computation.is_running() {
-                        return Err(ErrResponse::new("Previous computation is still running. Cancel it before starting a new one."));
+                        return Err(String::from("Previous computation is still running. Cancel it before starting a new one."));
                     }
                 }
 
@@ -172,12 +173,10 @@ pub fn start_computation(
 
                 // Now write the new computation to the global state...
                 *write_computation = Some(new_computation);
-                Ok(OkResponse::new(
-                    &object! { "timestamp" => start as u64 }.to_string(),
-                ))
+                Ok(start as u64)
             }
         }
-        Err(error) => Err(ErrResponse::new(&error)),
+        Err(error) => Err(error),
     }
 }
 
@@ -200,17 +199,17 @@ pub fn cancel_computation(window_session_key: &str) -> Result<String, String> {
 
 /// Get result of computation.
 #[tauri::command]
-pub fn get_results(window_session_key: &str) -> Result<OkResponse, ErrResponse> {
+pub fn get_results(window_session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_computation: Arc<RwLock<Option<Computation>>> =
         get_locked_computation(window_session_key);
     let read_computation = locked_computation.read().unwrap();
 
     let Some(computation) = read_computation.as_ref() else {
-        return Err(ErrResponse::new("No computation found."));
+        return Err(String::from("No computation found."));
     };
 
     match computation.get_results() {
-        Err(message) => Err(ErrResponse::new(message)),
+        Err(error_message) => Err(error_message.to_string()),
         Ok(results) => {
             // Format result data to json object
             let classification_map: Vec<JsonValue> = results
@@ -237,23 +236,22 @@ pub fn get_results(window_session_key: &str) -> Result<OkResponse, ErrResponse> 
                 data: JsonValue::Array(classification_map)
             };
 
-            let json_string = json.to_string();
-
-            Ok(OkResponse::new(json_string.as_str()))
+            // Convert JsonValue to serde_json::Value
+            Ok(from_str::<Value>(json.to_string().as_ref()).unwrap())
         }
     }
 }
 
 /// Get info about computation process.
 #[tauri::command]
-pub fn get_computation_process_info(window_session_key: &str) -> String {
+pub fn get_computation_process_info(window_session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_computation: Arc<RwLock<Option<Computation>>> =
         get_locked_computation(window_session_key);
     let read_computation = locked_computation.read().unwrap();
 
     if let Some(computation) = read_computation.as_ref() {
-        computation.get_info().to_string()
+        Ok(computation.get_info())
     } else {
-        String::from("No computation found.")
+        Err(String::from("No computation found."))
     }
 }

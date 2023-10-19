@@ -1,4 +1,3 @@
-
 let SORT_INFORMATION_GAIN = "sort-information-gain";
 let SORT_TOTAL_CLASSES = "sort-total-classes";
 let SORT_POSITIVE = "sort-positive";
@@ -27,12 +26,14 @@ function Math_percent(cardinality, total) {
 }
 
 function init() {
-	// Set engine address according to query parameter
-	const urlParams = new URLSearchParams(window.location.search);
-	const engineAddress = urlParams.get('engine');	
-	console.log(engineAddress);
-	ComputeEngine.openConnection(undefined, engineAddress);
-	
+	// TODO - Set version number
+	const engineAddress = "v0.1.0";
+
+	// Emit when the window is fully initialized and ready
+	TAURI.event.emit('ready', {});
+}
+
+function showTree() {
 	CytoscapeEditor.init();
 
 	let checkbox = document.getElementById("mass-distribution");
@@ -54,8 +55,8 @@ function init() {
 		loadBifurcationTree();
 	})});
 
-	var slider = document.getElementById("precision-slider");
-	var output = document.getElementById("precision-value");
+	let slider = document.getElementById("precision-slider");
+	let output = document.getElementById("precision-value");
 	output.innerHTML = slider.value/100.0 + "%";
 
 	slider.oninput = function() {
@@ -66,20 +67,24 @@ function init() {
 		setPrecision(slider.value);
 	}
 
-	ComputeEngine.getTreePrecision((e, r) => {		
-		slider.value = r;
-		output.innerHTML = r/100.0 + "%";
-	})
+	TreeExplorerEndpoints.getTreePrecision()
+		.then((precision) => {
+			slider.value = precision;
+			output.innerHTML = precision / 100.0 + "%";
+		})
+		.catch((errorMessage) => {
+			Dialog.errorMessage(errorMessage)
+		})
 
-	var depth = document.getElementById("auto-expand-slider");
-	var autoExpand = document.getElementById("button-auto-expand");
+	let depth = document.getElementById("auto-expand-slider");
+	let autoExpand = document.getElementById("button-auto-expand");
 
 	depth.oninput = function() {
 		let value = depth.value;
-		if (value == 1) {
-			autoExpand.innerHTML = "Auto expand (1 level)  <img src='img/graph-24px.svg'>";
+		if (value === 1) {
+			autoExpand.innerHTML = "Auto expand (1 level)  <img src='img/graph-24px.svg' alt='graph'>";
 		} else {
-			autoExpand.innerHTML = "Auto expand ("+value+" levels)  <img src='img/graph-24px.svg'>";
+			autoExpand.innerHTML = "Auto expand ("+value+" levels)  <img src='img/graph-24px.svg' alt='graph'>";
 		}		
 	}
 
@@ -106,7 +111,7 @@ function compareInformationGain(a, b) {
 
 function compareTotalClasses(a, b) {
 	let r = (a.right.length + a.left.length) - (b.right.length + b.left.length);
-	if (r == 0) {
+	if (r === 0) {
 		return compareInformationGain(a, b);
 	} else {
 		return r;
@@ -115,7 +120,7 @@ function compareTotalClasses(a, b) {
 
 function comparePositiveMajority(a, b) {
 	let r = b.right[0]["fraction"] - a.right[0]["fraction"];
-	if (r == 0) {
+	if (r === 0) {
 		return compareInformationGain(a, b);
 	} else {
 		return r;
@@ -124,7 +129,7 @@ function comparePositiveMajority(a, b) {
 
 function compareNegativeMajority(a, b) {
 	let r = b.left[0]["fraction"] - a.left[0]["fraction"];
-	if (r == 0) {
+	if (r === 0) {
 		return compareInformationGain(a, b);
 	} else {
 		return r;
@@ -137,7 +142,7 @@ function compareAttrName(a, b) {
 
 function comparePositive(a, b) {
 	let r = b.rightTotal - a.rightTotal;
-	if (r == 0) {
+	if (r === 0) {
 		return compareInformationGain(a, b);
 	} else {
 		return r;
@@ -146,7 +151,7 @@ function comparePositive(a, b) {
 
 function compareNegative(a, b) {
 	let r = b.leftTotal - a.leftTotal;
-	if (r == 0) {
+	if (r === 0) {
 		return compareInformationGain(a, b);
 	} else {
 		return r;
@@ -174,17 +179,17 @@ function setSort(sort) {
 
 function sortAttributes(attributes) {
 	let sort = getCurrentSort();
-	if (sort == SORT_TOTAL_CLASSES) {
+	if (sort === SORT_TOTAL_CLASSES) {
 		attributes.sort(compareTotalClasses);
-	} else if (sort == SORT_POSITIVE_MAJORITY) {
+	} else if (sort === SORT_POSITIVE_MAJORITY) {
 		attributes.sort(comparePositiveMajority);		
-	} else if (sort == SORT_NEGATIVE_MAJORITY) {
+	} else if (sort === SORT_NEGATIVE_MAJORITY) {
 		attributes.sort(compareNegativeMajority);
-	} else if (sort == SORT_ALPHABETICAL) {
+	} else if (sort === SORT_ALPHABETICAL) {
 		attributes.sort(compareAttrName);
-	} else if (sort == SORT_POSITIVE) {
+	} else if (sort === SORT_POSITIVE) {
 		attributes.sort(comparePositive);
-	} else if (sort == SORT_NEGATIVE) { 
+	} else if (sort === SORT_NEGATIVE) {
 		attributes.sort(compareNegative);
 	} else {
 		attributes.sort(compareInformationGain);
@@ -197,7 +202,7 @@ function renderAttributeTable(id, attributes, totalCardinality) {
 	let template = document.getElementById("mixed-attributes-list-item-template");				
 	let list = document.getElementById("mixed-attributes-list");
 	list.innerHTML = "";
-	var cut_off = 100;
+	let cut_off = 100;
 	sortAttributes(attributes);
 	for (attr of attributes) {
 		if (cut_off < 0) break;		
@@ -252,16 +257,16 @@ function renderAttributeTable(id, attributes, totalCardinality) {
             return html + row;
 		}, "");								
 		let expandButton = attrNode.getElementsByClassName("expand-button")[0];
-		if (attr.left.length == 1 && attr.right.length == 1) {
+		if (attr.left.length === 1 && attr.right.length === 1) {
 			expandButton.parentNode.removeChild(expandButton);
 		} else {
 			let expandButtonEvent = function() {
-				if (expandButton.innerHTML == "more...") {
+				if (expandButton.innerHTML === "more...") {
 					// Expand
 					expandButton.innerHTML = "...less";
 					leftTable.classList.remove("collapsed");
 					rightTable.classList.remove("collapsed");
-				} else if (expandButton.innerHTML == "...less") {
+				} else if (expandButton.innerHTML === "...less") {
 					// Collapse
 					expandButton.innerHTML = "more...";
 					leftTable.classList.add("collapsed");
@@ -273,96 +278,111 @@ function renderAttributeTable(id, attributes, totalCardinality) {
 	}
 }
 
-function autoExpandBifurcationTree(node, depth, fit = true) {
-	let loading = document.getElementById("loading-indicator");
-	loading.classList.remove("invisible");
-	ComputeEngine.autoExpandBifurcationTree(node, depth, (e, r) => {		
-		if (r !== undefined && r.length > 0) {
-			for (node of r) {
-				CytoscapeEditor.ensureNode(node);
-			}
-			for (node of r) {
-				if (node.type == "decision") {
-					CytoscapeEditor.ensureEdge(node.id, node.left, false);
-					CytoscapeEditor.ensureEdge(node.id, node.right, true);
+function autoExpandBifurcationTree(nodeId, depth, fit = true) {
+	if (nodeId === undefined || nodeId.length < 1) {
+		Dialog.errorMessage("No node selected.")
+	}
+
+	TreeExplorerEndpoints.autoExpandBifurcationTree(nodeId, depth)
+		.then((okResponseObject) => {
+			if (okResponseObject.length > 0) {
+				for (node of okResponseObject) {
+					CytoscapeEditor.ensureNode(node);
+				}
+				for (node of okResponseObject) {
+					if (node.type === "decision") {
+						CytoscapeEditor.ensureEdge(node.id, node.left, false);
+						CytoscapeEditor.ensureEdge(node.id, node.right, true);
+					}
+				}
+				CytoscapeEditor.applyTreeLayout();
+				if (fit) {
+					CytoscapeEditor.fit();
 				}
 			}
+		})
+		.catch((errorMessage) => {
+			Dialog.errorMessage(errorMessage)
+		})
 
-			CytoscapeEditor.applyTreeLayout();
-			if (fit) {
-				CytoscapeEditor.fit();				
-			}
-		} else {
-			alert(e);
-		}
-		loading.classList.add("invisible");
-		CytoscapeEditor.refreshSelection();
-	}, true);
+	CytoscapeEditor.refreshSelection();
 }
 
 function loadBifurcationTree(fit = true) {
-	let loading = document.getElementById("loading-indicator");
-	loading.classList.remove("invisible");
-	ComputeEngine.getBifurcationTree((e, r) => {		
-		if (r !== undefined && r.length > 0) {
-			CytoscapeEditor.removeAll();	// remove old tree if present
-			for (node of r) {
+	ComputationResultsEndpoints.getBifurcationTree()
+		.then((okResponseObject) => {
+			if (okResponseObject.length > 0) {
+				CytoscapeEditor.removeAll();	// remove old tree if present
+				for (node of okResponseObject) {
+					CytoscapeEditor.ensureNode(node);
+				}
+				for (node of okResponseObject) {
+					if (node.type === "decision") {
+						CytoscapeEditor.ensureEdge(node.id, node.left, false);
+						CytoscapeEditor.ensureEdge(node.id, node.right, true);
+					}
+				}
+
+				CytoscapeEditor.applyTreeLayout();
+				if (fit) {
+					CytoscapeEditor.fit();
+				}
+			}
+		})
+		.catch((errorMessage) => {
+			Dialog.errorMessage(errorMessage)
+		})
+}
+
+function setPrecision(precision) {
+	TreeExplorerEndpoints.applyTreePrecision(precision)
+		.then((okResponse) => {
+			loadBifurcationTree(false);
+		})
+		.catch((errorMessage) => {
+			Dialog.errorMessage(errorMessage)
+		})
+}
+
+function removeNode(nodeId) {
+	TreeExplorerEndpoints.deleteDecision(nodeId)
+		.then((okResponseObject) => {
+			if (okResponseObject.removed.length > 0) {
+				for (removed of okResponseObject.removed) {
+					CytoscapeEditor.removeNode(removed);
+				}
+			}
+			if (okResponseObject.node !== undefined) {
+				CytoscapeEditor.ensureNode(okResponseObject.node);
+				CytoscapeEditor.refreshSelection(okResponseObject.node.id);
+			}
+		})
+		.catch((errorMessage) => {
+			Dialog.errorMessage(errorMessage)
+		})
+}
+
+// TODO:
+//  - From where is this function called/used?
+//  - 'node' and 'attr' parameters should be string but are numeric
+function selectAttribute(node, attr) {
+	TreeExplorerEndpoints.selectDecisionAttribute(node, attr)
+		.then((okResponseObject) => {
+			for (node of okResponseObject) {
 				CytoscapeEditor.ensureNode(node);
 			}
-			for (node of r) {
-				if (node.type == "decision") {
+			for (node of okResponseObject) {
+				if (node.type === "decision") {
 					CytoscapeEditor.ensureEdge(node.id, node.left, false);
 					CytoscapeEditor.ensureEdge(node.id, node.right, true);
 				}
 			}
-
 			CytoscapeEditor.applyTreeLayout();
-			if (fit) {
-				CytoscapeEditor.fit();				
-			}			
-		}			
-		loading.classList.add("invisible");
-	}, true);
-}
-
-function setPrecision(precision) {
-	let loading = document.getElementById("loading-indicator");
-	loading.classList.remove("invisible");
-	ComputeEngine.applyTreePrecision(precision, (e, r) => {
-		loadBifurcationTree(false);
-	});
-}
-
-function removeNode(nodeId) {
-	ComputeEngine.deleteDecision(nodeId, (e, r) => {
-		console.log(r);		
-		if (r.removed.length > 0) {
-			for (removed of r.removed) {
-				CytoscapeEditor.removeNode(removed);
-			} 
-		}
-		if (r.node !== undefined) {
-			CytoscapeEditor.ensureNode(r.node);
-			CytoscapeEditor.refreshSelection(r.node.id);
-		}
-	});
-}
-
-function selectAttribute(node, attr) {
-	ComputeEngine.selectDecisionAttribute(node, attr, (e, r) => {
-		console.log(r);
-		for (node of r) {
-			CytoscapeEditor.ensureNode(node);
-		}
-		for (node of r) {
-			if (node.type == "decision") {
-				CytoscapeEditor.ensureEdge(node.id, node.left, false);
-				CytoscapeEditor.ensureEdge(node.id, node.right, true);
-			}
-		}
-		CytoscapeEditor.applyTreeLayout();
-		CytoscapeEditor.refreshSelection();
-	});
+			CytoscapeEditor.refreshSelection();
+		})
+		.catch((errorMessage) => {
+			Dialog.errorMessage(errorMessage)
+		})
 }
 
 /* Open witness network for the currently selected tree node. */
@@ -371,8 +391,7 @@ function openTreeWitness() {
 	if (node === undefined) {
 		return;
 	}
-	const url = window.location.pathname.replace("tree_explorer.html", "index.html");
-    window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node));
+	Windows.openTreeWitnessWindow(node)
 }
 
 function openStabilityWitness(variable, behaviour, vector) {
@@ -380,8 +399,7 @@ function openStabilityWitness(variable, behaviour, vector) {
 	if (node === undefined) {
 		return;
 	}
-	const url = window.location.pathname.replace("tree_explorer.html", "index.html");
-    window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node) + "&variable=" + encodeURI(variable) + "&behaviour=" + encodeURI(behaviour) + "&vector=" + encodeURI(vector));
+	Windows.openStabilityWitnessWindow(node, behaviour, variable, vector)
 }
 
 /* Open attractors for the currently selected tree node. */
@@ -390,8 +408,7 @@ function openTreeAttractor() {
 	if (node === undefined) {
 		return;
 	}
-	const url = window.location.pathname.replace("tree_explorer.html", "explorer.html");
-    window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node));
+	Windows.openTreeAttractorExplorerWindow(node)
 }
 
 function openStabilityAttractor(variable, behaviour, vector) {
@@ -399,8 +416,7 @@ function openStabilityAttractor(variable, behaviour, vector) {
 	if (node === undefined) {
 		return;
 	}
-	const url = window.location.pathname.replace("tree_explorer.html", "explorer.html");
-    window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&tree_witness="+ encodeURI(node) + "&variable=" + encodeURI(variable) + "&behaviour=" + encodeURI(behaviour) + "&vector=" + encodeURI(vector));
+	Windows.openStabilityAttractorExplorerWindow(node, behaviour, variable, vector)
 }
 
 function vector_to_string(vector) {
@@ -412,9 +428,9 @@ function vector_to_string(vector) {
 		} else {
 			result += ","
 		}
-		if (item == "true") {
+		if (item === "true") {
 			result += "<span class='green'><b>true</b></span>";
-		} else if (item == "false") {
+		} else if (item === "false") {
 			result += "<span class='red'><b>false</b></span>";
 		} else {
 			result += "<b>" + item + "</b>";
@@ -426,49 +442,45 @@ function vector_to_string(vector) {
 
 // Used to initialize a stability analysis button in the detail panels.
 function initStabilityButton(id, button, dropdown, container) {
-    let loading = document.getElementById("loading-indicator");
     button.onclick = function() {
-        loading.classList.remove("invisible");
         let behaviour = dropdown.value;
-        ComputeEngine.getStabilityData(id, behaviour, (e, r) => {
-            loading.classList.add("invisible");
-            if (e !== undefined) {
-                console.log(e);
-                alert("Cannot load stability data: "+e);                   
-            } else {
-            	console.log(r);
-            	let content = "<h4>Stability analysis:</h4>";
-            	for (item of r) {
-            		let variableName = item.variable;
-            		if (item.data.length == 1) {            			
-            			content += "<div><b>" + variableName + "</b>: always "+vector_to_string(item.data[0].vector)+"</div>";            			
-            		} else {            			
-            			content += "<div><b>" + variableName + "</b>:</br>";
-            			for (data of item.data) {
-            				content += " - " + vector_to_string(data.vector) + ": " + data.colors + getWitnessPanelForVariable(variableName, behaviour, data.vector) + "</br>";
-            			}
-            			content += "</div>"
-            		}            		
-            	}               
-                container.innerHTML = content;
-            }
-        })
+		console.log(id)
+		TreeExplorerEndpoints.getStabilityData(id, behaviour)
+			.then((okResponseObject) => {
+				let content = "<h4>Stability analysis:</h4>";
+				for (item of okResponseObject) {
+					let variableName = item.variable;
+					if (item.data.length === 1) {
+						content += "<div><b>" + variableName + "</b>: always "+vector_to_string(item.data[0].vector)+"</div>";
+					} else {
+						content += "<div><b>" + variableName + "</b>:</br>";
+						for (data of item.data) {
+							content += " - " + vector_to_string(data.vector) + ": " + data.colors + getWitnessPanelForVariable(variableName, behaviour, data.vector) + "</br>";
+						}
+						content += "</div>"
+					}
+				}
+				container.innerHTML = content;
+			})
+			.catch((errorMessage) => {
+				Dialog.errorMessage("Cannot load stability data: " + errorMessage)
+			})
     }
 }
 
 function getWitnessPanelForVariable(variable, behaviour, vector) {
-	return "<span class='witness-panel'><span class='inline-button' onclick='openStabilityWitness(\""+variable+"\",\""+behaviour+"\",\""+vector+"\");'>Witness</span> | <span class='inline-button' onclick='openStabilityAttractor(\""+variable+"\",\""+behaviour+"\",\""+vector+"\");'>Attractor</span></span>";
+	return "<span class='witness-panel'><span class='inline-button' onclick='openStabilityWitness(\""+variable+"\",\""+behaviour+"\",\""+"["+vector+"]"+"\");'>Witness</span> | <span class='inline-button' onclick='openStabilityAttractor(\""+variable+"\",\""+behaviour+"\",\""+"["+vector+"]"+"\");'>Attractor</span></span>";
 }
 
 // Keyboard shortcuts for basic navigation:
 
 hotkeys('up', function(event, handler) {	
 	let selected = CytoscapeEditor.getSelectedNodeId();
-	if (selected == undefined) {
+	if (selected === undefined) {
 		CytoscapeEditor.selectNode("0");	
 	} else {
 		let parent = CytoscapeEditor.getParentNode(selected);
-		if (parent == undefined) { return; }
+		if (parent === undefined) { return; }
 		CytoscapeEditor.selectNode(parent);
 		event.preventDefault();
 	}	
@@ -476,12 +488,12 @@ hotkeys('up', function(event, handler) {
 
 hotkeys('left', function(event, handler) {
 	let selected = CytoscapeEditor.getSelectedNodeId();
-	if (selected == undefined) {
+	if (selected === undefined) {
 		CytoscapeEditor.selectNode("0");	
 	} else {
 
 		let sibling = CytoscapeEditor.getSiblingNode(selected);
-		if (sibling == undefined) { return; }
+		if (sibling === undefined) { return; }
 		CytoscapeEditor.selectNode(sibling);
 		event.preventDefault();
 	}	
@@ -489,11 +501,11 @@ hotkeys('left', function(event, handler) {
 
 hotkeys('right', function(event, handler) {
 	let selected = CytoscapeEditor.getSelectedNodeId();
-	if (selected == undefined) {
+	if (selected === undefined) {
 		CytoscapeEditor.selectNode("0");	
 	} else {
 		let sibling = CytoscapeEditor.getSiblingNode(selected);
-		if (sibling == undefined) { return; }
+		if (sibling === undefined) { return; }
 		CytoscapeEditor.selectNode(sibling);
 		event.preventDefault();
 	}	
@@ -501,11 +513,11 @@ hotkeys('right', function(event, handler) {
 
 hotkeys('down', function(event, handler) {
 	let selected = CytoscapeEditor.getSelectedNodeId();
-	if (selected == undefined) {
+	if (selected === undefined) {
 		CytoscapeEditor.selectNode("0");	
 	} else {
 		let child = CytoscapeEditor.getChildNode(selected, true);
-		if (child == undefined) { return; }
+		if (child === undefined) { return; }
 		CytoscapeEditor.selectNode(child);
 		event.preventDefault();
 	}	
@@ -513,11 +525,11 @@ hotkeys('down', function(event, handler) {
 
 hotkeys('shift+down', function(event, handler) {
 	let selected = CytoscapeEditor.getSelectedNodeId();
-	if (selected == undefined) {
+	if (selected === undefined) {
 		CytoscapeEditor.selectNode("0");	
 	} else {
 		let child = CytoscapeEditor.getChildNode(selected, false);
-		if (child == undefined) { return; }
+		if (child === undefined) { return; }
 		CytoscapeEditor.selectNode(child);
 		event.preventDefault();
 	}	
@@ -525,7 +537,7 @@ hotkeys('shift+down', function(event, handler) {
 
 hotkeys('backspace', function(event, handler) {	
 	let selected = CytoscapeEditor.getSelectedNodeId();
-	if (selected !== undefined && CytoscapeEditor.getNodeType(selected) == "decision") {
+	if (selected !== undefined && CytoscapeEditor.getNodeType(selected) === "decision") {
 		event.preventDefault();
 		if (confirm("Delete this node?")) {
 			removeNode(selected);		
@@ -571,7 +583,7 @@ function fireEvent(el, etype){
   if (el.fireEvent) {
     el.fireEvent('on' + etype);
   } else {
-    var evObj = document.createEvent('Events');
+    let evObj = document.createEvent('Events');
     evObj.initEvent(etype, true, false);
     el.dispatchEvent(evObj);
   }

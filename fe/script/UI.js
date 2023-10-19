@@ -275,7 +275,7 @@ let UI = {
 	downloadAeon() {
 		let modelFile = LiveModel.exportAeon();
 		if (modelFile === undefined) {
-			MessageDialog.errorMessage(Strings.modelEmpty);
+			Dialog.errorMessage(Strings.modelEmpty);
 			return;
 		}
 		let filename = ModelEditor.getModelName();
@@ -286,49 +286,43 @@ let UI = {
 	},
 
 	downloadSBML() {
-		let modelFile = LiveModel.exportAeon();
-		if (modelFile === undefined) {
-			MessageDialog.errorMessage(Strings.modelEmpty)
+		let aeonModel = LiveModel.exportAeon();
+		if (aeonModel === undefined) {
+			Dialog.errorMessage(Strings.modelEmpty)
 			return;
 		}
 		let filename = ModelEditor.getModelName();
         if (filename === undefined) {
         	filename = "model";
         }
-        this.isLoading(true);
-		ModelEndpoints.aeonToSbml(modelFile, (error, response) => {
-			this.isLoading(false);
-			if (error !== undefined) {
-				MessageDialog.errorMessage(error['message'])
-			}
-			if (response !== undefined) {
-				let result = JSON.parse(response['result']);
-				this._downloadFile(filename + ".sbml", result['model']);
-			}
-		});
+
+		ModelEndpoints.aeonToSbml(aeonModel)
+			.then((sbmlModel) => {
+				this._downloadFile(filename + ".sbml", sbmlModel);
+			})
+			.catch((errorMessage) => {
+				Dialog.errorMessage(errorMessage)
+			})
 	},
 
 	downloadSBMLInstantiated() {
-		let modelFile = LiveModel.exportAeon();
-		if (modelFile === undefined) {
-			MessageDialog.errorMessage(Strings.modelEmpty);
+		let aeonModel = LiveModel.exportAeon();
+		if (aeonModel === undefined) {
+			Dialog.errorMessage(Strings.modelEmpty);
 			return;
 		}
 		let filename = ModelEditor.getModelName();
         if (filename === undefined) {
         	filename = "model";
         }
-        this.isLoading(true);
-		ModelEndpoints.aeonToSbmlInstantiated(modelFile, (error, response) => {
-			this.isLoading(false);
-			if (error !== undefined) {
-				MessageDialog.errorMessage(error['message']);
-			}
-			if (response !== undefined) {
-				let result = JSON.parse(response['result']);
-				this._downloadFile(filename + "_instantiated.sbml", result['model']);
-			}
-		});
+
+		ModelEndpoints.aeonToSbmlInstantiated(aeonModel)
+			.then((sbmlModel) => {
+				this._downloadFile(filename + "_instantiated.sbml", sbmlModel);
+			})
+			.catch((errorMessage) => {
+				Dialog.errorMessage(errorMessage);
+			})
 	},
 
 	async _downloadFile(name, content) {
@@ -360,7 +354,7 @@ let UI = {
 
 		let error = await LiveModel.handleAeonModelImport(aeonFileContent);
 		if (error !== undefined) {
-			MessageDialog.errorMessage(error);
+			Dialog.errorMessage(error);
 		}
 	},
 
@@ -380,47 +374,14 @@ let UI = {
 
 		const sbmlFileContent = await TAURI.fs.readTextFile(filePath);
 
-		this.isLoading(true);
-
-		ModelEndpoints.sbmlToAeon(sbmlFileContent, async (error, response) => {
-			this.isLoading(false);
-			if (response !== undefined) {
-				let result = JSON.parse(response['result']);
-				error = await LiveModel.handleAeonModelImport(result['model']);
-			}
-			if (error !== undefined) {
-				MessageDialog.errorMessage(error['message']);
-			}
-		});
+		ModelEndpoints.sbmlToAeon(sbmlFileContent)
+			.then((model) => {
+				LiveModel.handleAeonModelImport(model);
+			})
+			.catch((errorMessage) => {
+				Dialog.errorMessage(errorMessage);
+			})
 	},
-
-	openWitness(witness) {
-		if (!ComputeEngine.hasActiveComputation()) {
-			alert("Results no longer available.");
-			return;
-		}
-		const url = window.location.pathname;
-        window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&witness="+ encodeURI(witness));
-	},
-
-    openExplorer(behavior) {
-		if (!ComputeEngine.hasActiveComputation()) {
-			alert("Results no longer available.");
-			return;
-		}
-		const url = 'explorer.html';
-        window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()) + "&behavior="+ encodeURI(behavior));
-    },
-
-    openTreeExplorer() {
-		if (!ComputeEngine.hasActiveComputation()) {
-			alert("Results no longer available.");
-			return;
-		}
-		const url = 'tree_explorer.html';
-		window.open(url + '?engine=' + encodeURI(ComputeEngine.getAddress()));
-    },
-
 
 	// Add a listener to each button to display hint texts when hovered.
 	// For toggle buttons, add functions that enable actual toggling of the state value.
