@@ -64,7 +64,7 @@ pub async fn open_model_window(label: &str, handle: tauri::AppHandle) -> Result<
     tauri::WindowBuilder::new(&handle, label, tauri::WindowUrl::App("index.html".into()))
         .menu(menu_init())
         .inner_size(1000f64, 700f64)
-        .title("Aeon/BIODIVINE")
+        .title("Aeon/BIODIVINE - model editor")
         .build()
         .expect("Error while creating new model window.");
     Ok(())
@@ -72,7 +72,7 @@ pub async fn open_model_window(label: &str, handle: tauri::AppHandle) -> Result<
 
 /// Open new window to watch computation status.
 #[tauri::command]
-pub async fn open_computation_window(label: &str, handle: tauri::AppHandle) -> Result<(), ()> {
+pub async fn open_computation_window(label: &str, title: &str, handle: tauri::AppHandle) -> Result<(), ()> {
     tauri::WindowBuilder::new(
         &handle,
         label,
@@ -80,7 +80,7 @@ pub async fn open_computation_window(label: &str, handle: tauri::AppHandle) -> R
     )
     .inner_size(550f64, 600f64)
     .min_inner_size(400f64, 400f64)
-    .title("Computation")
+    .title(title)
     .build()
     .expect("Error while creating computation window.");
     Ok(())
@@ -95,7 +95,7 @@ pub async fn open_explorer_window(label: &str, handle: tauri::AppHandle) -> Resu
         tauri::WindowUrl::App("explorer.html".into()),
     )
     .inner_size(1000f64, 700f64)
-    .title("Aeon/BIODIVINE")
+    .title("Aeon/BIODIVINE - attractor explorer")
     .build()
     .expect("Error while creating new model window.");
     Ok(())
@@ -103,14 +103,14 @@ pub async fn open_explorer_window(label: &str, handle: tauri::AppHandle) -> Resu
 
 /// Open new window with bifurcation decision tree.
 #[tauri::command]
-pub async fn open_tree_explorer_window(label: &str, handle: tauri::AppHandle) -> Result<(), ()> {
+pub async fn open_tree_explorer_window(label: &str, title: &str, handle: tauri::AppHandle) -> Result<(), ()> {
     tauri::WindowBuilder::new(
         &handle,
         label,
         tauri::WindowUrl::App("tree_explorer.html".into()),
     )
     .inner_size(1000f64, 700f64)
-    .title("Aeon/BIODIVINE")
+    .title(title)
     .build()
     .expect("Error while creating new model window.");
     Ok(())

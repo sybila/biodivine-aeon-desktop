@@ -1,6 +1,8 @@
 let Computation = {
     _windowSessionKey: undefined,
     _lastComputation: undefined,
+    _modelTitle: undefined,
+    _windowTimestamp: undefined,
 
     setWindowSessionKey(windowSessionKey) {
         this._windowSessionKey = windowSessionKey
@@ -19,6 +21,22 @@ let Computation = {
             // if timestamp changed, switch to undefined.
             this._lastComputation = undefined;
         }
+    },
+
+    setModelTitle(modelTitle) {
+        this._modelTitle = modelTitle
+    },
+
+    getModelTitle() {
+        return this._modelTitle
+    },
+
+    setWindowTimestamp(timestamp) {
+        this._windowTimestamp = timestamp
+    },
+
+    getWindowTimestamp() {
+        return this._windowTimestamp
     },
 
     isActiveComputation() {

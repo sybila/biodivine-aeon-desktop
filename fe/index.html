@@ -34,8 +34,10 @@
 
         <script src="script/common/const.js"></script>
         <script src="script/common/Strings.js"></script>
+        <script src="script/common/Model.js"></script>
         <script src="script/Results.js"></script>
         <script src="script/Computation.js"></script>
+        <script src="script/endpoints/WindowsEndpoints.js"></script>
         <script src="script/Windows.js"></script>
         <script src="script/endpoints/ModelEndpoints.js"></script>
         <script src="script/common/Examples.js"></script>
@@ -174,7 +176,7 @@
             <div id="side-menu">
                 <div class="button-group-fake">
                     <img alt="Compute Bifurcation" id="side-menu-compute" src="img/play_circle_filled-48px.svg"
-                         onclick="LiveModel.startAnalysis(LiveModel.exportAeon());" class="button-fake">
+                         onclick="UI.startAnalysis(LiveModel.exportAeon());" class="button-fake">
                     <span class="hint invisible">Start Analysis</span>
                 </div>
 

@@ -350,6 +350,8 @@ let UI = {
 			return;
 		}
 
+		ModelEditor.setModelFilePath(filePath)
+
 		const aeonFileContent = await TAURI.fs.readTextFile(filePath);
 
 		let error = await LiveModel.handleAeonModelImport(aeonFileContent);
@@ -372,6 +374,8 @@ let UI = {
 			return;
 		}
 
+		ModelEditor.setModelFilePath(filePath)
+
 		const sbmlFileContent = await TAURI.fs.readTextFile(filePath);
 
 		ModelEndpoints.sbmlToAeon(sbmlFileContent)
@@ -381,6 +385,14 @@ let UI = {
 			.catch((errorMessage) => {
 				Dialog.errorMessage(errorMessage);
 			})
+	},
+
+	startAnalysis(aeonString) {
+		if (aeonString === undefined) {
+			Dialog.errorMessage("Empty model.")
+			return undefined;
+		}
+		Windows.openComputationWindow(aeonString)
 	},
 
 	// Add a listener to each button to display hint texts when hovered.

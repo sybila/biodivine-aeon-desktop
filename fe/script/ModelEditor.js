@@ -16,6 +16,7 @@ let ModelEditor = {
 	// Template element that we use to create new variable boxes and regulation rows.
 	_variableTemplate: undefined,
 	_regulationTemplate: undefined,
+	_modelFilePath: undefined,
 
 	init() {
 		this._variables = document.getElementById("model-variables");
@@ -40,6 +41,14 @@ let ModelEditor = {
 		let description = this._modelDescription.innerHTML;
 		if (description.length == 0) return undefined;
 		return description;
+	},
+
+	getModelFilePath() {
+		return this._modelFilePath
+	},
+
+	setModelFilePath(filePath) {
+		this._modelFilePath = filePath
 	},
 
 	setModelName(name) {

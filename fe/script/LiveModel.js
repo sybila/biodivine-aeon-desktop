@@ -399,15 +399,6 @@ let LiveModel = {
 		return this.importAeon(modelString)
 	},
 
-	startAnalysis(aeonString) {
-		if (aeonString === undefined) {
-			Dialog.errorMessage("Empty model.")
-			return undefined;
-		}
-		Windows.openComputationWindow(aeonString)
-	},
-
-
 	// Import model from Aeon file. If the import is successful, return undefined,
 	// otherwise return an error string.
 	importAeon(modelString) {

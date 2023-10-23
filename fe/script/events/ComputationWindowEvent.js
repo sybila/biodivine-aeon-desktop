@@ -1,10 +1,14 @@
 // Listen for 'start-computation' event and start computation from (this) new window
 TAURI.event.listen('start-computation', (event) => {
     const aeonString = event.payload['aeonString']
+    const modelTitle = event.payload['modelTitle']
+    const windowTimestamp = event.payload['windowTimestamp']
 
     const windowSessionKey = TAURI.window.getCurrent().label;
     Session.createWindowSession(windowSessionKey)
     Computation.setWindowSessionKey(windowSessionKey)
+    Computation.setModelTitle(modelTitle)
+    Computation.setWindowTimestamp(windowTimestamp)
 
     ComputationEndpoints.startComputation(aeonString, windowSessionKey)
         .then((startTimestamp) => {

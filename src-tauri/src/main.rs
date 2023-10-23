@@ -26,7 +26,7 @@ fn main() {
                 tauri::WindowUrl::App("index.html".into()),
             )
             .menu(menu)
-            .title("Aeon/BIODIVINE")
+            .title("Aeon/BIODIVINE - model editor")
             .inner_size(1000f64, 700f64)
             .build()?;
             Ok(())
