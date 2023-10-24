@@ -25,9 +25,12 @@ function Math_percent(cardinality, total) {
 	return Math.round((cardinality / total) * 100);
 }
 
-function init() {
-	// TODO - Set version number
-	const engineAddress = "v0.1.0";
+async function init() {
+
+	// Set program version
+	let version = await TAURI.invoke('get_version', {})
+	document.title = document.title + " (" + version + ")";
+	document.getElementById("version").innerHTML = "v" + version
 
 	// Emit when the window is fully initialized and ready
 	TAURI.event.emit('ready', {});

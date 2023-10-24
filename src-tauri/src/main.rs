@@ -15,6 +15,7 @@ mod model_commands;
 mod multi_window;
 mod session;
 mod tree_explorer_commands;
+mod version_command;
 
 fn main() {
     let menu = menu_init();
@@ -61,6 +62,7 @@ fn main() {
             tree_explorer_commands::apply_attribute,
             tree_explorer_commands::revert_decision,
             tree_explorer_commands::get_stability_data,
+            version_command::get_version,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
