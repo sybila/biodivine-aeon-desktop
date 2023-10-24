@@ -4,6 +4,9 @@ TAURI.window.appWindow.onMenuClicked(({ payload: menuItemId }) => {
         case 'help':
             UI.openHelpWindow()
             break
+        case 'manual':
+            WindowsEndpoints.openManualWindow()
+            break
         case 'local_storage':
             LiveModel.loadFromLocalStorage()
             break

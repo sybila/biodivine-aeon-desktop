@@ -1,0 +1,531 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>AEON 2021: Manual</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="foreword.html">Foreword</a></li><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Running AEON</a></li><li class="chapter-item expanded "><a href="compute_engine.html"><strong aria-hidden="true">2.</strong> AEON Compute Engine</a></li><li class="chapter-item expanded "><a href="model_editor/chapter.html"><strong aria-hidden="true">3.</strong> Model Editor</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="model_editor/variables_and_regulations.html"><strong aria-hidden="true">3.1.</strong> Variables and regulations</a></li><li class="chapter-item expanded "><a href="model_editor/update_functions.html"><strong aria-hidden="true">3.2.</strong> Model panel and update functions</a></li><li class="chapter-item expanded "><a href="model_editor/parametrised_networks.html"><strong aria-hidden="true">3.3.</strong> Parametrised networks</a></li><li class="chapter-item expanded "><a href="model_editor/graph_properties.html"><strong aria-hidden="true">3.4.</strong> Regulatory graph properties</a></li><li class="chapter-item expanded "><a href="model_editor/import_export.html"><strong aria-hidden="true">3.5.</strong> Import/Export</a></li></ol></li><li class="chapter-item expanded "><a href="attractor_bifurcation/chapter.html"><strong aria-hidden="true">4.</strong> Attractor Bifurcation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="attractor_bifurcation/state_space.html"><strong aria-hidden="true">4.1.</strong> State space explorer</a></li><li class="chapter-item expanded "><a href="attractor_bifurcation/decision_trees.html"><strong aria-hidden="true">4.2.</strong> Bifurcation decision trees</a></li><li class="chapter-item expanded "><a href="attractor_bifurcation/stability_analysis.html"><strong aria-hidden="true">4.3.</strong> Stability analysis</a></li></ol></li><li class="chapter-item expanded "><a href="build.html"><strong aria-hidden="true">5.</strong> Building AEON</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">AEON 2021: Manual</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="foreword"><a class="header" href="#foreword">Foreword</a></h1>
+<p>Welcome! </p>
+<p>This is the manual of AEON, a tool for <em>long term analysis of <a href="https://en.wikipedia.org/wiki/Boolean_network">Boolean networks</a></em>. In particular, AEON allows you to define Boolean networks with <em>partially unknown update functions</em>. Then, for such a network, you can compute its <em>asynchronous attractors</em> and explore the <em>state space</em> of these attractors. Finally, you can investigate how the attractor structure changes depending on the unknown parts of the network (<em>attractor bifurcation</em>) as well as which variables are <em>stable</em>, <em>unstable</em>, or <em>switched</em> under different conditions (<em>stability analysis</em>). For all of this, AEON uses efficient symbolic algorithms based on <a href="https://en.wikipedia.org/wiki/Binary_decision_diagram">BDDs</a>, which make it possible to handle even networks with 1000 or more variables. </p>
+<p>In this document, you can find information on how to use AEON to:</p>
+<ul>
+<li>Create a Boolean network or import it from an existing <code>.sbml</code> or <code>.aeon</code> file.</li>
+<li>Create a partially unknown Boolean network with logical parameters.</li>
+<li>Check that the network is consistent with its regulatory graph.</li>
+<li>Compute asynchronous attractors of a Boolean network.</li>
+<li>Visualize the state space of the computed attractors.</li>
+<li>Construct a <em>bifurcation decision tree</em>: A visual representation of the dependence between network parameters and attractors.</li>
+<li>Perform stability analysis of the attractors for different conditions.</li>
+</ul>
+<p>AEON is a constantly evolving academic project. If you have any problem or run into some unexpected behaviour, please contact us at <code>sybila@fi.muni.cz</code>. We will be happy to help you and make AEON a more useful tool for you. Finally, if you found AEON useful in your research, please cite it using the following publication:</p>
+<pre><code>Beneš, N., Brim, L., Kadlecaj, J., Pastva, S., &amp; Šafránek, D. (2020, July). 
+AEON: Attractor Bifurcation Analysis of Parametrised Boolean Networks. 
+In International Conference on Computer Aided Verification (pp. 569-581).
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>AEON is available as an online tool at <a href="https://biodivine.fi.muni.cz/aeon/">https://biodivine.fi.muni.cz/aeon/</a>. On this website, you can pick the version of AEON you want to use (naturally, we recommend the latest version), and you will be redirected to its online interface, which should look similar to this:</p>
+<p><img src="assets/ui_screenshot.png" alt="AEON Screenshot" />
+<em>AEON User interface.</em></p>
+<p>In the middle, there is a quick help message, which disappears when you load a Boolean network, but you can always bring it back by holding down <strong>H</strong>. On the left, there is a main menu which you can use to import existing networks, manage the details of your model, or start attractor analysis.</p>
+<blockquote>
+<p>If you for whatever reason cannot access this website, there is a mirror on <a href="https://sybila.github.io/aeon/">Github pages</a>, but the version there may not be always up to date. Alternatively, you can also run your own instance of AEON. It is a simple static HTML/JavaScript website, and the sources are available on <a href="https://github.com/sybila/biodivine-aeon-client">Github</a>. See the <em>Building AEON</em> chapter for more details.</p>
+</blockquote>
+<p>Out of the box, AEON allows you to perform basic actions, like creating or editing a Boolean network. However, AEON uses a native <em>compute engine</em> which handles computationally intensive tasks efficiently outside your browser. Therefore, to do almost anything beside editing Boolean networks, you need a compute engine the website can connect to. In the next chapter, we discuss how to download and run this <em>compute engine</em>.</p>
+<blockquote>
+<p>At the moment, due to security reasons, some browsers are blocking non-HTTPS JavaScript connections to foreign websites if the page itself is using HTTPS. For this reason, you may not be able to connect to a local compute engine from Safari, Brave or other browser with this policy. If you can, please use Chrome for the rest of this tutorial.</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="aeon-compute-engine"><a class="header" href="#aeon-compute-engine">AEON Compute Engine</a></h1>
+<p>To download the compute engine for the version of AEON you are using, pick <code>Compute Engine</code> in the left menu, and download a pre-compiled binary for your operating system. Compute engine binaries for different versions of AEON are in general not compatible, and you should be therefore always using the compute engine of your current version: </p>
+<p><img src="assets/download_compute_engine.gif" alt="Download Compute Enging" />
+<em>Downloading AEON compute engine.</em></p>
+<p>Once the download is finished, you can unzip the file. Inside, you should find a <code>compute-engine</code> binary that you need to execute.</p>
+<blockquote>
+<p>The binary is not signed for distribution on MacOS, so you may need to add a security exception if you want to run it on a Mac.</p>
+</blockquote>
+<p>When you execute the binary, you should see a terminal window with an output similar to this:</p>
+<pre><code>🔧 Configured for production.
+    =&gt; address: localhost
+    =&gt; port: 8000
+    =&gt; log: critical
+    =&gt; workers: 8
+    =&gt; secret key: generated
+    =&gt; limits: forms = 32KiB
+    =&gt; keep-alive: 5s
+    =&gt; read timeout: 5s
+    =&gt; write timeout: 5s
+    =&gt; tls: disabled
+Warning: environment is 'production', but no `secret_key` is configured
+🚀 Rocket has launched from http://localhost:8000
+</code></pre>
+<p>The compute engine automatically starts a local webserver on port <code>8000</code> through which it communicates with the AEON website. You can set the environmental variable <code>AEON_PORT</code> to whatever you need the port to be.</p>
+<blockquote>
+<p>If you can't for any reason run the binary (for example, some Linux systems seem to have problems with outdated <code>glibc</code>), you can build it from source. Instructions for this are quite simple, and you can find them in the <em>Building AEON</em> chapter.</p>
+</blockquote>
+<p>Once compute engine is running, you can go back to the AEON website and either (a) refresh the website, if running correctly, the compute engine should connect automatically, or (b) press <code>Connect</code> in the <code>Compute Engine</code> panel to manually retry the connection. You should see the status change from <em>disconnected</em> to <em>connected</em>, and the dot next to the <code>Compute Engine</code> should change its color to green.</p>
+<p><img src="assets/open_connection.gif" alt="Open Connection" />
+<em>Connecting to a running compute engine.</em></p>
+<blockquote>
+<p>If you changed the <code>AEON_PORT</code> value, you need to also update the engine address in the <code>Compute Engine</code> panel — click the default address <code>http://localhost:8000</code> to edit it.</p>
+</blockquote>
+<p><strong>WARNING:</strong> At the moment, the compute engine supports only one active session of AEON at a time (this will be resolved in future versions of AEON). If you have multiple tabs with AEON open, and they all connect to the same compute engine, they can see and override each other's data! You can still use multiple tabs to edit or view networks, but keep in mind that analysis results (attractors and bifurcation decision trees) are available only for the last computed tab. </p>
+<p>Now, you should be ready to use all features available in AEON.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="model-editor"><a class="header" href="#model-editor">Model Editor</a></h1>
+<p>In this chapter, we discuss how to create, import, modify, and export Boolean networks, as well as how to enhance them with logical parameters. If you only want to work with existing Boolean networks (available as <code>.sbml</code> or <code>.aeon</code> file), i.e. you are not planning to edit the network, just import it, you can skip to the last section of this chapter.</p>
+<p>AEON model editing functionality is distributed between two main editor &quot;components&quot;: an interactive <em>regulatory graph editor</em>, and a <em>model panel</em>. The regulatory graph editor is the main area of the AEON window, while the model editor can be opened by clicking the <code>Model Editor</code> button in the left menu.</p>
+<p><img src="model_editor/../assets/model_editor.png" alt="AEON Model Editor" />
+<em>Model panel (left) and regulatory graph editor (right)</em></p>
+<p>We first focus on the regulatory graph editor, and show how to manipulate network variables and regulations. Then, we shift our focus to the model panel and show how to edit network update functions or add parameters. Finally, we look at structural properties of regulatory graphs and how AEON verifies these properties on-the-fly. At the end of the chapter, we discuss model formats supported by AEON.  </p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="variables-and-regulations"><a class="header" href="#variables-and-regulations">Variables and regulations</a></h2>
+<p>To create a new variable, double-click anywhere in the empty space of the AEON window. A new <em>variable node</em> will appear at that location (You can also press <strong>N</strong> to create a new variable node at a default location). A variable node in a regulatory graph represents one variable of a Boolean network. When you move the cursor over this variable node, a blue <strong>+</strong> icon appears. By dragging from this icon to some variable node, you can create <em>regulations</em>, i.e. edges of the regulatory graph. Note that self-loops (<em>auto-regulations</em>) are also supported. A regulation edge from <code>A</code> to <code>B</code> represents a (possible) dependence of <code>B</code> on <code>A</code>. </p>
+<p><img src="model_editor/../assets/create_variables.gif" alt="Create Variables and Regulations" />
+<em>Creating variables and regulations in the regulatory graph.</em></p>
+<p>You can click and drag variable nodes to re-arrange them however you like. To help with arranging large networks, AEON contains an auto-layout algorithm that you can activate using the <code>Apply Layout</code> button in the left menu.</p>
+<p><img src="model_editor/../assets/auto_layout.gif" alt="Auto Layout" />
+<em>Auto-layout functionality.</em></p>
+<p>Finally, each variable node or regulation edge can be selected by clicking. This opens a <em>variable</em> or <em>regulation menu</em>. Through here, you can access additional options, such as removing a variable or regulation (which you can do using backspace as well). You can also <em>rename</em> a variable, which opens the <em>model panel</em> and focuses the edit field of the variable name. We will talk about the remaining options in edge and regulation menus in the following sections.</p>
+<p><img src="model_editor/../assets/delete_variables.gif" alt="Delete and edit variables" />
+<em>Deleting and editing regulatory graph elements.</em></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="model-panel-and-update-functions"><a class="header" href="#model-panel-and-update-functions">Model panel and update functions</a></h1>
+<p>Once the regulatory graph of your Boolean network is in place, you can assign each variable an update function. The update function of variable <code>A</code> takes the values of its regulators (sources of the regulation edges terminating in <code>A</code>) and computes a new value of <code>A</code> based on these values.</p>
+<p>For example, consider the following regulatory graph:</p>
+<p><img src="model_editor/../assets/update_function_example.png" alt="Network example" /></p>
+<p>Here, variable <code>C</code> is regulated by every variable. That is, update function of <code>C</code> should depend on <code>A</code>, <code>B</code>, and <code>C</code>. For example, we can open the model panel and set the update function to <code>C | (!A &amp; !B)</code>. This will make <code>C</code> <code>true</code> if it already is <code>true</code>, or if both <code>A</code> and <code>B</code> are false.</p>
+<p><img src="model_editor/../assets/setting_update_function.gif" alt="Setting update function" />
+<em>Setting the update function of <code>C</code>.</em></p>
+<p>The behaviour of the Boolean network is described using a state transition graph, where the graph vertices are the <em>states</em> of the network (each state assigns <code>true</code> or <code>false</code> to every network variable), and the edges correspond to applications of individual update functions to the network states. In our network, a state <code>A=false, B=false, C=false</code> can transition into <code>A=false, B=false, C=true</code> by updating the variable <code>C</code>.</p>
+<p>Note that <code>A</code> and <code>B</code> have no regulations, therefore their update functions do not depend on any variable and must be constant: <code>true</code> or <code>false</code>. In general, an update function can use the constant values <code>true/false</code>, names of the regulating variables, parenthesis <code>()</code>, and (<code>&amp;</code>), or (<code>|</code>), implies (<code>=&gt;</code>), if and only if (<code>&lt;=&gt;</code>) as well as xor (<code>^</code>). You can add new-lines and arbitrary whitespace to the update function, but AEON will not save this information to the exported model file.</p>
+<h3 id="other-model-panel-functionality"><a class="header" href="#other-model-panel-functionality">Other model panel functionality</a></h3>
+<p>Aside from setting the update functions, in the model panel, you can create/remove variables as well as edit their names (as we have already seen). In a large model, it can be also useful to <em>locate</em> a specific variable in the regulatory graph using the magnifying glass button. </p>
+<p><img src="model_editor/../assets/variable_lookup.gif" alt="Variable lookup" />
+<em>Looking up and editing a variable in a model panel.</em></p>
+<blockquote>
+<p>Hint: When the model is very large, you can use the &quot;Find...&quot; feature of your browser to look for specific variables in the model panel.</p>
+</blockquote>
+<p>Finally, at the very top of the model panel, you can find an edit field where you specify the <em>name</em> of your model, as well as some general <em>description</em> of the model. This part of the panel also contains a general overview of the model, including:</p>
+<ul>
+<li>Number of Boolean variables and regulations between them.</li>
+<li>Maximal in-degree and out-degree (number of incoming and outgoing regulations) in the model.</li>
+<li>Size of the models state space.</li>
+<li>Size of the parameter space, as well as names of the logical parameters.</li>
+</ul>
+<p><img src="model_editor/../assets/model_panel_overview.png" alt="Model panel overview" />
+<em>The name, description, and overview of a particular model.</em></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="parametrised-networks"><a class="header" href="#parametrised-networks">Parametrised networks</a></h1>
+<p>In practice, we often don't know the exact update functions that govern the behaviour of the network. In AEON, you can therefore analyse even a network that is <em>partially unknown</em>. In such case, we say that the network has <em>logical parameters</em>. These parameters can be of two types:</p>
+<ul>
+<li>We say that a variable is <em>implicitly parametrised</em> when its entire update function is unknown. For example, in the model from the previous section, since we did not set any update function for <code>A</code> or <code>B</code>, they are both implicitly parametrised.</li>
+<li>An update function is <em>explicitly parametrised</em> when it contains unknown Boolean expressions. These are expressed using uninterpreted functions. For example, in the model from the previous section, we could set the update function of <code>C</code> to be <code>C | f(A, B)</code>. Here, <code>f</code> is an explicit parameter: an uninterpreted function of arity 2. This way, we are giving a partial specification of the update function: we know that when <code>C=true</code>, the value of the function is also <code>true</code>. However, if <code>C=false</code>, we know the result depends on <code>A</code> and <code>B</code>, but we don't know what that dependence looks like. </li>
+</ul>
+<blockquote>
+<p>An uninterpreted function of arity zero can be also used without argument parenthesis, in which case it resembles a more traditional logical parameter. For example, we can write <code>(K =&gt; A) &amp; (!K =&gt; B)</code> where <code>A</code> and <code>B</code> are variables, but <code>K</code> is an explicit parameter.</p>
+</blockquote>
+<blockquote>
+<p>At the moment AEON only allows variables as arguments of uninterpreted functions. That is, you cannot use complex expressions such as <code>C | f(A &amp; B, C)</code>. This restriction may be lifted in the future. </p>
+</blockquote>
+<p>In AEON, we then consider <em>all possible instantiations</em> of these logical parameters. That is, AEON considers every possible Boolean function that can be substituted in place of either the explicit or implicit uninterpreted functions. </p>
+<blockquote>
+<p>Note that the number of such functions grows very quickly (there are <code>2^(2^n)</code> Boolean functions with <code>n</code> arguments). For this reason, AEON typically cannot handle uninterpreted functions (explicit or implicit) with more than 5 arguments (which corresponds to <code>2^32</code> possible functions).</p>
+</blockquote>
+<p>In the user interface, you can see this in the form of <code>Possible instantiations: ...</code> label under each update function input field. If the function is fully specified (no parameters), there should be one instantiation: the function itself. As soon as parameters are introduced (or the function is removed completely), the number of instantiations should grow.</p>
+<p>For example, update functions for variables <code>A</code> and <code>B</code> from our example should have two instantiations (<code>true</code> and <code>false</code>), while the <code>C | f(A, B)</code> function will have 10 instantiations, as there are 10 binary Boolean functions that depend on both inputs (There are 16 binary Boolean functions, but 6 of them, <code>true</code>, <code>false</code>, <code>A</code>, <code>!A</code>, <code>B</code>, and <code>!B</code> do not depend on both inputs). </p>
+<p>Parameters will come into play later, when we discuss the long term behaviour of Boolean networks. Now, lets look at how we can reduce the number of possible instantiations of a parametrised network by enhancing the regulatory graph with additional structural properties.   </p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="regulatory-graph-properties"><a class="header" href="#regulatory-graph-properties">Regulatory graph properties</a></h1>
+<p>In our regulatory graphs, to this point, we assumed each regulation should have some effect on the output of the update function. This is a fairly reasonable assumption (if the regulation has no effect, it has no reason to be in the graph). However, we often have some additional information about the nature of the regulation.</p>
+<h3 id="regulation-monotonicity"><a class="header" href="#regulation-monotonicity">Regulation monotonicity</a></h3>
+<p>Many biological processes are either positively or negatively monotonous. In such case, we can mark a regulation as <em>activation</em> (positive monotonicity), or <em>inhibition</em> (negative monotonicity). To do this, you can either use the corresponding button in the <em>regulation menu</em>, or toggle the regulation status in the model panel.</p>
+<p><img src="model_editor/../assets/monotonicity.gif" alt="Toggling monotonicity" />
+<em>Changing monotonicity of regulations.</em></p>
+<p>Notice that as we change the monotonicity of a regulation, the number of instantiations of the update function also changes. This is because the number of Boolean functions with that specific property is smaller. Specifically, if a regulation is positively monotonous, we expect that increasing the value of the regulator cannot decrease the value of the output, and vice versa, when the monotonicity is negative, increasing the value of the regulator cannot increase the function output.</p>
+<p>Specifically, if we set the regulation <code>B -&gt; C</code> as activation, we reduce the number of instantiations of <code>f(A, B)</code> to only four options: <code>A &amp; B</code>, <code>!A &amp; B</code>, <code>A | B</code>, <code>!A | B</code>. In particular, notice that in each such function, <code>B</code> appears in its positive form (without negation). We could further limit the number of instantiations by also setting a monotonicity for the <code>A -&gt; C</code> relationship.</p>
+<p>The regulation <code>C -&gt; C</code> is slightly different. The dependence <code>C -&gt; C</code> is already fully specified in the update function. Changing the properties of the regulation therefore cannot change the number of instantiations. However, it can make the function completely invalid if the properties given by the regulatory graph do not match the properties of the update function. Since in our case, <code>C</code> appears positively in <code>C | f(A, B)</code>, AEON reports an error when the regulation is marked as an inhibition, but is ok with either activation or unspecified monotonicity.</p>
+<blockquote>
+<p>When possible, AEON will try to infer which regulation properties cause the function to be invalid. You can then update the properties accordingly.</p>
+</blockquote>
+<p><img src="model_editor/../assets/invalid_regulations.png" alt="Invalid regulation properties" />
+<em>AEON explains why a function is not consistent with its regulatory graph.</em></p>
+<h3 id="observability"><a class="header" href="#observability">Observability</a></h3>
+<p>While it is often reasonable to expect each regulation to have some effect on the regulated variable, sometimes we may not be sure if a regulation is indeed (always) needed. In such case, we can mark the regulation as <em>non-observable</em>. </p>
+<p>AEON will then also consider instantiations where the argument does not have any impact on the resulting function value. To set this property, you can again use either the regulation menu, or the model panel:</p>
+<p><img src="model_editor/../assets/observability.gif" alt="Toggle observability" />
+<em>Changing observability of regulations.</em></p>
+<p>Notice that as we remove the observability requirements, the number of instantiations grows. In the end, the function has 15 possible instantiations. This includes all 16 possible binary Boolean functions except for one: <code>true</code>.</p>
+<p>If we set <code>f(A, B) = true</code>, the update function would be <code>C | true</code>, which is equivalent to <code>true</code>. However, we still have <code>C -&gt; C</code> marked as observable, and a constant function does not depend on <code>C</code>. Meanwhile, instantiation <code>f(A, B) = false</code> is fine, because <code>C | false</code> is equivalent to <code>C</code>, which clearly still depends on the value of <code>C</code>.</p>
+<p>Also, note that a function can &quot;appear&quot; to depend on a value of some variable, while in fact it does not. Take a simple example of <code>(A &amp; B) | A</code>. If <code>A=true</code>, this function is always <code>true</code>, if <code>A=false</code>, this function is always <code>false</code>, regardless of the value of <code>B</code>. AEON will also detect and report these types of problems.</p>
+<h3 id="inconsistencies-in-real-world-models"><a class="header" href="#inconsistencies-in-real-world-models">Inconsistencies in real world models</a></h3>
+<p>Note that in many cases, you can encounter real-world models where AEON identifies some structural inconsistencies as described in this section. In such case, you cannot directly analyse the original model. </p>
+<p>This does not necessarily mean the model is incorrect, but it can suggest some kind of human error (a missing negation, wrong parenthesis, etc.), or an inconsistency between experimental data and literature (regulatory graph is often constructed based on known assumptions about the system, prior to the actual Boolean functions). </p>
+<p>In such case, assuming you cannot consult the author(s) of the model about the inconsistency, we recommend simply updating the regulatory graph to make it consistent with the update functions in the model. That is, removing the monotonicity or observability requirement from the problematic regulation.  </p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="importexport"><a class="header" href="#importexport">Import/Export</a></h1>
+<p>Finally, lets discuss how to transfer your models into AEON, as well as sharing them with the world afterwards. AEON has an <code>Import/Export</code> panel accessible in the left menu:</p>
+<p><img src="model_editor/../assets/import_export.png" alt="Import/Export panel" />
+<em>Import/Export panel in AEON.</em></p>
+<p>At the bottom, you can see a collection of four pre-defined example models which you can open to demo AEONs functionality. Each model contains additional description of its properties.</p>
+<blockquote>
+<p>The <code>Local Storage</code> option tries to continuously save the model you are working on into the local storage of your browser. If you accidentally reload your editor and lose some unfinished work, you can try to recover it from this local storage.</p>
+</blockquote>
+<h3 id="sbml-qual"><a class="header" href="#sbml-qual">SBML-qual</a></h3>
+<p>AEON should be fully compatible with <a href="http://sbml.org/Documents/Specifications/SBML_Level_3/Packages/Qualitative_Models_%28qual%29">SBML-qual</a> models. You can therefore both import and export <code>.sbml</code> models from AEON. However, there are a few restrictions to keep in mind:</p>
+<ul>
+<li>AEON only supports alphanumeric names with underscores, while SBML also supports other special characters (for example<code>[]</code>). During import, AEON will replace all conflicting characters with underscores. If this leads to a name clash, it also adds a unique ID to the name of each variable. </li>
+<li>AEON will try to import layout information from the SBML file, but the layout may be incompatible (some tools use a <code>[0,1]</code> coordinate system, which makes the layout very small), or completely missing. In such case, all variable nodes will appear at the same position. You can then apply the automatic layout to better visualise the network.</li>
+<li>SBML does not have explicit support for observability. If a regulator appears in an update function, AEON will import this regulation as observable. If the regulator is completely missing in the function, it will be imported as non-observable.</li>
+<li>SBML may contain variables with unspecified update functions. These are naturally imported as implicitly parametrised. However, there is no support for explicit parameters. To implement this functionality, if a model contains explicit parameters, we export the update function with a <code>&lt;csymbol&gt;</code> MathML element (used to denote arbitrary function invocation). This can be imported back into AEON, but won't be interpretable in other tools that follow the SBML standard. You can disable this behaviour by using the <code>SBML (instantiated)</code> button. In this mode, AEON will pick some arbitrary instantiation for each parameter and thus export a valid SBML.</li>
+</ul>
+<h3 id="aeon-format"><a class="header" href="#aeon-format">Aeon format</a></h3>
+<p>Since SBML is quite hard to edit by hand, as well as parse correctly, we also provide a simplified text based format. In this format, the regulatory graph is described as a list of edges, where each edge is encoded as <code>regulator [-&gt;,-|,-?,-&gt;?,-|?,-??] target</code>. Here, <code>regulator</code> and <code>target</code> are the names of the network variables, and the arrow connecting them describes the type of regulation. Then <code>-&gt;</code> denotes activation, <code>-|</code> inhibition and <code>-?</code> is unspecified monotonicity. Finally, an extra <code>?</code> signifies that the regulation is non-observable.</p>
+<p>An update function for variable <code>X</code> is written as <code>$A: function</code>, where the format of the actual  functions in <code>.aeon</code> files is the same as in the edit fields in the AEON interface. Additional information (model name, description and layout) is encoded in comments (lines starting with <code>#</code>). The order of declarations is not taken into account. Example of <code>.aeon</code> model:</p>
+<pre><code>    #name:Asymmetric Cell Division A
+    #description:Lorem Ipsum....
+    #position:CtrA:419,94
+    CtrA -&gt; CtrA
+    GcrA -&gt; CtrA
+    CcrM -| CtrA
+    SciP -| CtrA
+    $CtrA: CtrA &amp; GcrA &amp; !CcrM &amp; !SciP
+    #position:GcrA:325,135
+    CtrA -| GcrA
+    DnaA -&gt; GcrA
+    $GcrA: !CtrA | DnaA
+    #position:CcrM:462,222
+    CtrA -&gt; CcrM
+    CcrM -| CcrM
+    SciP -| CcrM
+    $CcrM: CtrA | f(CcrM, SciP)
+    #position:SciP:506,133
+    CtrA -&gt; SciP
+    DnaA -| SciP
+    #position:DnaA:374,224
+    CtrA -&gt; DnaA
+    GcrA -| DnaA
+    DnaA -| DnaA
+    CcrM -&gt; DnaA
+    $DnaA: g(CtrA, GcrA, DnaA) &amp; CcrM
+</code></pre>
+<blockquote>
+<p>Note that due to this encoding, <code>.aeon</code> technically can't represent a variable with no incoming or outgoing regulations. Such variable may be lost during export.</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="attractor-bifurcation"><a class="header" href="#attractor-bifurcation">Attractor Bifurcation</a></h1>
+<p>In this chapter, you will learn how to study the long term behaviour of Boolean networks using AEON. Specifically, we refer to this analysis as <em>attractor bifurcation</em>, because it examines how parameters influence the long term behaviour (attractors) of a particular Boolean network.</p>
+<p>Attractors are subgraphs of the asynchronous state transition graph of the Boolean network. Recall that this graph consists of <em>states</em> which assign Boolean value to each variable of the network, and <em>transitions</em> which correspond to applications of individual update functions. Then, attractor consists of states that, once reached, cannot be escaped. Informally, these are the regions where the network eventually converges to, and stays forever. In terms of graph theory, these are the bottom (terminal) strongly connected components of the state transition graph. </p>
+<p>In AEON, we distinguish between three main types of attractors:</p>
+<ul>
+<li><em>Stable attractor</em> is an attractor which consists of a single state. This type of attractor is also called a <em>sink</em>.</li>
+<li><em>Oscillating attractor</em> is a cycle of states. The length of the cycle is its <em>period</em>, hence this type of attractor is sometimes also referred to as <em>periodic</em>.</li>
+<li><em>Disordered attractor</em> is an arbitrary set of states consisting of multiple connected cycles. This type of attractor is also called <em>aperiodic</em>.</li>
+</ul>
+<p><img src="attractor_bifurcation/../assets/attractor_types.png" alt="Attractor Types" />
+<em>Three types of attractors. Notice that each type is labelled with an appropriate icon.</em></p>
+<p>To compute the attractors of the network, click <code>Start Analysis</code> in the left menu. Keep in mind that for large models (especially with a lot of parameters), this process can take a long time. The compute engine color should change to orange, and you should find a (very) approximate progress of the computation in the compute engine panel. Here, you can also cancel the current computation.</p>
+<p><img src="attractor_bifurcation/../assets/computation.gif" alt="Computation" />
+<em>Starting and cancelling a computation.</em></p>
+<blockquote>
+<p>Due to the nature of the problem, it is typically not possible to accurately predict how long it will take to compute the results. The progress corresponds to the number of states eliminated as &quot;non-attractor&quot; states so far, however, this is only meaningful when the attractors are relatively small. Also, as discussed previously, AEON compute engine can only run one computation at a time. If you need to run multiple experiments simultaneously, we recommend running multiple compute engines.</p>
+</blockquote>
+<p>Once the computation is finished, you should be taken to the <code>Results</code> panel, where you can see the overview of the <em>attractor bifurcation function</em>. If your model has no parameters, the function has one row showing the types of attractors in your network (behaviour class). In a parametrised model, there are usually multiple rows, each showing you the <em>number of parametrisations</em> (witness count) which produce a specific type of behaviour.</p>
+<p><img src="attractor_bifurcation/../assets/results.png" alt="Results" />
+<em>An overview of an attractor bifurcation function of a parametrised Boolean network. There are 6 behaviour classes, two having an oscillating attractor and two having a disordered attractor. Remaining attractors are stable.</em></p>
+<blockquote>
+<p>Note that the attractors that fall into the individual behaviour classes may not have identical state space. Only their type is equivalent. For example, a class with a single stable attractor can actually cover many distinct stable states. However, in every parametrisation (for that class), AEON guarantees there is exactly one stable state. You can then use stability analysis to examine how the values of variables differ in various conditions.</p>
+</blockquote>
+<p>From here, you can continue in different directions:</p>
+<ul>
+<li>You can generate a <code>Witness</code> for each behaviour class. This is a fully specified Boolean network (no parameters) that exhibits the attractors as described by the behaviour class.</li>
+<li>You can explore the state space of the discovered attractors by clicking <code>Attractors</code>.</li>
+<li>You can explore the dependence between attractors and behaviour classes using a decision tree (<code>Explore Bifurcation Function</code>).</li>
+<li>You can examine stable/unstable/switched variables in the attractors of a particular behaviour class (<code>Explore Bifurcation Function</code>).</li>
+</ul>
+<p>We discuss these methods in the following sections.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="state-space-explorer"><a class="header" href="#state-space-explorer">State space explorer</a></h1>
+<p>If you click the <code>Attractors</code> button in the <code>Results</code> panel, a state space explorer appears with the exact representation of the attractors discovered in the network for that particular behaviour class.</p>
+<p>You can click each state to see a breakdown of the variables which are true (green) or false (red) in said state. In an oscillating or disordered attractor, the state labels will contain a dash (<code>-</code>) in place of variables which have a fixed (stable) value in the whole attractor. They will be also shown as grey in the variable values list. This way, you can quickly visually distinguish which variables are fixed and which are being updated in the attractor.</p>
+<p>However, if your network is parametrised, remember that this visualisation always shows attractors of a fully specified Boolean network that was picked from the particular behaviour class. That is, state space of attractors in other parametrisations can be different. To show the update functions used in this particular network, you can click the <code>Function</code> button in the top left. </p>
+<p><img src="attractor_bifurcation/../assets/state_space.gif" alt="Attractor State Space" />
+<em>Exploring the states of a disordered attractor.</em></p>
+<blockquote>
+<p>Keep in mind that in a large network, you can use the <code>Find...</code> functionality of your browser to quickly highlight the important variables in the list of variable values. </p>
+</blockquote>
+<p>Finally, if the attractor is very large (approx. &gt;5.000 states), we can't easily display it in a browser. We thus only show a simplified view of the attractor compressed into two states. In these two states, the stable variables have the values with which they appear in the attractor, and the unstable values simply all switch between <code>true</code> and <code>false</code> in one transition:</p>
+<p><img src="attractor_bifurcation/../assets/compressed_attractor.png" alt="Compressed Attractor" />
+<em>A view of a large compressed attractor.</em></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="bifurcation-decision-trees"><a class="header" href="#bifurcation-decision-trees">Bifurcation decision trees</a></h1>
+<p>To follow along with this section, you can download the <code>.aeon</code> model we will be using <a href="attractor_bifurcation/../assets/example_simple_tree.aeon">here</a>. After loading it into AEON, you should see that the model has 66 variables and 13 parameters. Here, the parameters correspond to the <em>input</em> nodes of the regulatory graph, i.e. variables with no incoming regulations. Computing attractors for this model should take somewhere between 30 and 60 seconds. </p>
+<p>The model can exhibit two behaviour classes: One with a stable attractor, and one with a disordered attractor. However, it is not clear which conditions lead to these two different classes! To explore this further, open the <code>Bifurcation Function Explorer</code>.</p>
+<p>In this window, we will be constructing a <em>bifurcation decision tree</em> which describes how parameters alter the behaviour of the network. This decision tree consists of three types of nodes:</p>
+<ul>
+<li>A <em>leaf</em> node corresponds to a set of parametrisations which admit only a single behaviour class.</li>
+<li>A <em>mixed</em> node corresponds to a set of parametrisations which admit multiple behaviour classes.</li>
+<li>A <em>decision</em> node splits the parametrisations based on a value of a specific parameter. </li>
+</ul>
+<p>Our goal will be to gradually turn <em>mixed</em> nodes into <em>leaf</em> or <em>decision</em> nodes to uncover which parameters influence the presence of different attractors in the network.</p>
+<p>Initially, the tree contains a single mixed node with all admissible parametrisations of the network. By clicking the node, we reveal an overview similar to the <code>Results</code> panel in the main AEON window. However, we can also turn this mixed node into a decision node using the <code>Make Decision</code> button. This button will cause AEON to compute possible impact of picking different parameters as decision <em>attributes</em>. You will then be presented with a list of <em>attributes</em> (i.e. parameters) that you can use to split the mixed node into two. For each decision attribute, AEON shows you the impact of that decision on the behavior classes in the mixed node. If the decision isolates one behaviour class from the rest, a leaf node with that class will appear. Otherwise, a new mixed node is created.</p>
+<p><img src="attractor_bifurcation/../assets/making_a_decision.gif" alt="Making a decision" />
+<em>Creating decision nodes. Here, a parameter <code>sigA</code> is selected as the decision attribute, creating one leaf node with only disordered attractors, and one mixed node.</em></p>
+<p>AEON will automatically sort the attributes based on how likely it is that they lead to a concise decision tree. We use <a href="https://en.wikipedia.org/wiki/Information_gain_in_decision_trees">information gain</a> as the primary sorting criterion. However, you can also pick from other sorting heuristics:</p>
+<ul>
+<li>Total number of behaviour classes in both branches after making the decision. </li>
+<li>Number of parametrisations in the positive or negative branch. </li>
+<li>Number of parametrisations in the largest class (<em>majority</em>) of the positive/negative branch.</li>
+<li>Alphabetical sort.</li>
+</ul>
+<p>There is generally no &quot;best&quot; decision attribute. The attribute you select usually depends on what you are trying to achieve with your decision tree. On the one hand, if you already have experimental data that you are trying to reproduce, you may be restricted to a set of measured/controllable parameters. On the other hand, if you are trying to explain the presence of a particular behaviour class, you may want to minimise the number of decisions necessary to isolate said class. And so on.</p>
+<p>In our case, AEON will suggest <code>glucose</code> as the next decision attribute, producing the following tree:</p>
+<p><img src="attractor_bifurcation/../assets/simple_tree.png" alt="Simple Decision Tree" />
+<em>A decision tree for the example model.</em></p>
+<p>As you can see, all mixed nodes are now gone. This is interesting, because as you may recall, the network has 13 parameters in total. However, only two of these parameters seem to actually play a role in the type of attractors appearing in the network (the remaining parameters can still determine what specific values the network variables take in the attractors -- we will explore this in the section about stability analysis). Furthermore, we can also clearly see that to bring the network into a stable state, it is sufficient to set <code>sigA=true</code> and <code>glucose=false</code>.</p>
+<blockquote>
+<p>If you want to, you can now delete the decision nodes (select a node and click a red <code>X</code> in its corner) and try a different combination of decision attributes. You should discover that for this particular model, the remaining parameters indeed play no role in determining the attractor types: you will eventually have to make decisions on <code>sigA</code> and <code>glucose</code> in either case.</p>
+</blockquote>
+<p>You can also generate a <code>Witness</code> network and explore <code>Attractor</code> state space for each leaf node of the tree, just as you could in the overview table of the bifurcation function. Furthermore, you can ask AEON to automatically expand a mixed node up to a certain depth using the <code>Auto Expand</code> function (AEON will use information gain to select the decision attributes).</p>
+<h3 id="decision-attributes-of-unknown-boolean-functions"><a class="header" href="#decision-attributes-of-unknown-boolean-functions">Decision attributes of unknown Boolean functions</a></h3>
+<p>As you may have noticed, up to this point, the parameters of the network were always constants that can be either <code>true</code> or <code>false</code>, so it was simple to make decision nodes. If a network contains an uninterpreted function as a parameter (for example, recall the <code>C | f(A, B)</code> we used in the section about parametrised networks), it is not very clear how such a function can appear in a decision tree.</p>
+<p>One option is to simply decide based on specific values in the function table. For example, <code>f(0,1)</code> could be a decision attribute that fixes the value of <code>f(0,1)</code> to be either <code>true</code> or <code>false</code>. However, it is often very hard to understand how a decision tree with such attributes translates to real life conditions. Specifically, if we want to test such condition in the real world, we would have to ensure that both inputs of the function are fixed to a specific value, which may not be always possible.</p>
+<p>We thus also admit a different type of decision attributes for these parameters. We say that an input <code>X</code> is <em>essential</em> in function <code>f</code> if the value of <code>f</code> depends on the value of <code>X</code> (recall the observability property in regulatory graphs). We can then generalize this property further, and say that <code>X</code> is essential in <code>f</code> when <code>Y=true</code>. This means that not only <code>f</code> has to depend on the value of <code>X</code>, it has to depend on it when <code>Y=true</code>.</p>
+<p>This kind of property should be easier to test and understand, because (a) we are only fixing a partial context (<code>Y=true</code>) for the function, instead of the entire input vector, and (b) we are clearly stating a variable (<code>X</code>) that is significant in determining the resulting value of the function in that context.</p>
+<p><img src="attractor_bifurcation/../assets/advanced_attributes.png" alt="Advanced Decision Attributes" />
+<em>Example of a basic uninterpreted function constraint (implicitly parametrised function of variable <code>CcrM</code> is true for <code>CcrM=CtrA=SciP=false</code>), as well as an essentiality constraint (variable <code>CtrA</code> influences the outcome of the implicit function of <code>DnaA</code> when <code>CcrM=GcrA=false</code>).</em></p>
+<p>To see these attributes in action, you can explore the decision tree of the model which we will now use to discuss trees with reduced precision...</p>
+<h3 id="reduced-precision-trees"><a class="header" href="#reduced-precision-trees">Reduced precision trees</a></h3>
+<p>In some cases, the decision tree is not very concise and can be hard to read. For example, let's consider another version of the <code>G2A</code> model available <a href="attractor_bifurcation/../assets/g2a.aeon">here</a>. This model is highly parametrised (in a rather unrealistic way nonetheless), and as a result, its bifurcation decision tree is quite large. However, in a lot of its nodes, there is a distinctive <em>majority</em> behaviour class that appears significantly more often than other classes. </p>
+<p>In practice, we may want to allow a node with such a class to be regarded as a leaf, thus eliminating the remaining edge cases from the tree. In the bottom right corner of the AEON interface, you should see a <code>Precision</code> slider. By adjusting this slider, you specify what percentage of parametrisations needs to fall into a single class for a node to be accepted as a leaf. By default, this is set to the &quot;exact&quot; precision of 100%, however, you can reduce the number to collapse less likely branches of the tree into leaves: </p>
+<p><img src="attractor_bifurcation/../assets/tree_precision.gif" alt="Tree Precision" />
+<em>Collapsing branches of a complex tree with more than 90% majority behaviour class into leaves.</em></p>
+<p>In a highly parametrised model, this is a great tool for focusing only on the most statistically significant types of behaviour.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stability-analysis"><a class="header" href="#stability-analysis">Stability analysis</a></h1>
+<p>In many real world situations, what we are truly interested in is not only the type of attractor (stability, oscillation, disorder), but also the values of some significant variables in that attractor. In particular, in an attractor, a variable can be <em>stable</em> (always <code>true</code>, or always <code>false</code>) or unstable (changing its value depending on the attractor state). Recall that in the section about state space visualisation, we saw a disordered attractor with three unstable variables (<code>v_1</code>, <code>v_2</code>, and <code>v_4</code>), and one stable variable (<code>v_3</code>). In the presence of multiple attractors, we also say that a variable may exhibit <em>switched</em> behaviour if there are multiple attractors such that the stability properties of the variable change from attractor to attractor.</p>
+<p>All these properties can change with respect to parameters, but don't alter the attractor type. To analyse these types of situations, AEON contains a <code>Stability Analysis</code> functionality which can further divide the parameter space based on the stability of individual variables.</p>
+<p>You can run stability analysis for any node of the bifurcation decision tree (even mixed or decision nodes). This way, you can quickly assess how the stability of variables changes in your tree. Furthermore, you can also restrict the analysis based on the attractor type to only show how the variables change in these particular attractors. Finally, for each case, you can generate a <code>Witness</code> network as well as visualise the <code>Attractor</code> state space. </p>
+<p><img src="attractor_bifurcation/../assets/stability_analysis.png" alt="Stability Analysis" />
+<em>Stability analysis result for the <code>Orlando</code> example model. <code>[true]</code>/<code>[false]</code>/<code>[unstable]</code> represent situations where the variable always exhibits one type of behaviour, while multiple values (e.g. <code>[true,false]</code> or <code>[true,unstable]</code>) represent a switching behaviour.</em></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="building-aeon"><a class="header" href="#building-aeon">Building Aeon</a></h1>
+<p>AEON lives in two Github repositories and is available under a permissive MIT license. First repository manages the web frontend, and the second one is responsible for the compute engine.</p>
+<h3 id="deploying-the-web-frontend"><a class="header" href="#deploying-the-web-frontend">Deploying the web frontend</a></h3>
+<p>If you want to run your own version of the AEON frontend, you simply need to download the latest source files from the <a href="https://github.com/sybila/biodivine-aeon-client">aeon-client</a> repository (or download the sources for a particular release based on its tag). Then, you can either open the <code>index.html</code> file in your favourite browser, or deploy the whole directory to any webserver that is able to serve static content.</p>
+<h3 id="compiling-the-compute-engine"><a class="header" href="#compiling-the-compute-engine">Compiling the compute engine</a></h3>
+<p>To run your own version of the compute engine, you need to download the source files from the <a href="https://github.com/sybila/biodivine-aeon-server">aeon-server</a> repository (again, you can either download the latest version from the <code>master</code> branch, or sources for a specific version based on its tag). To run or compile the compute engine, you will need the Rust nightly compiler. We recommend following the installation instructions on <a href="https://www.rust-lang.org/">rust-lang.org</a>. These will install the whole distribution into your local <code>~/.cargo</code> folder, hence they do not require any elevated privileges (as opposed to some OS package managers).</p>
+<blockquote>
+<p>Once you have completed the setup process, you need to switch from <code>stable</code> to the <code>nightly</code> compiler by executing: </p>
+<pre><code>rustup default nightly
+</code></pre>
+</blockquote>
+<p>Once you have the compiler ready, you can navigate to the source files you downloaded from Github, and execute </p>
+<pre><code>cargo run --release
+</code></pre>
+<p>to immediately compile and start the compute engine. Alternatively, you can also run </p>
+<pre><code>cargo build --release
+</code></pre>
+<p>which will generate the compute engine binary in <code>./target/release/biodivine-aeon-server</code>.</p>
+<h3 id="building-this-manual"><a class="header" href="#building-this-manual">Building this manual</a></h3>
+<p>This manual is available in the <code>aeon-server</code> repository in the <code>manual</code> directory, and is managed using the <a href="https://github.com/rust-lang/mdBook">mdBook</a> tool. You can follow the instructions on their website to install <code>mdbook</code>. Once you have <code>mdbook</code> ready, you simply need to navigate to the <code>manual</code> folder and run <code>mdbook build</code> to write the output files into the <code>book</code> directory (from here, you can deploy them as a static website). Alternatively, you can run <code>mdbook serve</code> to open a local webserver at <code>http://localhost:3000</code> which serves the manual from your machine and automatically updates when you change its contents.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

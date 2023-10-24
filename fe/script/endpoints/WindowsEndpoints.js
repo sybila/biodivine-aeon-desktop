@@ -24,6 +24,10 @@ let WindowsEndpoints = {
             label: windowLabel,
             title: windowTitle
         })
+    },
+
+    openManualWindow() {
+        return TAURI.invoke('open_manual_window', {})
     }
 
 }

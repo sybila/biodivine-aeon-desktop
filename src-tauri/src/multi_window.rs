@@ -3,6 +3,14 @@ use tauri::{CustomMenuItem, Menu, Submenu};
 /// Initialize system menu used in model window.
 pub fn menu_init() -> Menu {
     let help = CustomMenuItem::new("help", "About/Help");
+    let manual = CustomMenuItem::new("manual", "Manual");
+
+    let about_submenu = Submenu::new(
+        "About",
+        Menu::new()
+            .add_item(help)
+            .add_item(manual)
+    );
 
     // Example models submenu items
     let g2a = CustomMenuItem::new("g2a", "G2A - Cell Division");
@@ -55,7 +63,7 @@ pub fn menu_init() -> Menu {
             .add_submenu(export_submenu),
     );
 
-    Menu::new().add_item(help).add_submenu(model_submenu)
+    Menu::new().add_submenu(about_submenu).add_submenu(model_submenu)
 }
 
 /// Open new window with model editor.
@@ -113,5 +121,20 @@ pub async fn open_tree_explorer_window(label: &str, title: &str, handle: tauri::
     .title(title)
     .build()
     .expect("Error while creating new model window.");
+    Ok(())
+}
+
+/// Open manual window.
+#[tauri::command]
+pub async fn open_manual_window(handle: tauri::AppHandle) -> Result<(), ()> {
+    tauri::WindowBuilder::new(
+        &handle,
+        "manual-window",
+        tauri::WindowUrl::App("manual/book/index.html".into()),
+    )
+        .inner_size(1000f64, 700f64)
+        .title("Manual")
+        .build()
+        .expect("Error while creating new model window.");
     Ok(())
 }

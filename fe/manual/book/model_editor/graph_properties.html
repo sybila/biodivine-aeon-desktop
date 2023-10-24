@@ -1,0 +1,251 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Regulatory graph properties - AEON 2021: Manual</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../foreword.html">Foreword</a></li><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Running AEON</a></li><li class="chapter-item expanded "><a href="../compute_engine.html"><strong aria-hidden="true">2.</strong> AEON Compute Engine</a></li><li class="chapter-item expanded "><a href="../model_editor/chapter.html"><strong aria-hidden="true">3.</strong> Model Editor</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../model_editor/variables_and_regulations.html"><strong aria-hidden="true">3.1.</strong> Variables and regulations</a></li><li class="chapter-item expanded "><a href="../model_editor/update_functions.html"><strong aria-hidden="true">3.2.</strong> Model panel and update functions</a></li><li class="chapter-item expanded "><a href="../model_editor/parametrised_networks.html"><strong aria-hidden="true">3.3.</strong> Parametrised networks</a></li><li class="chapter-item expanded "><a href="../model_editor/graph_properties.html" class="active"><strong aria-hidden="true">3.4.</strong> Regulatory graph properties</a></li><li class="chapter-item expanded "><a href="../model_editor/import_export.html"><strong aria-hidden="true">3.5.</strong> Import/Export</a></li></ol></li><li class="chapter-item expanded "><a href="../attractor_bifurcation/chapter.html"><strong aria-hidden="true">4.</strong> Attractor Bifurcation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../attractor_bifurcation/state_space.html"><strong aria-hidden="true">4.1.</strong> State space explorer</a></li><li class="chapter-item expanded "><a href="../attractor_bifurcation/decision_trees.html"><strong aria-hidden="true">4.2.</strong> Bifurcation decision trees</a></li><li class="chapter-item expanded "><a href="../attractor_bifurcation/stability_analysis.html"><strong aria-hidden="true">4.3.</strong> Stability analysis</a></li></ol></li><li class="chapter-item expanded "><a href="../build.html"><strong aria-hidden="true">5.</strong> Building AEON</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">AEON 2021: Manual</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="regulatory-graph-properties"><a class="header" href="#regulatory-graph-properties">Regulatory graph properties</a></h1>
+<p>In our regulatory graphs, to this point, we assumed each regulation should have some effect on the output of the update function. This is a fairly reasonable assumption (if the regulation has no effect, it has no reason to be in the graph). However, we often have some additional information about the nature of the regulation.</p>
+<h3 id="regulation-monotonicity"><a class="header" href="#regulation-monotonicity">Regulation monotonicity</a></h3>
+<p>Many biological processes are either positively or negatively monotonous. In such case, we can mark a regulation as <em>activation</em> (positive monotonicity), or <em>inhibition</em> (negative monotonicity). To do this, you can either use the corresponding button in the <em>regulation menu</em>, or toggle the regulation status in the model panel.</p>
+<p><img src="../assets/monotonicity.gif" alt="Toggling monotonicity" />
+<em>Changing monotonicity of regulations.</em></p>
+<p>Notice that as we change the monotonicity of a regulation, the number of instantiations of the update function also changes. This is because the number of Boolean functions with that specific property is smaller. Specifically, if a regulation is positively monotonous, we expect that increasing the value of the regulator cannot decrease the value of the output, and vice versa, when the monotonicity is negative, increasing the value of the regulator cannot increase the function output.</p>
+<p>Specifically, if we set the regulation <code>B -&gt; C</code> as activation, we reduce the number of instantiations of <code>f(A, B)</code> to only four options: <code>A &amp; B</code>, <code>!A &amp; B</code>, <code>A | B</code>, <code>!A | B</code>. In particular, notice that in each such function, <code>B</code> appears in its positive form (without negation). We could further limit the number of instantiations by also setting a monotonicity for the <code>A -&gt; C</code> relationship.</p>
+<p>The regulation <code>C -&gt; C</code> is slightly different. The dependence <code>C -&gt; C</code> is already fully specified in the update function. Changing the properties of the regulation therefore cannot change the number of instantiations. However, it can make the function completely invalid if the properties given by the regulatory graph do not match the properties of the update function. Since in our case, <code>C</code> appears positively in <code>C | f(A, B)</code>, AEON reports an error when the regulation is marked as an inhibition, but is ok with either activation or unspecified monotonicity.</p>
+<blockquote>
+<p>When possible, AEON will try to infer which regulation properties cause the function to be invalid. You can then update the properties accordingly.</p>
+</blockquote>
+<p><img src="../assets/invalid_regulations.png" alt="Invalid regulation properties" />
+<em>AEON explains why a function is not consistent with its regulatory graph.</em></p>
+<h3 id="observability"><a class="header" href="#observability">Observability</a></h3>
+<p>While it is often reasonable to expect each regulation to have some effect on the regulated variable, sometimes we may not be sure if a regulation is indeed (always) needed. In such case, we can mark the regulation as <em>non-observable</em>. </p>
+<p>AEON will then also consider instantiations where the argument does not have any impact on the resulting function value. To set this property, you can again use either the regulation menu, or the model panel:</p>
+<p><img src="../assets/observability.gif" alt="Toggle observability" />
+<em>Changing observability of regulations.</em></p>
+<p>Notice that as we remove the observability requirements, the number of instantiations grows. In the end, the function has 15 possible instantiations. This includes all 16 possible binary Boolean functions except for one: <code>true</code>.</p>
+<p>If we set <code>f(A, B) = true</code>, the update function would be <code>C | true</code>, which is equivalent to <code>true</code>. However, we still have <code>C -&gt; C</code> marked as observable, and a constant function does not depend on <code>C</code>. Meanwhile, instantiation <code>f(A, B) = false</code> is fine, because <code>C | false</code> is equivalent to <code>C</code>, which clearly still depends on the value of <code>C</code>.</p>
+<p>Also, note that a function can &quot;appear&quot; to depend on a value of some variable, while in fact it does not. Take a simple example of <code>(A &amp; B) | A</code>. If <code>A=true</code>, this function is always <code>true</code>, if <code>A=false</code>, this function is always <code>false</code>, regardless of the value of <code>B</code>. AEON will also detect and report these types of problems.</p>
+<h3 id="inconsistencies-in-real-world-models"><a class="header" href="#inconsistencies-in-real-world-models">Inconsistencies in real world models</a></h3>
+<p>Note that in many cases, you can encounter real-world models where AEON identifies some structural inconsistencies as described in this section. In such case, you cannot directly analyse the original model. </p>
+<p>This does not necessarily mean the model is incorrect, but it can suggest some kind of human error (a missing negation, wrong parenthesis, etc.), or an inconsistency between experimental data and literature (regulatory graph is often constructed based on known assumptions about the system, prior to the actual Boolean functions). </p>
+<p>In such case, assuming you cannot consult the author(s) of the model about the inconsistency, we recommend simply updating the regulatory graph to make it consistent with the update functions in the model. That is, removing the monotonicity or observability requirement from the problematic regulation.  </p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../model_editor/parametrised_networks.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../model_editor/import_export.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../model_editor/parametrised_networks.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../model_editor/import_export.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

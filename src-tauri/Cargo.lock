@@ -177,7 +177,7 @@ checksum = "383d29d513d8764dcdc42ea295d979eb99c3c9f00607b3692cf68a431f7dca72"
 
 [[package]]
 name = "biodivine-aeon-desktop"
-version = "0.1.1"
+version = "0.1.0"
 dependencies = [
  "biodivine-lib-bdd",
  "biodivine-lib-param-bn",
