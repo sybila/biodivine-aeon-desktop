@@ -286,8 +286,10 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 		Dialog.errorMessage("No node selected.")
 	}
 
+	UI.isLoading(true)
 	TreeExplorerEndpoints.autoExpandBifurcationTree(nodeId, depth)
 		.then((okResponseObject) => {
+			UI.isLoading(false)
 			if (okResponseObject.length > 0) {
 				for (node of okResponseObject) {
 					CytoscapeEditor.ensureNode(node);
@@ -305,6 +307,7 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 			}
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 
@@ -312,8 +315,10 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 }
 
 function loadBifurcationTree(fit = true) {
+	UI.isLoading(true)
 	ComputationResultsEndpoints.getBifurcationTree()
 		.then((okResponseObject) => {
+			UI.isLoading(false)
 			if (okResponseObject.length > 0) {
 				CytoscapeEditor.removeAll();	// remove old tree if present
 				for (node of okResponseObject) {
@@ -333,16 +338,20 @@ function loadBifurcationTree(fit = true) {
 			}
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 }
 
 function setPrecision(precision) {
+	UI.isLoading(true)
 	TreeExplorerEndpoints.applyTreePrecision(precision)
 		.then((okResponse) => {
+			UI.isLoading(false)
 			loadBifurcationTree(false);
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 }
@@ -447,9 +456,10 @@ function vector_to_string(vector) {
 function initStabilityButton(id, button, dropdown, container) {
     button.onclick = function() {
         let behaviour = dropdown.value;
-		console.log(id)
+		UI.isLoading(true)
 		TreeExplorerEndpoints.getStabilityData(id, behaviour)
 			.then((okResponseObject) => {
+				UI.isLoading(false)
 				let content = "<h4>Stability analysis:</h4>";
 				for (item of okResponseObject) {
 					let variableName = item.variable;
@@ -466,6 +476,7 @@ function initStabilityButton(id, button, dropdown, container) {
 				container.innerHTML = content;
 			})
 			.catch((errorMessage) => {
+				UI.isLoading(false)
 				Dialog.errorMessage("Cannot load stability data: " + errorMessage)
 			})
     }

@@ -199,7 +199,7 @@ pub fn cancel_computation(window_session_key: &str) -> Result<String, String> {
 
 /// Get result of computation.
 #[tauri::command]
-pub fn get_results(window_session_key: &str) -> Result<Value, ErrorMessage> {
+pub async fn get_results(window_session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_computation: Arc<RwLock<Option<Computation>>> =
         get_locked_computation(window_session_key);
     let read_computation = locked_computation.read().unwrap();

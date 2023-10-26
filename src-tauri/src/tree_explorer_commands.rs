@@ -9,7 +9,7 @@ use json::{array, object, JsonValue};
 use serde_json::{from_str, Value};
 
 #[tauri::command]
-pub fn auto_expand(
+pub async fn auto_expand(
     node_id: String,
     depth: String,
     window_session_key: &str,
@@ -61,7 +61,7 @@ pub fn get_attributes(node_id: String, window_session_key: &str) -> Result<Value
 }
 
 #[tauri::command]
-pub fn apply_tree_precision(
+pub async fn apply_tree_precision(
     precision: String,
     window_session_key: &str,
 ) -> Result<String, ErrorMessage> {
@@ -157,7 +157,7 @@ pub fn revert_decision(node_id: String, window_session_key: &str) -> Result<Valu
 }
 
 #[tauri::command]
-pub fn get_stability_data(
+pub async fn get_stability_data(
     node_id: String,
     behaviour_str: String,
     window_session_key: &str,

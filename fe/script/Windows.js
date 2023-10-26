@@ -58,31 +58,40 @@ let Windows = {
     },
 
     openWitnessWindow(witness) {
+        UI.isLoading(true)
         ComputationResultsEndpoints.getWitness(witness)
             .then((witness) => {
+                UI.isLoading(false)
                 this.newWitnessWindow(witness)
             })
             .catch((errorMessage) => {
+                UI.isLoading(false)
                 Dialog.errorMessage(errorMessage)
             })
     },
 
     openTreeWitnessWindow(node) {
+        UI.isLoading(true)
         ComputationResultsEndpoints.getTreeWitness(node)
             .then((witness) => {
+                UI.isLoading(false)
                 this.newWitnessWindow(witness)
             })
             .catch((errorMessage) => {
+                UI.isLoading(false)
                 Dialog.errorMessage(errorMessage)
             })
     },
 
     openStabilityWitnessWindow(node, behavior, variable, vector) {
+        UI.isLoading(true)
         ComputationResultsEndpoints.getStabilityWitness(node, behavior, variable, vector)
             .then((witness) => {
+                UI.isLoading(false)
                 this.newWitnessWindow(witness)
             })
             .catch((errorMessage) => {
+                UI.isLoading(false)
                 Dialog.errorMessage(errorMessage)
             })
     },

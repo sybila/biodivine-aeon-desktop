@@ -10,8 +10,10 @@ let Results = {
 	},
 
 	show() {
+		UI.isLoading(true)
 		ComputationEndpoints.getResults()
 			.then((resultsObject) => {
+				UI.isLoading(false)
 				let isPartial = resultsObject["isPartial"]
 				let isCancelled = resultsObject["isCancelled"]
 
@@ -68,6 +70,7 @@ let Results = {
 				}
 			})
 			.catch((errorMessage) => {
+				UI.isLoading(false)
 				Dialog.errorMessage(errorMessage)
 			})
 	},

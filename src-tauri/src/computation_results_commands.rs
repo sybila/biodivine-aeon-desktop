@@ -11,7 +11,7 @@ use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use serde_json::{from_str, Value};
 
 #[tauri::command]
-pub fn get_witness(class_str: String, window_session_key: &str) -> Result<String, ErrorMessage> {
+pub async fn get_witness(class_str: String, window_session_key: &str) -> Result<String, ErrorMessage> {
     let mut class = Class::new_empty();
     for char in class_str.chars() {
         match char {
@@ -49,7 +49,7 @@ pub fn get_witness(class_str: String, window_session_key: &str) -> Result<String
 }
 
 #[tauri::command]
-pub fn get_tree_witness(node_id: String, window_session_key: &str) -> Result<String, ErrorMessage> {
+pub async fn get_tree_witness(node_id: String, window_session_key: &str) -> Result<String, ErrorMessage> {
     let locked_tree = get_locked_tree(window_session_key);
     let read_tree = locked_tree.read().unwrap();
     return if let Some(tree) = read_tree.as_ref() {
@@ -71,7 +71,7 @@ pub fn get_tree_witness(node_id: String, window_session_key: &str) -> Result<Str
 }
 
 #[tauri::command]
-pub fn get_stability_witness(
+pub async fn get_stability_witness(
     node_id: String,
     behaviour_str: String,
     variable_str: String,
@@ -166,7 +166,7 @@ pub fn get_stability_witness(
 }
 
 #[tauri::command]
-pub fn get_attractors(class_str: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
+pub async fn get_attractors(class_str: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
     let mut class = Class::new_empty();
     for char in class_str.chars() {
         match char {
@@ -202,7 +202,7 @@ pub fn get_attractors(class_str: String, window_session_key: &str) -> Result<Val
 }
 
 #[tauri::command]
-pub fn get_tree_attractors(
+pub async fn get_tree_attractors(
     node_id: String,
     window_session_key: &str,
 ) -> Result<Value, ErrorMessage> {
@@ -227,7 +227,7 @@ pub fn get_tree_attractors(
 }
 
 #[tauri::command]
-pub fn get_stability_attractors(
+pub async fn get_stability_attractors(
     node_id: String,
     behaviour_str: String,
     variable_str: String,
@@ -322,7 +322,7 @@ pub fn get_stability_attractors(
 }
 
 #[tauri::command]
-pub fn get_bifurcation_tree(window_session_key: &str) -> Result<Value, ErrorMessage> {
+pub async fn get_bifurcation_tree(window_session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_tree = get_locked_tree(window_session_key);
     let read_tree = locked_tree.read().unwrap();
     if let Some(tree) = read_tree.as_ref() {

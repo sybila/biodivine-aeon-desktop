@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Biodivine/Aeon - Bifurcation tree</title>
     <meta charset="utf-8">
@@ -39,6 +39,7 @@
     <script src="script/endpoints/ComputationResultsEndpoints.js"></script>
     <script src="script/endpoints/WindowsEndpoints.js"></script>
     <script src="script/Windows.js"></script>
+    <script src="script/UI.js"></script>
     <script src="script/CytoscapeTreeEditor.js"></script>
     <script src="script/Computation.js"></script>
     <script src="script/endpoints/TreeExplorerEndpoints.js"></script>
@@ -61,6 +62,13 @@
 </head>
 
 <body onload="init()" id="tree-explorer">
+
+<div id="loading-indicator" class="invisible">
+    <img src="img/progress.gif" alt="loading"/><br><br>Loading...
+</div>
+
+
+<div id="content">
 
 <!-- Do not change it here, this is a placeholder. -->
 <span id="version">v0.0.0</span>
@@ -297,6 +305,9 @@
     Precision: <span id="precision-value">100%</span>
 </div>
 
+
+
+</div>
 
 </body>
 </html>

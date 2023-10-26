@@ -64,6 +64,12 @@
 
     <body onload="init()">
 
+        <div id="loading-indicator" class="invisible">
+            <img src="img/progress.gif"/><br><br>Loading...
+        </div>
+
+        <div id="content">
+
         <!-- Hosts the interactive model editor -->        
         <div id="cytoscape-editor">
         </div>
@@ -191,8 +197,8 @@
                     <span class="hint invisible">Apply Layout</span>
                 </div>
             </div>
+        </div>
 
-            <div id="loading-indicator" class="invisible"><img src="img/progress.gif"/><br><br>Waiting for server...</div>
         </div>
 
     </body>

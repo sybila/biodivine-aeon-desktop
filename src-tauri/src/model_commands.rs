@@ -50,7 +50,7 @@ pub fn check_update_function(data: &str) -> Result<Cardinality, ErrorMessage> {
 /// If everything goes well, return a standard result object with a parsed model, or
 /// error if something fails.
 #[tauri::command]
-pub fn sbml_to_aeon(sbml_string: &str) -> Result<String, ErrorMessage> {
+pub async fn sbml_to_aeon(sbml_string: &str) -> Result<String, ErrorMessage> {
     match BooleanNetwork::try_from_sbml(sbml_string) {
         Ok((model, layout)) => {
             let mut model_string = format!("{}", model); // convert back to aeon
@@ -85,7 +85,7 @@ pub fn read_layout(aeon_string: &str) -> HashMap<String, (f64, f64)> {
 /// which will then be translated into SBML (XML) representation.
 /// Preserve layout metadata.
 #[tauri::command]
-pub fn aeon_to_sbml(aeon_string: &str) -> Result<String, ErrorMessage> {
+pub async fn aeon_to_sbml(aeon_string: &str) -> Result<String, ErrorMessage> {
     match BooleanNetwork::try_from(aeon_string) {
         Ok(network) => {
             let layout = read_layout(aeon_string);
@@ -100,7 +100,7 @@ pub fn aeon_to_sbml(aeon_string: &str) -> Result<String, ErrorMessage> {
 /// Note that this can take quite a while for large models since we have to actually build
 /// the unit BDD right now (in the future, we might opt to use a SAT solver which might be faster).
 #[tauri::command]
-pub fn aeon_to_sbml_instantiated(aeon_string: &str) -> Result<String, ErrorMessage> {
+pub async fn aeon_to_sbml_instantiated(aeon_string: &str) -> Result<String, ErrorMessage> {
     match BooleanNetwork::try_from(aeon_string).and_then(SymbolicAsyncGraph::new) {
         Ok(graph) => {
             let witness = graph.pick_witness(graph.unit_colors());

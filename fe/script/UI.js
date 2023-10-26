@@ -264,10 +264,14 @@ let UI = {
 	},
 
 	isLoading(status) {
+		const windowContent = document.getElementById("content")
+		const loading = document.getElementById("loading-indicator")
 		if (status) {
-			document.getElementById("loading-indicator").classList.remove("invisible");
+			windowContent.classList.add("freeze")
+			loading.classList.remove("invisible")
 		} else {
-			document.getElementById("loading-indicator").classList.add("invisible");
+			windowContent.classList.remove("freeze")
+			loading.classList.add("invisible");
 		}
 	},
 
@@ -296,11 +300,14 @@ let UI = {
         	filename = "model";
         }
 
+		this.isLoading(true)
 		ModelEndpoints.aeonToSbml(aeonModel)
 			.then((sbmlModel) => {
+				this.isLoading(false)
 				this._downloadFile(filename + ".sbml", sbmlModel);
 			})
 			.catch((errorMessage) => {
+				this.isLoading(false)
 				Dialog.errorMessage(errorMessage)
 			})
 	},
@@ -316,11 +323,14 @@ let UI = {
         	filename = "model";
         }
 
+		this.isLoading(true)
 		ModelEndpoints.aeonToSbmlInstantiated(aeonModel)
 			.then((sbmlModel) => {
+				this.isLoading(false)
 				this._downloadFile(filename + "_instantiated.sbml", sbmlModel);
 			})
 			.catch((errorMessage) => {
+				this.isLoading(false)
 				Dialog.errorMessage(errorMessage);
 			})
 	},
@@ -378,11 +388,14 @@ let UI = {
 
 		const sbmlFileContent = await TAURI.fs.readTextFile(filePath);
 
+		this.isLoading(true)
 		ModelEndpoints.sbmlToAeon(sbmlFileContent)
 			.then((model) => {
+				this.isLoading(false)
 				LiveModel.handleAeonModelImport(model);
 			})
 			.catch((errorMessage) => {
+				this.isLoading(false)
 				Dialog.errorMessage(errorMessage);
 			})
 	},
