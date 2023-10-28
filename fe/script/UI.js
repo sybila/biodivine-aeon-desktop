@@ -137,6 +137,7 @@ let UI = {
 				cmp.classList.remove("gone");
 				if (data.error !== null) {
 					status += ", error: " + data.error;
+					cmpStatus.classList.add("orange");
 				}
 				cmpStatus.innerHTML = status;
 				cmpProgress.textContent = data.progress;
