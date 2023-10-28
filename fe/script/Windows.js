@@ -161,7 +161,17 @@ let Windows = {
 
 
     openTreeExplorerWindow() {
-        let treeWindowLabel = "tree-window:" + Date.now()
+        let treeWindowLabel = Computation.getTreeExplorerWindowLabel()
+
+        // If the window is already opened, just focus on it
+        if (treeWindowLabel !== undefined) {
+            const treeWindow = TAURI.window.WebviewWindow.getByLabel(treeWindowLabel)
+            treeWindow.setFocus()
+            return
+        }
+
+        treeWindowLabel = "tree-window:" + Date.now()
+        Computation.setTreeExplorerWindowLabel(treeWindowLabel)
         let windowTitle = Computation.getModelTitle() + ", started: " + new Date(Computation.getWindowTimestamp()).toLocaleTimeString('en-GB')
 
         WindowsEndpoints.openTreeExplorerWindow(treeWindowLabel, windowTitle)

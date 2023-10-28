@@ -1,8 +1,9 @@
 let Computation = {
-    _windowSessionKey: undefined,
+    _windowSessionKey: undefined, // window session key is computation window label
     _lastComputation: undefined,
     _modelTitle: undefined,
     _windowTimestamp: undefined,
+    _treeExplorerWindowLabel: undefined,
 
     setWindowSessionKey(windowSessionKey) {
         this._windowSessionKey = windowSessionKey
@@ -41,6 +42,14 @@ let Computation = {
 
     isActiveComputation() {
         return this._lastComputation !== undefined;
+    },
+
+    getTreeExplorerWindowLabel() {
+        return this._treeExplorerWindowLabel
+    },
+
+    setTreeExplorerWindowLabel(label) {
+        this._treeExplorerWindowLabel = label
     },
 
     update_computation_process() {

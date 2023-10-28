@@ -8,3 +8,10 @@ TAURI.event.listen('send-window-session-key', (event) => {
     // Initialize the window
     showTree()
 });
+
+// Send message to computation window before closing this tree explorer window
+TAURI.window.getCurrent().listen("tauri://close-requested", () => {
+    const computationWindow = TAURI.window.WebviewWindow.getByLabel(Computation.getWindowSessionKey())
+    computationWindow.emit('tree-explorer-window-closed', {})
+    TAURI.window.getCurrent().close()
+})

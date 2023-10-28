@@ -46,3 +46,8 @@ TAURI.window.getCurrent().listen("tauri://close-requested", async () => {
             Dialog.errorMessage(errorMessage)
         })
 })
+
+// Listen for event when tree explorer window is closed
+TAURI.event.listen('tree-explorer-window-closed', () => {
+    Computation.setTreeExplorerWindowLabel(undefined)
+});
