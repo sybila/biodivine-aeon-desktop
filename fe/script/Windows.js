@@ -4,7 +4,7 @@ let Windows = {
     async openModelInNewWindow(modelString) {
         let windowLabel = 'model-window:' + Date.now()
 
-        await WindowsEndpoints.openModelWindow(windowLabel)
+        await WindowsCommands.openModelWindow(windowLabel)
             .then(() => {
                 const newModelWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel)
 
@@ -33,7 +33,7 @@ let Windows = {
 
         let windowTitle = modelTitle + ", started: " + new Date(timestamp).toLocaleTimeString('en-GB')
 
-        WindowsEndpoints.openComputationWindow(windowLabel, windowTitle)
+        WindowsCommands.openComputationWindow(windowLabel, windowTitle)
             .then(() => {
                 const newComputationWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel)
 
@@ -59,7 +59,7 @@ let Windows = {
 
     openWitnessWindow(witness) {
         UI.isLoading(true)
-        ComputationResultsEndpoints.getWitness(witness)
+        ComputationResultsCommands.getWitness(witness)
             .then((witness) => {
                 UI.isLoading(false)
                 this.newWitnessWindow(witness)
@@ -72,7 +72,7 @@ let Windows = {
 
     openTreeWitnessWindow(node) {
         UI.isLoading(true)
-        ComputationResultsEndpoints.getTreeWitness(node)
+        ComputationResultsCommands.getTreeWitness(node)
             .then((witness) => {
                 UI.isLoading(false)
                 this.newWitnessWindow(witness)
@@ -85,7 +85,7 @@ let Windows = {
 
     openStabilityWitnessWindow(node, behavior, variable, vector) {
         UI.isLoading(true)
-        ComputationResultsEndpoints.getStabilityWitness(node, behavior, variable, vector)
+        ComputationResultsCommands.getStabilityWitness(node, behavior, variable, vector)
             .then((witness) => {
                 UI.isLoading(false)
                 this.newWitnessWindow(witness)
@@ -99,7 +99,7 @@ let Windows = {
     openAttractorExplorerWindow(behavior) {
         let explorerWindowLabel = "explorer-window:" + Date.now()
 
-        WindowsEndpoints.openExplorerWindow(explorerWindowLabel)
+        WindowsCommands.openExplorerWindow(explorerWindowLabel)
             .then(() => {
                 const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel)
 
@@ -108,7 +108,7 @@ let Windows = {
                     // Emit to get attractors
                     newExplorerWindow.emit('get-attractors', {
                         behavior: behavior,
-                        windowSessionKey: Computation.getWindowSessionKey()
+                        sessionKey: Computation.getSessionKey()
                     })
                 })
             }).catch((errorMessage) => {
@@ -119,7 +119,7 @@ let Windows = {
     openTreeAttractorExplorerWindow(node) {
         let explorerWindowLabel = "explorer-window:" + Date.now()
 
-        WindowsEndpoints.openExplorerWindow(explorerWindowLabel)
+        WindowsCommands.openExplorerWindow(explorerWindowLabel)
             .then(() => {
                 const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel)
 
@@ -128,7 +128,7 @@ let Windows = {
                     // Emit to get tree attractors
                     newExplorerWindow.emit('get-tree-attractors', {
                         node: node,
-                        windowSessionKey: Computation.getWindowSessionKey()
+                        sessionKey: Computation.getSessionKey()
                     })
                 })
             }).catch((errorMessage) => {
@@ -139,7 +139,7 @@ let Windows = {
     openStabilityAttractorExplorerWindow(node, behavior, variable, vector) {
         let explorerWindowLabel = "explorer-window:" + Date.now()
 
-        WindowsEndpoints.openExplorerWindow(explorerWindowLabel)
+        WindowsCommands.openExplorerWindow(explorerWindowLabel)
             .then(() => {
                 const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel)
 
@@ -151,7 +151,7 @@ let Windows = {
                         behavior: behavior,
                         variable: variable,
                         vector: vector,
-                        windowSessionKey: Computation.getWindowSessionKey()
+                        sessionKey: Computation.getSessionKey()
                     })
                 })
             }).catch((errorMessage) => {
@@ -174,18 +174,41 @@ let Windows = {
         Computation.setTreeExplorerWindowLabel(treeWindowLabel)
         let windowTitle = Computation.getModelTitle() + ", started: " + new Date(Computation.getWindowTimestamp()).toLocaleTimeString('en-GB')
 
-        WindowsEndpoints.openTreeExplorerWindow(treeWindowLabel, windowTitle)
+        WindowsCommands.openTreeExplorerWindow(treeWindowLabel, windowTitle)
             .then(() => {
                 const newTreeWindow = TAURI.window.WebviewWindow.getByLabel(treeWindowLabel)
 
                 // Wait until the new tree explorer window is initialized
                 newTreeWindow.once('ready', () => {
                     // Emit to send window session key
-                    newTreeWindow.emit('send-window-session-key', { windowSessionKey: Computation.getWindowSessionKey() })
+                    newTreeWindow.emit('send-window-session-key', { sessionKey: Computation.getSessionKey() })
                 })
             }).catch((errorMessage) => {
             Dialog.errorMessage(errorMessage)
         })
     },
 
+    openHelpWindow() {
+        const helpWindow = TAURI.window.WebviewWindow.getByLabel("help-window")
+
+        // If the window is already opened, just focus on it
+        if (helpWindow !== null) {
+            helpWindow.setFocus()
+            return
+        }
+
+        WindowsCommands.openHelpWindow()
+    },
+
+    openManualWindow() {
+        const manualWindow = TAURI.window.WebviewWindow.getByLabel("manual-window")
+
+        // If the window is already opened, just focus on it
+        if (manualWindow !== null) {
+            manualWindow.setFocus()
+            return
+        }
+
+        WindowsCommands.openManualWindow()
+    },
 }

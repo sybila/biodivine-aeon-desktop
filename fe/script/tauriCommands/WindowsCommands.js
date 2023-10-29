@@ -1,4 +1,4 @@
-let WindowsEndpoints = {
+let WindowsCommands = {
 
     openModelWindow(windowLabel) {
         return TAURI.invoke("open_model_window", {
@@ -28,6 +28,9 @@ let WindowsEndpoints = {
 
     openManualWindow() {
         return TAURI.invoke('open_manual_window', {})
-    }
+    },
 
+    openHelpWindow() {
+        return TAURI.invoke('open_help_window', {})
+    }
 }

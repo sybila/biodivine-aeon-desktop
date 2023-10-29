@@ -70,7 +70,7 @@ function showTree() {
 		setPrecision(slider.value);
 	}
 
-	TreeExplorerEndpoints.getTreePrecision()
+	TreeExplorerCommands.getTreePrecision()
 		.then((precision) => {
 			slider.value = precision;
 			output.innerHTML = precision / 100.0 + "%";
@@ -287,7 +287,7 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 	}
 
 	UI.isLoading(true)
-	TreeExplorerEndpoints.autoExpandBifurcationTree(nodeId, depth)
+	TreeExplorerCommands.autoExpandBifurcationTree(nodeId, depth)
 		.then((okResponseObject) => {
 			UI.isLoading(false)
 			if (okResponseObject.length > 0) {
@@ -316,7 +316,7 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 
 function loadBifurcationTree(fit = true) {
 	UI.isLoading(true)
-	ComputationResultsEndpoints.getBifurcationTree()
+	ComputationResultsCommands.getBifurcationTree()
 		.then((okResponseObject) => {
 			UI.isLoading(false)
 			if (okResponseObject.length > 0) {
@@ -345,7 +345,7 @@ function loadBifurcationTree(fit = true) {
 
 function setPrecision(precision) {
 	UI.isLoading(true)
-	TreeExplorerEndpoints.applyTreePrecision(precision)
+	TreeExplorerCommands.applyTreePrecision(precision)
 		.then((okResponse) => {
 			UI.isLoading(false)
 			loadBifurcationTree(false);
@@ -357,7 +357,7 @@ function setPrecision(precision) {
 }
 
 function removeNode(nodeId) {
-	TreeExplorerEndpoints.deleteDecision(nodeId)
+	TreeExplorerCommands.deleteDecision(nodeId)
 		.then((okResponseObject) => {
 			if (okResponseObject.removed.length > 0) {
 				for (removed of okResponseObject.removed) {
@@ -378,7 +378,7 @@ function removeNode(nodeId) {
 //  - From where is this function called/used?
 //  - 'node' and 'attr' parameters should be string but are numeric
 function selectAttribute(node, attr) {
-	TreeExplorerEndpoints.selectDecisionAttribute(node, attr)
+	TreeExplorerCommands.selectDecisionAttribute(node, attr)
 		.then((okResponseObject) => {
 			for (node of okResponseObject) {
 				CytoscapeEditor.ensureNode(node);
@@ -457,7 +457,7 @@ function initStabilityButton(id, button, dropdown, container) {
     button.onclick = function() {
         let behaviour = dropdown.value;
 		UI.isLoading(true)
-		TreeExplorerEndpoints.getStabilityData(id, behaviour)
+		TreeExplorerCommands.getStabilityData(id, behaviour)
 			.then((okResponseObject) => {
 				UI.isLoading(false)
 				let content = "<h4>Stability analysis:</h4>";

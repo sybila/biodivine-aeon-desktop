@@ -11,7 +11,7 @@ let Results = {
 
 	show() {
 		UI.isLoading(true)
-		ComputationEndpoints.getResults()
+		ComputationCommands.getResults()
 			.then((resultsObject) => {
 				UI.isLoading(false)
 				let isPartial = resultsObject["isPartial"]
@@ -62,7 +62,7 @@ let Results = {
 				// Show result window
 				document.getElementById("results").innerHTML = table;
 				document.getElementById("open-tree-explorer").classList.remove("gone");
-				document.getElementById("tab-results").classList.remove("gone");
+				document.getElementById("content-results").classList.remove("gone");
 
 				// Hide "Show partial result" button after it is clicked on cancelled computation
 				if (isCancelled) {

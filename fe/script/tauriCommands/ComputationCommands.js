@@ -1,27 +1,27 @@
-let ComputationEndpoints = {
+let ComputationCommands = {
 
-    startComputation(aeonString, windowSessionKey) {
+    startComputation(aeonString, sessionKey) {
          return TAURI.invoke('start_computation', {
-            windowSessionKey: windowSessionKey,
+            sessionKey: sessionKey,
             aeonString: aeonString
         })
     },
 
     update_computation_process() {
         return TAURI.invoke('get_computation_process_info', {
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
     getResults() {
         return TAURI.invoke('get_results', {
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
     cancelComputation() {
         TAURI.invoke('cancel_computation', {
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
             .catch((errorMessage) => {
                 Dialog.errorMessage(errorMessage)

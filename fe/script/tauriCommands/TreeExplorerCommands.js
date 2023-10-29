@@ -1,30 +1,30 @@
-let TreeExplorerEndpoints = {
+let TreeExplorerCommands = {
 
     autoExpandBifurcationTree(nodeId, depth) {
         return TAURI.invoke('auto_expand', {
             nodeId: nodeId,
             depth: depth,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
     getDecisionAttributes(nodeId) {
         return TAURI.invoke('get_attributes', {
             nodeId: nodeId,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
     applyTreePrecision(precision) {
         return TAURI.invoke('apply_tree_precision', {
             precision: precision,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
     getTreePrecision() {
         return TAURI.invoke('get_tree_precision', {
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
@@ -32,14 +32,14 @@ let TreeExplorerEndpoints = {
         return TAURI.invoke('apply_attribute', {
             nodeId: nodeId,
             attributeId: attrId,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
     deleteDecision(nodeId) {
         return TAURI.invoke('revert_decision', {
             nodeId: nodeId,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
@@ -47,7 +47,7 @@ let TreeExplorerEndpoints = {
         return TAURI.invoke('get_stability_data', {
             nodeId: nodeId.toString(),
             behaviourStr: behaviour,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 

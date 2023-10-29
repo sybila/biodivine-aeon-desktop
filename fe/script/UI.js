@@ -1,7 +1,5 @@
 let ContentTabs = {
-	engine: "tab-engine",
 	modelEditor: "tab-model-editor",
-	results: "tab-results",
 }
 
 const DOUBLE_CLICK_DELAY = 400;
@@ -61,22 +59,6 @@ let UI = {
 		}		
 	},
 
-	openHelpWindow() {
-		const helpWindow = TAURI.window.WebviewWindow.getByLabel("help-window")
-
-		// If the window is already opened, just focus on it
-		if (helpWindow !== null) {
-			helpWindow.setFocus()
-			return
-		}
-
-		new TAURI.window.WebviewWindow('help-window', {
-			url: 'help-window.html',
-			title: 'About & Help',
-			width: 530,
-			height: 700,
-		})
-	},
 
 	updateComputationStatus(activeStatus, data) {
 		let cmp = document.getElementById("computation");
@@ -86,7 +68,7 @@ let UI = {
 		let cmpClasses = document.getElementById("computation-classes");
 		let cmpCancel = document.getElementById("computation-cancel");
 		let cmpDownload = document.getElementById("computation-download");
-		let resultsWindow = document.getElementById("tab-results");
+		let resultsWindow = document.getElementById("content-results");
 
 		// Reset classes
 		cmpLabel.classList.remove("green", "orange");
@@ -302,7 +284,7 @@ let UI = {
         }
 
 		this.isLoading(true)
-		ModelEndpoints.aeonToSbml(aeonModel)
+		ModelCommands.aeonToSbml(aeonModel)
 			.then((sbmlModel) => {
 				this.isLoading(false)
 				this._downloadFile(filename + ".sbml", sbmlModel);
@@ -325,7 +307,7 @@ let UI = {
         }
 
 		this.isLoading(true)
-		ModelEndpoints.aeonToSbmlInstantiated(aeonModel)
+		ModelCommands.aeonToSbmlInstantiated(aeonModel)
 			.then((sbmlModel) => {
 				this.isLoading(false)
 				this._downloadFile(filename + "_instantiated.sbml", sbmlModel);
@@ -390,7 +372,7 @@ let UI = {
 		const sbmlFileContent = await TAURI.fs.readTextFile(filePath);
 
 		this.isLoading(true)
-		ModelEndpoints.sbmlToAeon(sbmlFileContent)
+		ModelCommands.sbmlToAeon(sbmlFileContent)
 			.then((model) => {
 				this.isLoading(false)
 				LiveModel.handleAeonModelImport(model);

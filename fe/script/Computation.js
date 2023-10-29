@@ -1,16 +1,16 @@
 let Computation = {
-    _windowSessionKey: undefined, // window session key is computation window label
+    _sessionKey: undefined, // window session key is computation window label
     _lastComputation: undefined,
     _modelTitle: undefined,
     _windowTimestamp: undefined,
     _treeExplorerWindowLabel: undefined,
 
-    setWindowSessionKey(windowSessionKey) {
-        this._windowSessionKey = windowSessionKey
+    setSessionKey(sessionKey) {
+        this._sessionKey = sessionKey
     },
 
-    getWindowSessionKey() {
-        return this._windowSessionKey
+    getSessionKey() {
+        return this._sessionKey
     },
 
     setLastComputation(timestamp) {
@@ -53,7 +53,7 @@ let Computation = {
     },
 
     update_computation_process() {
-        ComputationEndpoints.update_computation_process()
+        ComputationCommands.update_computation_process()
             .then((computationInfoObject) => {
                 // Update UI of Computation Window
                 if (typeof UI !== 'undefined') {

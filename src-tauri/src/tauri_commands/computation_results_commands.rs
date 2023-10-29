@@ -1,5 +1,4 @@
-use crate::common::ErrorMessage;
-use crate::computation_commands::{get_locked_computation, get_locked_tree};
+use crate::types::ErrorMessage;
 use crate::computation_results::{
     get_witness_attractors, get_witness_network, try_get_class_params,
 };
@@ -9,9 +8,10 @@ use biodivine_aeon_desktop::scc::{Behaviour, Class};
 use biodivine_aeon_desktop::util::functional::Functional;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use serde_json::{from_str, Value};
+use crate::session::{get_locked_computation, get_locked_tree};
 
 #[tauri::command]
-pub async fn get_witness(class_str: String, window_session_key: &str) -> Result<String, ErrorMessage> {
+pub async fn get_witness(class_str: String, session_key: &str) -> Result<String, ErrorMessage> {
     let mut class = Class::new_empty();
     for char in class_str.chars() {
         match char {
@@ -24,13 +24,13 @@ pub async fn get_witness(class_str: String, window_session_key: &str) -> Result<
         }
     }
     {
-        let locked_computation = get_locked_computation(window_session_key);
+        let locked_computation = get_locked_computation(session_key);
         let read_computation = locked_computation.read().unwrap();
         if let Some(computation) = read_computation.as_ref() {
             if let Some(classifier) = &computation.classifier {
                 if let Some(has_class) = try_get_class_params(classifier, &class) {
                     if let Some(class) = has_class {
-                        get_witness_network(&class, window_session_key)
+                        get_witness_network(&class, session_key)
                     } else {
                         Err(String::from("Specified class has no witness."))
                     }
@@ -49,8 +49,8 @@ pub async fn get_witness(class_str: String, window_session_key: &str) -> Result<
 }
 
 #[tauri::command]
-pub async fn get_tree_witness(node_id: String, window_session_key: &str) -> Result<String, ErrorMessage> {
-    let locked_tree = get_locked_tree(window_session_key);
+pub async fn get_tree_witness(node_id: String, session_key: &str) -> Result<String, ErrorMessage> {
+    let locked_tree = get_locked_tree(session_key);
     let read_tree = locked_tree.read().unwrap();
     return if let Some(tree) = read_tree.as_ref() {
         let node = BdtNodeId::try_from(node_id.parse::<usize>().unwrap(), tree);
@@ -61,7 +61,7 @@ pub async fn get_tree_witness(node_id: String, window_session_key: &str) -> Resu
         };
 
         if let Some(params) = tree.params_for_leaf(node) {
-            get_witness_network(params, window_session_key)
+            get_witness_network(params, session_key)
         } else {
             Err(String::from("Given node is not an unprocessed node."))
         }
@@ -76,7 +76,7 @@ pub async fn get_stability_witness(
     behaviour_str: String,
     variable_str: String,
     vector_str: String,
-    window_session_key: &str,
+    session_key: &str,
 ) -> Result<String, ErrorMessage> {
     let behaviour = Behaviour::try_from(behaviour_str.as_str());
     let behaviour = match behaviour {
@@ -98,7 +98,7 @@ pub async fn get_stability_witness(
     };
     // First, extract all colors in that tree node.
     let node_params = {
-        let locked_tree = get_locked_tree(window_session_key);
+        let locked_tree = get_locked_tree(session_key);
         let read_tree = locked_tree.read().unwrap();
         if let Some(tree) = read_tree.as_ref() {
             let node = BdtNodeId::try_from(node_id.parse::<usize>().unwrap(), tree);
@@ -113,7 +113,7 @@ pub async fn get_stability_witness(
         }
     };
     // Then find all attractors of the graph
-    let locked_computation = get_locked_computation(window_session_key);
+    let locked_computation = get_locked_computation(session_key);
     let read_computation = locked_computation.read().unwrap();
     if let Some(computation) = read_computation.as_ref() {
         let components = if let Some(classifier) = &computation.classifier {
@@ -153,7 +153,7 @@ pub async fn get_stability_witness(
             let variable_stability =
                 VariableStability::for_attractors(graph, &components, variable);
             if let Some(colors) = &variable_stability[vector] {
-                get_witness_network(colors, window_session_key)
+                get_witness_network(colors, session_key)
             } else {
                 Err(format!("No witness available for vector `{}`.", vector_str))
             }
@@ -166,7 +166,7 @@ pub async fn get_stability_witness(
 }
 
 #[tauri::command]
-pub async fn get_attractors(class_str: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
+pub async fn get_attractors(class_str: String, session_key: &str) -> Result<Value, ErrorMessage> {
     let mut class = Class::new_empty();
     for char in class_str.chars() {
         match char {
@@ -177,13 +177,13 @@ pub async fn get_attractors(class_str: String, window_session_key: &str) -> Resu
         }
     }
     {
-        let locked_computation = get_locked_computation(window_session_key);
+        let locked_computation = get_locked_computation(session_key);
         let read_computation = locked_computation.read().unwrap();
         if let Some(computation) = read_computation.as_ref() {
             if let Some(classifier) = &computation.classifier {
                 if let Some(has_class) = try_get_class_params(classifier, &class) {
                     if let Some(class) = has_class {
-                        get_witness_attractors(&class, window_session_key)
+                        get_witness_attractors(&class, session_key)
                     } else {
                         Err(String::from("Specified class has no witness."))
                     }
@@ -204,9 +204,9 @@ pub async fn get_attractors(class_str: String, window_session_key: &str) -> Resu
 #[tauri::command]
 pub async fn get_tree_attractors(
     node_id: String,
-    window_session_key: &str,
+    session_key: &str,
 ) -> Result<Value, ErrorMessage> {
-    let locked_tree = get_locked_tree(window_session_key);
+    let locked_tree = get_locked_tree(session_key);
     let read_tree = locked_tree.read().unwrap();
     return if let Some(tree) = read_tree.as_ref() {
         let node = BdtNodeId::try_from(node_id.parse::<usize>().unwrap(), tree);
@@ -217,7 +217,7 @@ pub async fn get_tree_attractors(
         };
 
         if let Some(params) = tree.params_for_leaf(node) {
-            get_witness_attractors(params, window_session_key)
+            get_witness_attractors(params, session_key)
         } else {
             Err(String::from("Given node is not an unprocessed node."))
         }
@@ -232,7 +232,7 @@ pub async fn get_stability_attractors(
     behaviour_str: String,
     variable_str: String,
     vector_str: String,
-    window_session_key: &str,
+    session_key: &str,
 ) -> Result<Value, ErrorMessage> {
     let behaviour = Behaviour::try_from(behaviour_str.as_str());
     let behaviour = match behaviour {
@@ -254,7 +254,7 @@ pub async fn get_stability_attractors(
     };
     // First, extract all colors in that tree node.
     let node_params = {
-        let locked_tree = get_locked_tree(window_session_key);
+        let locked_tree = get_locked_tree(session_key);
         let read_tree = locked_tree.read().unwrap();
         if let Some(tree) = read_tree.as_ref() {
             let node = BdtNodeId::try_from(node_id.parse::<usize>().unwrap(), tree);
@@ -269,7 +269,7 @@ pub async fn get_stability_attractors(
         }
     };
     // Then find all attractors of the graph
-    let locked_computation = get_locked_computation(window_session_key);
+    let locked_computation = get_locked_computation(session_key);
     let read_computation = locked_computation.read().unwrap();
     if let Some(computation) = read_computation.as_ref() {
         let components = if let Some(classifier) = &computation.classifier {
@@ -309,7 +309,7 @@ pub async fn get_stability_attractors(
             let variable_stability =
                 VariableStability::for_attractors(graph, &components, variable);
             if let Some(colors) = &variable_stability[vector] {
-                get_witness_attractors(colors, window_session_key)
+                get_witness_attractors(colors, session_key)
             } else {
                 Err(format!("No witness available for vector `{}`.", vector_str))
             }
@@ -322,8 +322,8 @@ pub async fn get_stability_attractors(
 }
 
 #[tauri::command]
-pub async fn get_bifurcation_tree(window_session_key: &str) -> Result<Value, ErrorMessage> {
-    let locked_tree = get_locked_tree(window_session_key);
+pub async fn get_bifurcation_tree(session_key: &str) -> Result<Value, ErrorMessage> {
+    let locked_tree = get_locked_tree(session_key);
     let read_tree = locked_tree.read().unwrap();
     if let Some(tree) = read_tree.as_ref() {
         // Convert JsonValue to serde_json::Value

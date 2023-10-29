@@ -1,4 +1,4 @@
-let ModelEndpoints = {
+let ModelCommands = {
 
     validateUpdateFunction(modelFragment,) {
         return TAURI.invoke('check_update_function', {

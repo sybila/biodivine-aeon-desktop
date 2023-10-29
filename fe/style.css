@@ -560,24 +560,24 @@ div.invisible-input[contenteditable]:empty:not(:focus):before {
     text-decoration: underline;
 }
 
-#tab-results .table-head {
+#content-results .table-head {
     font-family: 'FiraMonoBold', monospace;
     font-weight: bold;
 }
 
-#tab-results .table-behavior {
+#content-results .table-behavior {
     font-family: 'symbols';
     letter-spacing: 5px;
     font-style: normal;
 }
 
-#tab-results table {
+#content-results table {
     margin: 0 auto;
     text-align: center;
     font-size: 18px;
 }
 
-#tab-results td {
+#content-results td {
     padding-left: 8px;
     padding-right: 8px;
     padding-top: 2px;
@@ -602,7 +602,7 @@ div.invisible-input[contenteditable]:empty:not(:focus):before {
     text-align: center;
 }
 
-#tab-results {
+#content-results {
     font-family: 'FiraMono', monospace;
 }
 

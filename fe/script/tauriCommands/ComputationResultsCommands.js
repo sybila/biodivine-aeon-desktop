@@ -1,17 +1,17 @@
-let ComputationResultsEndpoints = {
+let ComputationResultsCommands = {
 
     // Witness
     getWitness(witness) {
         return TAURI.invoke('get_witness', {
             classStr: witness,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
     getTreeWitness(node) {
         return TAURI.invoke('get_tree_witness', {
             nodeId: node,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
@@ -21,7 +21,7 @@ let ComputationResultsEndpoints = {
             behaviourStr: behavior,
             variableStr: variable,
             vectorStr: vector,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
@@ -30,14 +30,14 @@ let ComputationResultsEndpoints = {
     getAttractors(behavior) {
         return TAURI.invoke('get_attractors', {
             classStr: behavior,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
     getTreeAttractors(node) {
         return TAURI.invoke('get_tree_attractors', {
             nodeId: node,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
@@ -47,7 +47,7 @@ let ComputationResultsEndpoints = {
             behaviourStr: behavior,
             variableStr: variable,
             vectorStr: vector,
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     },
 
@@ -55,7 +55,7 @@ let ComputationResultsEndpoints = {
     // Tree
     getBifurcationTree() {
         return TAURI.invoke('get_bifurcation_tree', {
-            windowSessionKey: Computation.getWindowSessionKey()
+            sessionKey: Computation.getSessionKey()
         })
     }
 }

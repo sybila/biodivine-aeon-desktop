@@ -1,11 +1,11 @@
 // Listen for 'get-attractors' event to show attractors in explorer window
 TAURI.event.listen('get-attractors', (event) => {
-    Computation.setWindowSessionKey(event.payload['windowSessionKey'])
+    Computation.setSessionKey(event.payload['sessionKey'])
 
     const behavior = event.payload['behavior']
 
     UI.isLoading(true)
-    ComputationResultsEndpoints.getAttractors(behavior)
+    ComputationResultsCommands.getAttractors(behavior)
         .then((okJson) => {
             UI.isLoading(false)
             showInExplorer(okJson)
@@ -18,12 +18,12 @@ TAURI.event.listen('get-attractors', (event) => {
 
 // Listen for 'get-tree-attractors' event to show attractors in explorer window
 TAURI.event.listen('get-tree-attractors', (event) => {
-    Computation.setWindowSessionKey(event.payload['windowSessionKey'])
+    Computation.setSessionKey(event.payload['sessionKey'])
 
     const node = event.payload['node']
 
     UI.isLoading(true)
-    ComputationResultsEndpoints.getTreeAttractors(node)
+    ComputationResultsCommands.getTreeAttractors(node)
         .then((okJson) => {
             UI.isLoading(false)
             showInExplorer(okJson)
@@ -36,7 +36,7 @@ TAURI.event.listen('get-tree-attractors', (event) => {
 
 // Listen for 'get-stability-attractors' event to show attractors in explorer window
 TAURI.event.listen('get-stability-attractors', (event) => {
-    Computation.setWindowSessionKey(event.payload['windowSessionKey'])
+    Computation.setSessionKey(event.payload['sessionKey'])
 
     const node = event.payload['node']
     const behavior = event.payload['behavior']
@@ -44,7 +44,7 @@ TAURI.event.listen('get-stability-attractors', (event) => {
     const vector = event.payload['vector']
 
     UI.isLoading(true)
-    ComputationResultsEndpoints.getStabilityAttractors(node, behavior, variable, vector)
+    ComputationResultsCommands.getStabilityAttractors(node, behavior, variable, vector)
         .then((okJson) => {
             UI.isLoading(false)
             showInExplorer(okJson)

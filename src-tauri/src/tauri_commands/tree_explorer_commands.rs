@@ -1,5 +1,4 @@
-use crate::common::ErrorMessage;
-use crate::computation_commands::{get_locked_computation, get_locked_tree};
+use crate::types::ErrorMessage;
 use biodivine_aeon_desktop::bdt::{AttributeId, BdtNodeId};
 use biodivine_aeon_desktop::scc::algo_stability_analysis::compute_stability;
 use biodivine_aeon_desktop::scc::Behaviour;
@@ -7,12 +6,13 @@ use biodivine_aeon_desktop::util::functional::Functional;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use json::{array, object, JsonValue};
 use serde_json::{from_str, Value};
+use crate::session::{get_locked_computation, get_locked_tree};
 
 #[tauri::command]
 pub async fn auto_expand(
     node_id: String,
     depth: String,
-    window_session_key: &str,
+    session_key: &str,
 ) -> Result<Value, ErrorMessage> {
     let depth: u32 = {
         let parsed = depth.parse::<u32>();
@@ -25,7 +25,7 @@ pub async fn auto_expand(
     if depth > 10 {
         return Err(String::from("Maximum allowed depth is 10."));
     }
-    let locked_tree = get_locked_tree(window_session_key);
+    let locked_tree = get_locked_tree(session_key);
     let mut write_tree = locked_tree.write().unwrap();
     if let Some(tree) = write_tree.as_mut() {
         let node_id: BdtNodeId =
@@ -43,8 +43,8 @@ pub async fn auto_expand(
 }
 
 #[tauri::command]
-pub fn get_attributes(node_id: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
-    let locked_tree = get_locked_tree(window_session_key);
+pub fn get_attributes(node_id: String, session_key: &str) -> Result<Value, ErrorMessage> {
+    let locked_tree = get_locked_tree(session_key);
     let read_tree = locked_tree.read().unwrap();
     if let Some(tree) = read_tree.as_ref() {
         let node = BdtNodeId::try_from_str(node_id.clone(), tree);
@@ -63,10 +63,10 @@ pub fn get_attributes(node_id: String, window_session_key: &str) -> Result<Value
 #[tauri::command]
 pub async fn apply_tree_precision(
     precision: String,
-    window_session_key: &str,
+    session_key: &str,
 ) -> Result<String, ErrorMessage> {
     if let Ok(precision) = precision.parse::<u32>() {
-        let locked_tree = get_locked_tree(window_session_key);
+        let locked_tree = get_locked_tree(session_key);
         let mut write_tree = locked_tree.write().unwrap();
         if let Some(tree) = write_tree.as_mut() {
             tree.set_precision(precision);
@@ -80,8 +80,8 @@ pub async fn apply_tree_precision(
 }
 
 #[tauri::command]
-pub fn get_tree_precision(window_session_key: &str) -> Result<u32, ErrorMessage> {
-    let locked_tree = get_locked_tree(window_session_key);
+pub fn get_tree_precision(session_key: &str) -> Result<u32, ErrorMessage> {
+    let locked_tree = get_locked_tree(session_key);
     let read_tree = locked_tree.read().unwrap();
     if let Some(tree) = read_tree.as_ref() {
         Ok(tree.get_precision())
@@ -95,9 +95,9 @@ pub fn get_tree_precision(window_session_key: &str) -> Result<u32, ErrorMessage>
 pub fn apply_attribute(
     node_id: usize,
     attribute_id: usize,
-    window_session_key: &str,
+    session_key: &str,
 ) -> Result<Value, ErrorMessage> {
-    let locked_tree = get_locked_tree(window_session_key);
+    let locked_tree = get_locked_tree(session_key);
     let mut write_tree = locked_tree.write().unwrap();
     return if let Some(tree) = write_tree.as_mut() {
         let node = BdtNodeId::try_from(node_id, tree);
@@ -129,8 +129,8 @@ pub fn apply_attribute(
 }
 
 #[tauri::command]
-pub fn revert_decision(node_id: String, window_session_key: &str) -> Result<Value, ErrorMessage> {
-    let locked_tree = get_locked_tree(window_session_key);
+pub fn revert_decision(node_id: String, session_key: &str) -> Result<Value, ErrorMessage> {
+    let locked_tree = get_locked_tree(session_key);
     let mut write_tree = locked_tree.write().unwrap();
     return if let Some(tree) = write_tree.as_mut() {
         let node = BdtNodeId::try_from_str(node_id.clone(), tree);
@@ -160,7 +160,7 @@ pub fn revert_decision(node_id: String, window_session_key: &str) -> Result<Valu
 pub async fn get_stability_data(
     node_id: String,
     behaviour_str: String,
-    window_session_key: &str,
+    session_key: &str,
 ) -> Result<Value, ErrorMessage> {
     let behaviour = Behaviour::try_from(behaviour_str.as_str());
     let behaviour = match behaviour {
@@ -175,7 +175,7 @@ pub async fn get_stability_data(
     };
     // First, extract all colors in that tree node.
     let node_params = {
-        let locked_tree = get_locked_tree(window_session_key);
+        let locked_tree = get_locked_tree(session_key);
         let read_tree = locked_tree.read().unwrap();
         if let Some(tree) = read_tree.as_ref() {
             let node = BdtNodeId::try_from_str(node_id.clone(), tree);
@@ -190,7 +190,7 @@ pub async fn get_stability_data(
         }
     };
     // Then find all attractors of the graph
-    let locked_computation = get_locked_computation(window_session_key);
+    let locked_computation = get_locked_computation(session_key);
     let read_computation = locked_computation.read().unwrap();
     if let Some(computation) = read_computation.as_ref() {
         let components = if let Some(classifier) = &computation.classifier {
