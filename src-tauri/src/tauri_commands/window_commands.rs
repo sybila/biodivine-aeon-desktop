@@ -20,6 +20,7 @@ pub async fn open_computation_window(label: &str, title: &str, handle: tauri::Ap
         label,
         tauri::WindowUrl::App("computation-window.html".into()),
     )
+        .menu(menu_init())
         .inner_size(550f64, 600f64)
         .min_inner_size(400f64, 400f64)
         .title(title)
@@ -36,6 +37,7 @@ pub async fn open_explorer_window(label: &str, handle: tauri::AppHandle) -> Resu
         label,
         tauri::WindowUrl::App("explorer.html".into()),
     )
+        .menu(menu_init())
         .inner_size(1000f64, 700f64)
         .title("Aeon/BIODIVINE - attractor explorer")
         .build()
@@ -51,6 +53,7 @@ pub async fn open_tree_explorer_window(label: &str, title: &str, handle: tauri::
         label,
         tauri::WindowUrl::App("tree_explorer.html".into()),
     )
+        .menu(menu_init())
         .inner_size(1000f64, 700f64)
         .title(title)
         .build()
@@ -66,6 +69,7 @@ pub async fn open_manual_window(handle: tauri::AppHandle) -> Result<(), ()> {
         "manual-window",
         tauri::WindowUrl::App("manual/book/index.html".into()),
     )
+        .menu(menu_init())
         .inner_size(1000f64, 700f64)
         .title("Manual")
         .build()
@@ -81,6 +85,7 @@ pub async fn open_help_window(handle: tauri::AppHandle) -> Result<(), ()> {
         "help-window",
         tauri::WindowUrl::App("help-window.html".into()),
     )
+        .menu(menu_init())
         .inner_size(530f64, 700f64)
         .title("Help")
         .build()

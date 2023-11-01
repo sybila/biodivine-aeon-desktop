@@ -1,16 +1,56 @@
-use tauri::{CustomMenuItem, Menu, Submenu};
+use tauri::{CustomMenuItem, Manager, Menu, MenuItem, Submenu};
+
+#[tauri::command]
+pub fn update_menu_items(label: &str, handle: tauri::AppHandle) {
+    let status = label.starts_with("model-window");
+    let window = handle.get_window(label).unwrap();
+    let menu_handle = window.menu_handle();
+    menu_handle
+        .get_item("g2a")
+        .set_enabled(status)
+        .expect("Error while updating menu item.");
+    menu_handle
+        .get_item("g2b")
+        .set_enabled(status)
+        .expect("Error while updating menu item.");
+    menu_handle
+        .get_item("budding_yeast_orlando")
+        .set_enabled(status)
+        .expect("Error while updating menu item.");
+    menu_handle
+        .get_item("budding_yeast_irons")
+        .set_enabled(status)
+        .expect("Error while updating menu item.");
+    menu_handle
+        .get_item("local_storage")
+        .set_enabled(status)
+        .expect("Error while updating menu item.");
+    menu_handle
+        .get_item("aeon_import")
+        .set_enabled(status)
+        .expect("Error while updating menu item.");
+    menu_handle
+        .get_item("sbml_import")
+        .set_enabled(status)
+        .expect("Error while updating menu item.");
+    menu_handle
+        .get_item("aeon_export")
+        .set_enabled(status)
+        .expect("Error while updating menu item.");
+    menu_handle
+        .get_item("sbml_export_parametrized")
+        .set_enabled(status)
+        .expect("Error while updating menu item.");
+    menu_handle
+        .get_item("sbml_export_instantiated")
+        .set_enabled(status)
+        .expect("Error while updating menu item.");
+}
 
 /// Initialize system menu used in model window.
 pub fn menu_init() -> Menu {
     let help = CustomMenuItem::new("help", "About/Help");
     let manual = CustomMenuItem::new("manual", "Manual");
-
-    let about_submenu = Submenu::new(
-        "About",
-        Menu::new()
-            .add_item(help)
-            .add_item(manual)
-    );
 
     // Example models submenu items
     let g2a = CustomMenuItem::new("g2a", "G2A - Cell Division");
@@ -56,6 +96,12 @@ pub fn menu_init() -> Menu {
             .add_item(sbml_export_instantiated),
     );
 
+    // Main submenus in menu bar
+    let app_submenu = Submenu::new(
+        "AEON/BIODIVINE",
+        Menu::new().add_item(help).add_native_item(MenuItem::Quit),
+    );
+
     let model_submenu = Submenu::new(
         "Model",
         Menu::new()
@@ -63,6 +109,10 @@ pub fn menu_init() -> Menu {
             .add_submenu(export_submenu),
     );
 
-    Menu::new().add_submenu(about_submenu).add_submenu(model_submenu)
-}
+    let manual_submenu = Submenu::new("Manual", Menu::new().add_item(manual));
 
+    Menu::new()
+        .add_submenu(app_submenu)
+        .add_submenu(model_submenu)
+        .add_submenu(manual_submenu)
+}

@@ -4,7 +4,7 @@
 extern crate lazy_static;
 
 use crate::menu::menu_init;
-use tauri::WindowBuilder;
+use tauri::{Manager, WindowBuilder};
 
 mod types;
 mod computation;
@@ -14,13 +14,15 @@ mod session;
 mod tauri_commands;
 mod model;
 
+
+
 fn main() {
     let menu = menu_init();
     tauri::Builder::default()
         .setup(|app| {
             WindowBuilder::new(
                 app,
-                "main-window".to_string(),
+                "model-window-main".to_string(),
                 tauri::WindowUrl::App("index.html".into()),
             )
             .menu(menu)
@@ -30,6 +32,7 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            menu::update_menu_items,
             tauri_commands::model_commands::check_update_function,
             tauri_commands::model_commands::sbml_to_aeon,
             tauri_commands::model_commands::aeon_to_sbml,
