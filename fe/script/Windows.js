@@ -1,5 +1,10 @@
 let Windows = {
 
+    openNewModelEditorWindow() {
+        let windowLabel = 'model-window:' + Date.now()
+        WindowsCommands.openModelWindow(windowLabel)
+    },
+
     // Open model in new window and return label of this window
     async openModelInNewWindow(modelString) {
         let windowLabel = 'model-window:' + Date.now()

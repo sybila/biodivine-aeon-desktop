@@ -95,6 +95,7 @@ pub fn menu_init() -> Menu {
             .add_item(sbml_export_parametrized)
             .add_item(sbml_export_instantiated),
     );
+    let new_model_editor = CustomMenuItem::new("new_model_editor", "New model editor");
 
     // Main submenus in menu bar
     let app_submenu = Submenu::new(
@@ -106,7 +107,8 @@ pub fn menu_init() -> Menu {
         "Model",
         Menu::new()
             .add_submenu(import_submenu)
-            .add_submenu(export_submenu),
+            .add_submenu(export_submenu)
+            .add_item(new_model_editor)
     );
 
     let manual_submenu = Submenu::new("Manual", Menu::new().add_item(manual));

@@ -7,6 +7,9 @@ TAURI.window.appWindow.onMenuClicked(({ payload: menuItemId }) => {
         case 'manual':
             Windows.openManualWindow()
             break
+        case 'new_model_editor':
+            Windows.openNewModelEditorWindow()
+            break
         case 'local_storage':
             LiveModel.loadFromLocalStorage()
             break
