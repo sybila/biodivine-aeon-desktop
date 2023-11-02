@@ -4,6 +4,7 @@ let Strings = {
     openNewWindow: "Editor is not empty. Do you want to open the model in a new window?",
     runningComputation: "Computation is still running. Do you want to close window?",
     waitingForTreeResult: "Waiting for result. Do you really want to close the window?",
+    unsupportedAction: "Unsupported action for this window",
 
     removeNodeCheck(name) {
         return "Dou you really want to remove '"+name+"'?";

@@ -1,51 +1,5 @@
 use tauri::{CustomMenuItem, Manager, Menu, MenuItem, Submenu};
 
-#[tauri::command]
-pub fn update_menu_items(label: &str, handle: tauri::AppHandle) {
-    let status = label.starts_with("model-window");
-    let window = handle.get_window(label).unwrap();
-    let menu_handle = window.menu_handle();
-    menu_handle
-        .get_item("g2a")
-        .set_enabled(status)
-        .expect("Error while updating menu item.");
-    menu_handle
-        .get_item("g2b")
-        .set_enabled(status)
-        .expect("Error while updating menu item.");
-    menu_handle
-        .get_item("budding_yeast_orlando")
-        .set_enabled(status)
-        .expect("Error while updating menu item.");
-    menu_handle
-        .get_item("budding_yeast_irons")
-        .set_enabled(status)
-        .expect("Error while updating menu item.");
-    menu_handle
-        .get_item("local_storage")
-        .set_enabled(status)
-        .expect("Error while updating menu item.");
-    menu_handle
-        .get_item("aeon_import")
-        .set_enabled(status)
-        .expect("Error while updating menu item.");
-    menu_handle
-        .get_item("sbml_import")
-        .set_enabled(status)
-        .expect("Error while updating menu item.");
-    menu_handle
-        .get_item("aeon_export")
-        .set_enabled(status)
-        .expect("Error while updating menu item.");
-    menu_handle
-        .get_item("sbml_export_parametrized")
-        .set_enabled(status)
-        .expect("Error while updating menu item.");
-    menu_handle
-        .get_item("sbml_export_instantiated")
-        .set_enabled(status)
-        .expect("Error while updating menu item.");
-}
 
 /// Initialize system menu used in model window.
 pub fn menu_init() -> Menu {

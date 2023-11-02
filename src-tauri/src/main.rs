@@ -32,7 +32,6 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            menu::update_menu_items,
             tauri_commands::model_commands::check_update_function,
             tauri_commands::model_commands::sbml_to_aeon,
             tauri_commands::model_commands::aeon_to_sbml,
