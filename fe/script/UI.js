@@ -16,6 +16,7 @@ let UI = {
 	_edgeMenu: undefined,
 	// Contains pairs of elements of the form { button: ..., tab: ... } corresponding to the side menu.
 	_tabsAndButtons: undefined,
+	_isLoading: false,
 
 
 
@@ -178,6 +179,10 @@ let UI = {
 		this.ensureContentTabOpen(undefined);
 	},
 
+	isWaitingForResult() {
+		return this._isLoading
+	},
+
 	// A small utility method to show quick help.
 	setQuickHelpVisible(visible) {
 		if (visible || LiveModel.isEmpty()) {
@@ -252,9 +257,11 @@ let UI = {
 		if (status) {
 			windowContent.classList.add("freeze")
 			loading.classList.remove("invisible")
+			this._isLoading = true
 		} else {
 			windowContent.classList.remove("freeze")
 			loading.classList.add("invisible");
+			this._isLoading = false
 		}
 	},
 

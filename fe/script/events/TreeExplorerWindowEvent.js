@@ -9,8 +9,15 @@ TAURI.event.listen('send-window-session-key', (event) => {
 });
 
 // Send message to computation window before closing this tree explorer window
-TAURI.window.getCurrent().listen("tauri://close-requested", () => {
-    const computationWindow = TAURI.window.WebviewWindow.getByLabel(Computation.getSessionKey())
-    computationWindow.emit('tree-explorer-window-closed', {})
-    TAURI.window.getCurrent().close()
+TAURI.window.getCurrent().listen("tauri://close-requested", async () => {
+    let confirmClose = true
+    if (UI.isWaitingForResult()) {
+        confirmClose = await Dialog.confirm("Waiting for result", Strings.waitingForTreeResult)
+    }
+
+    if (confirmClose) {
+        const computationWindow = TAURI.window.WebviewWindow.getByLabel(Computation.getSessionKey())
+        computationWindow.emit('tree-explorer-window-closed', {})
+        TAURI.window.getCurrent().close()
+    }
 })
