@@ -1,20 +1,14 @@
+use crate::computation::{prepare_computation_thread, Computation};
+use crate::session::get_locked_computation;
 use crate::types::{ErrorMessage, Timestamp};
-use crate::computation::{Computation, prepare_computation_thread};
-use crate::session::{get_locked_computation};
 use biodivine_lib_param_bn::BooleanNetwork;
 use json::{object, JsonValue};
 use serde_json::{from_str, Value};
 use std::sync::{Arc, RwLock};
 
-
-
-
 /// Accept an Aeon model, parse it and start a new computation (if there is no computation running).
 #[tauri::command]
-pub fn start_computation(
-    session_key: &str,
-    aeon_string: &str,
-) -> Result<Timestamp, ErrorMessage> {
+pub fn start_computation(session_key: &str, aeon_string: &str) -> Result<Timestamp, ErrorMessage> {
     match BooleanNetwork::try_from(aeon_string) {
         Ok(network) => {
             let locked_computation = get_locked_computation(session_key);
@@ -64,8 +58,7 @@ pub fn start_computation(
 /// Cancel running computation.
 #[tauri::command]
 pub fn cancel_computation(session_key: &str) -> Result<String, String> {
-    let locked_computation: Arc<RwLock<Option<Computation>>> =
-        get_locked_computation(session_key);
+    let locked_computation: Arc<RwLock<Option<Computation>>> = get_locked_computation(session_key);
     let read_computation = locked_computation.read().unwrap();
 
     if let Some(computation) = read_computation.as_ref() {
@@ -81,8 +74,7 @@ pub fn cancel_computation(session_key: &str) -> Result<String, String> {
 /// Get result of computation.
 #[tauri::command]
 pub async fn get_results(session_key: &str) -> Result<Value, ErrorMessage> {
-    let locked_computation: Arc<RwLock<Option<Computation>>> =
-        get_locked_computation(session_key);
+    let locked_computation: Arc<RwLock<Option<Computation>>> = get_locked_computation(session_key);
     let read_computation = locked_computation.read().unwrap();
 
     let Some(computation) = read_computation.as_ref() else {
@@ -126,8 +118,7 @@ pub async fn get_results(session_key: &str) -> Result<Value, ErrorMessage> {
 /// Get info about computation process.
 #[tauri::command]
 pub fn get_computation_process_info(session_key: &str) -> Result<Value, ErrorMessage> {
-    let locked_computation: Arc<RwLock<Option<Computation>>> =
-        get_locked_computation(session_key);
+    let locked_computation: Arc<RwLock<Option<Computation>>> = get_locked_computation(session_key);
     let read_computation = locked_computation.read().unwrap();
 
     if let Some(computation) = read_computation.as_ref() {

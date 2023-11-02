@@ -14,18 +14,22 @@ pub async fn open_model_window(label: &str, handle: tauri::AppHandle) -> Result<
 
 /// Open new window to watch computation status.
 #[tauri::command]
-pub async fn open_computation_window(label: &str, title: &str, handle: tauri::AppHandle) -> Result<(), ()> {
+pub async fn open_computation_window(
+    label: &str,
+    title: &str,
+    handle: tauri::AppHandle,
+) -> Result<(), ()> {
     tauri::WindowBuilder::new(
         &handle,
         label,
         tauri::WindowUrl::App("computation-window.html".into()),
     )
-        .menu(menu_init())
-        .inner_size(550f64, 600f64)
-        .min_inner_size(400f64, 400f64)
-        .title(title)
-        .build()
-        .expect("Error while creating computation window.");
+    .menu(menu_init())
+    .inner_size(550f64, 600f64)
+    .min_inner_size(400f64, 400f64)
+    .title(title)
+    .build()
+    .expect("Error while creating computation window.");
     Ok(())
 }
 
@@ -37,27 +41,31 @@ pub async fn open_explorer_window(label: &str, handle: tauri::AppHandle) -> Resu
         label,
         tauri::WindowUrl::App("explorer.html".into()),
     )
-        .menu(menu_init())
-        .inner_size(1000f64, 700f64)
-        .title("Aeon/BIODIVINE - attractor explorer")
-        .build()
-        .expect("Error while creating new explorer window.");
+    .menu(menu_init())
+    .inner_size(1000f64, 700f64)
+    .title("Aeon/BIODIVINE - attractor explorer")
+    .build()
+    .expect("Error while creating new explorer window.");
     Ok(())
 }
 
 /// Open new window with bifurcation decision tree.
 #[tauri::command]
-pub async fn open_tree_explorer_window(label: &str, title: &str, handle: tauri::AppHandle) -> Result<(), ()> {
+pub async fn open_tree_explorer_window(
+    label: &str,
+    title: &str,
+    handle: tauri::AppHandle,
+) -> Result<(), ()> {
     tauri::WindowBuilder::new(
         &handle,
         label,
         tauri::WindowUrl::App("tree_explorer.html".into()),
     )
-        .menu(menu_init())
-        .inner_size(1000f64, 700f64)
-        .title(title)
-        .build()
-        .expect("Error while creating new tree explorer window.");
+    .menu(menu_init())
+    .inner_size(1000f64, 700f64)
+    .title(title)
+    .build()
+    .expect("Error while creating new tree explorer window.");
     Ok(())
 }
 
@@ -69,11 +77,11 @@ pub async fn open_manual_window(handle: tauri::AppHandle) -> Result<(), ()> {
         "manual-window",
         tauri::WindowUrl::App("manual/book/index.html".into()),
     )
-        .menu(menu_init())
-        .inner_size(1000f64, 700f64)
-        .title("Manual")
-        .build()
-        .expect("Error while creating new manual window.");
+    .menu(menu_init())
+    .inner_size(1000f64, 700f64)
+    .title("Manual")
+    .build()
+    .expect("Error while creating new manual window.");
     Ok(())
 }
 
@@ -85,10 +93,10 @@ pub async fn open_help_window(handle: tauri::AppHandle) -> Result<(), ()> {
         "help-window",
         tauri::WindowUrl::App("help-window.html".into()),
     )
-        .menu(menu_init())
-        .inner_size(530f64, 700f64)
-        .title("Help")
-        .build()
-        .expect("Error while creating new help window.");
+    .menu(menu_init())
+    .inner_size(530f64, 700f64)
+    .title("Help")
+    .build()
+    .expect("Error while creating new help window.");
     Ok(())
 }

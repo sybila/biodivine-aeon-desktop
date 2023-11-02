@@ -17,10 +17,7 @@ pub fn has_running_computation(session_key: &str) -> bool {
 /// Create new session when Tauri window is created.
 #[tauri::command]
 pub fn add_session(session_key: &str) {
-    println!(
-        "Window session with key: '{}' was created",
-        session_key
-    );
+    println!("Window session with key: '{}' was created", session_key);
 
     let mut sessions = SESSIONS.write().unwrap();
     sessions.insert(session_key.to_string(), Session::default());
@@ -32,10 +29,7 @@ pub fn add_session(session_key: &str) {
 /// Remove a window session from the collection of sessions when the window is destroyed.
 #[tauri::command]
 pub fn remove_session(session_key: &str) -> Result<String, String> {
-    println!(
-        "Window session with key: '{}' will be removed",
-        session_key
-    );
+    println!("Window session with key: '{}' will be removed", session_key);
 
     // First, found out if there is running computation.
     let locked_computation = get_locked_computation(session_key);

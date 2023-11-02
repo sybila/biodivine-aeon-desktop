@@ -1,3 +1,5 @@
+use crate::model::read_layout;
+use crate::session::get_locked_computation;
 use crate::types::ErrorMessage;
 use biodivine_aeon_desktop::scc::{Behaviour, Class, Classifier};
 use biodivine_lib_param_bn::biodivine_std::bitvector::{ArrayBitVector, BitVector};
@@ -9,8 +11,6 @@ use regex::Regex;
 use serde_json::Value;
 use std::collections::HashSet;
 use std::time::Duration;
-use crate::model::read_layout;
-use crate::session::get_locked_computation;
 
 type EdgeList = Vec<(ArrayBitVector, ArrayBitVector)>;
 

@@ -1,14 +1,14 @@
-use crate::types::ErrorMessage;
 use crate::computation_results::{
     get_witness_attractors, get_witness_network, try_get_class_params,
 };
+use crate::session::{get_locked_computation, get_locked_tree};
+use crate::types::ErrorMessage;
 use biodivine_aeon_desktop::bdt::BdtNodeId;
 use biodivine_aeon_desktop::scc::algo_stability_analysis::{StabilityVector, VariableStability};
 use biodivine_aeon_desktop::scc::{Behaviour, Class};
 use biodivine_aeon_desktop::util::functional::Functional;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use serde_json::{from_str, Value};
-use crate::session::{get_locked_computation, get_locked_tree};
 
 #[tauri::command]
 pub async fn get_witness(class_str: String, session_key: &str) -> Result<String, ErrorMessage> {

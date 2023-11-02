@@ -1,7 +1,7 @@
-use std::cmp::max;
-use std::collections::HashMap;
 use biodivine_lib_param_bn::FnUpdate;
 use regex::Regex;
+use std::cmp::max;
+use std::collections::HashMap;
 
 /// Try to read the model layout metadata from the given aeon file.
 pub fn read_layout(aeon_string: &str) -> HashMap<String, (f64, f64)> {

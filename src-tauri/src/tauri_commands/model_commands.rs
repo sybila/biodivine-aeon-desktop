@@ -1,9 +1,8 @@
+use crate::model::{max_parameter_cardinality, read_layout};
 use crate::types::{Cardinality, ErrorMessage};
 use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
-use biodivine_lib_param_bn::{BooleanNetwork};
+use biodivine_lib_param_bn::BooleanNetwork;
 use std::cmp::max;
-use crate::model::{max_parameter_cardinality, read_layout};
-
 
 /// Accept a partial model containing only the necessary regulations and one update function.
 /// Return cardinality of such model (i.e. the number of instantiations of this update function)

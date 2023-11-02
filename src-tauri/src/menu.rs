@@ -1,5 +1,4 @@
-use tauri::{CustomMenuItem, Manager, Menu, MenuItem, Submenu};
-
+use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
 
 /// Initialize system menu used in model window.
 pub fn menu_init() -> Menu {
@@ -62,7 +61,7 @@ pub fn menu_init() -> Menu {
         Menu::new()
             .add_submenu(import_submenu)
             .add_submenu(export_submenu)
-            .add_item(new_model_editor)
+            .add_item(new_model_editor),
     );
 
     let manual_submenu = Submenu::new("Manual", Menu::new().add_item(manual));

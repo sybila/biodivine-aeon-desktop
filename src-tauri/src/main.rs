@@ -4,17 +4,15 @@
 extern crate lazy_static;
 
 use crate::menu::menu_init;
-use tauri::{Manager, WindowBuilder};
+use tauri::WindowBuilder;
 
-mod types;
 mod computation;
 mod computation_results;
 mod menu;
+mod model;
 mod session;
 mod tauri_commands;
-mod model;
-
-
+mod types;
 
 fn main() {
     let menu = menu_init();

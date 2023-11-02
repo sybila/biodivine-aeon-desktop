@@ -1,16 +1,16 @@
+use crate::session::{get_locked_computation, get_locked_tree, is_there_session};
 use biodivine_aeon_desktop::bdt::Bdt;
+use biodivine_aeon_desktop::scc::algo_interleaved_transition_guided_reduction::interleaved_transition_guided_reduction;
+use biodivine_aeon_desktop::scc::algo_xie_beerel::xie_beerel_attractors;
 use biodivine_aeon_desktop::scc::{Class, Classifier};
 use biodivine_aeon_desktop::GraphTaskContext;
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
+use biodivine_lib_param_bn::BooleanNetwork;
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use std::thread::JoinHandle;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
-use biodivine_lib_param_bn::BooleanNetwork;
-use biodivine_aeon_desktop::scc::algo_interleaved_transition_guided_reduction::interleaved_transition_guided_reduction;
-use biodivine_aeon_desktop::scc::algo_xie_beerel::xie_beerel_attractors;
-use crate::session::{get_locked_computation, get_locked_tree, is_there_session};
 
 /// Locked type of Bifurcation decision tree.
 pub type ArcBdt = Arc<RwLock<Option<Bdt>>>;
@@ -158,15 +158,10 @@ impl Computation {
     }
 }
 
-
 /// Prepare thread for computation.
-pub fn prepare_computation_thread(
-    session_key: String,
-    network: BooleanNetwork,
-) -> JoinHandle<()> {
+pub fn prepare_computation_thread(session_key: String, network: BooleanNetwork) -> JoinHandle<()> {
     std::thread::spawn(move || {
-        let cmp: Arc<RwLock<Option<Computation>>> =
-            get_locked_computation(session_key.as_str());
+        let cmp: Arc<RwLock<Option<Computation>>> = get_locked_computation(session_key.as_str());
         match SymbolicAsyncGraph::new(network) {
             Ok(graph) => {
                 // Now that we have graph, we can create classifier and progress
