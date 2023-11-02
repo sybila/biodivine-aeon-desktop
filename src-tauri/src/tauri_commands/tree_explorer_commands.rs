@@ -43,7 +43,7 @@ pub async fn auto_expand(
 }
 
 #[tauri::command]
-pub fn get_attributes(node_id: String, session_key: &str) -> Result<Value, ErrorMessage> {
+pub async fn get_attributes(node_id: String, session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_tree = get_locked_tree(session_key);
     let read_tree = locked_tree.read().unwrap();
     if let Some(tree) = read_tree.as_ref() {
@@ -80,7 +80,7 @@ pub async fn apply_tree_precision(
 }
 
 #[tauri::command]
-pub fn get_tree_precision(session_key: &str) -> Result<u32, ErrorMessage> {
+pub async fn get_tree_precision(session_key: &str) -> Result<u32, ErrorMessage> {
     let locked_tree = get_locked_tree(session_key);
     let read_tree = locked_tree.read().unwrap();
     if let Some(tree) = read_tree.as_ref() {
@@ -92,7 +92,7 @@ pub fn get_tree_precision(session_key: &str) -> Result<u32, ErrorMessage> {
 
 /// TODO - changed node_id and attr_id to usize instead of String because of FE
 #[tauri::command]
-pub fn apply_attribute(
+pub async fn apply_attribute(
     node_id: usize,
     attribute_id: usize,
     session_key: &str,
@@ -129,7 +129,7 @@ pub fn apply_attribute(
 }
 
 #[tauri::command]
-pub fn revert_decision(node_id: String, session_key: &str) -> Result<Value, ErrorMessage> {
+pub async fn revert_decision(node_id: String, session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_tree = get_locked_tree(session_key);
     let mut write_tree = locked_tree.write().unwrap();
     return if let Some(tree) = write_tree.as_mut() {

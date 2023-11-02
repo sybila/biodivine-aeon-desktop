@@ -70,12 +70,15 @@ function showTree() {
 		setPrecision(slider.value);
 	}
 
+	UI.isLoading(true)
 	TreeExplorerCommands.getTreePrecision()
 		.then((precision) => {
+			UI.isLoading(false)
 			slider.value = precision;
 			output.innerHTML = precision / 100.0 + "%";
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 
@@ -357,8 +360,10 @@ function setPrecision(precision) {
 }
 
 function removeNode(nodeId) {
+	UI.isLoading(true)
 	TreeExplorerCommands.deleteDecision(nodeId)
 		.then((okResponseObject) => {
+			UI.isLoading(false)
 			if (okResponseObject.removed.length > 0) {
 				for (removed of okResponseObject.removed) {
 					CytoscapeEditor.removeNode(removed);
@@ -370,6 +375,7 @@ function removeNode(nodeId) {
 			}
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 }
@@ -378,8 +384,10 @@ function removeNode(nodeId) {
 //  - From where is this function called/used?
 //  - 'node' and 'attr' parameters should be string but are numeric
 function selectAttribute(node, attr) {
+	UI.isLoading(true)
 	TreeExplorerCommands.selectDecisionAttribute(node, attr)
 		.then((okResponseObject) => {
+			UI.isLoading(false)
 			for (node of okResponseObject) {
 				CytoscapeEditor.ensureNode(node);
 			}
@@ -393,6 +401,7 @@ function selectAttribute(node, attr) {
 			CytoscapeEditor.refreshSelection();
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 }
