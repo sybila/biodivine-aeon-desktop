@@ -1,6 +1,6 @@
-use crate::common::ErrorMessage;
-use crate::computation_commands::get_locked_computation;
-use crate::model_commands::read_layout;
+use crate::model::read_layout;
+use crate::session::get_locked_computation;
+use crate::types::ErrorMessage;
 use biodivine_aeon_desktop::scc::{Behaviour, Class, Classifier};
 use biodivine_lib_param_bn::biodivine_std::bitvector::{ArrayBitVector, BitVector};
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
@@ -32,9 +32,9 @@ pub fn read_metadata(aeon_string: &str) -> (Option<String>, Option<String>) {
 
 pub fn get_witness_network(
     colors: &GraphColors,
-    window_session_key: &str,
+    session_key: &str,
 ) -> Result<String, ErrorMessage> {
-    let locked_computation = get_locked_computation(window_session_key);
+    let locked_computation = get_locked_computation(session_key);
     let read_computation = locked_computation.read().unwrap();
     if let Some(computation) = read_computation.as_ref() {
         if let Some(graph) = &computation.graph {
@@ -74,11 +74,11 @@ pub fn try_get_class_params(classifier: &Classifier, class: &Class) -> Option<Op
 
 pub fn get_witness_attractors(
     f_colors: &GraphColors,
-    window_session_key: &str,
+    session_key: &str,
 ) -> Result<Value, ErrorMessage> {
     {
         // Variables prefixed with f_ are from the original fully parametrised graph.
-        let locked_computation = get_locked_computation(window_session_key);
+        let locked_computation = get_locked_computation(session_key);
         let read_computation = locked_computation.read().unwrap();
         if let Some(computation) = read_computation.as_ref() {
             if let Some(f_classifier) = &computation.classifier {

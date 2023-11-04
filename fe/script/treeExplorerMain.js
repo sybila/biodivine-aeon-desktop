@@ -25,9 +25,12 @@ function Math_percent(cardinality, total) {
 	return Math.round((cardinality / total) * 100);
 }
 
-function init() {
-	// TODO - Set version number
-	const engineAddress = "v0.1.0";
+async function init() {
+
+	// Set program version
+	let version = await TAURI.invoke('get_version', {})
+	document.title = document.title + " (" + version + ")";
+	document.getElementById("version").innerHTML = "v" + version
 
 	// Emit when the window is fully initialized and ready
 	TAURI.event.emit('ready', {});
@@ -67,12 +70,15 @@ function showTree() {
 		setPrecision(slider.value);
 	}
 
-	TreeExplorerEndpoints.getTreePrecision()
+	UI.isLoading(true)
+	TreeExplorerCommands.getTreePrecision()
 		.then((precision) => {
+			UI.isLoading(false)
 			slider.value = precision;
 			output.innerHTML = precision / 100.0 + "%";
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 
@@ -283,8 +289,10 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 		Dialog.errorMessage("No node selected.")
 	}
 
-	TreeExplorerEndpoints.autoExpandBifurcationTree(nodeId, depth)
+	UI.isLoading(true)
+	TreeExplorerCommands.autoExpandBifurcationTree(nodeId, depth)
 		.then((okResponseObject) => {
+			UI.isLoading(false)
 			if (okResponseObject.length > 0) {
 				for (node of okResponseObject) {
 					CytoscapeEditor.ensureNode(node);
@@ -302,6 +310,7 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 			}
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 
@@ -309,8 +318,10 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 }
 
 function loadBifurcationTree(fit = true) {
-	ComputationResultsEndpoints.getBifurcationTree()
+	UI.isLoading(true)
+	ComputationResultsCommands.getBifurcationTree()
 		.then((okResponseObject) => {
+			UI.isLoading(false)
 			if (okResponseObject.length > 0) {
 				CytoscapeEditor.removeAll();	// remove old tree if present
 				for (node of okResponseObject) {
@@ -330,23 +341,29 @@ function loadBifurcationTree(fit = true) {
 			}
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 }
 
 function setPrecision(precision) {
-	TreeExplorerEndpoints.applyTreePrecision(precision)
+	UI.isLoading(true)
+	TreeExplorerCommands.applyTreePrecision(precision)
 		.then((okResponse) => {
+			UI.isLoading(false)
 			loadBifurcationTree(false);
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 }
 
 function removeNode(nodeId) {
-	TreeExplorerEndpoints.deleteDecision(nodeId)
+	UI.isLoading(true)
+	TreeExplorerCommands.deleteDecision(nodeId)
 		.then((okResponseObject) => {
+			UI.isLoading(false)
 			if (okResponseObject.removed.length > 0) {
 				for (removed of okResponseObject.removed) {
 					CytoscapeEditor.removeNode(removed);
@@ -358,6 +375,7 @@ function removeNode(nodeId) {
 			}
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 }
@@ -366,8 +384,10 @@ function removeNode(nodeId) {
 //  - From where is this function called/used?
 //  - 'node' and 'attr' parameters should be string but are numeric
 function selectAttribute(node, attr) {
-	TreeExplorerEndpoints.selectDecisionAttribute(node, attr)
+	UI.isLoading(true)
+	TreeExplorerCommands.selectDecisionAttribute(node, attr)
 		.then((okResponseObject) => {
+			UI.isLoading(false)
 			for (node of okResponseObject) {
 				CytoscapeEditor.ensureNode(node);
 			}
@@ -381,6 +401,7 @@ function selectAttribute(node, attr) {
 			CytoscapeEditor.refreshSelection();
 		})
 		.catch((errorMessage) => {
+			UI.isLoading(false)
 			Dialog.errorMessage(errorMessage)
 		})
 }
@@ -444,9 +465,10 @@ function vector_to_string(vector) {
 function initStabilityButton(id, button, dropdown, container) {
     button.onclick = function() {
         let behaviour = dropdown.value;
-		console.log(id)
-		TreeExplorerEndpoints.getStabilityData(id, behaviour)
+		UI.isLoading(true)
+		TreeExplorerCommands.getStabilityData(id, behaviour)
 			.then((okResponseObject) => {
+				UI.isLoading(false)
 				let content = "<h4>Stability analysis:</h4>";
 				for (item of okResponseObject) {
 					let variableName = item.variable;
@@ -463,6 +485,7 @@ function initStabilityButton(id, button, dropdown, container) {
 				container.innerHTML = content;
 			})
 			.catch((errorMessage) => {
+				UI.isLoading(false)
 				Dialog.errorMessage("Cannot load stability data: " + errorMessage)
 			})
     }

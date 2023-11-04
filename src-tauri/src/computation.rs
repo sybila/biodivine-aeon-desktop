@@ -1,7 +1,11 @@
+use crate::session::{get_locked_computation, get_locked_tree, is_there_session};
 use biodivine_aeon_desktop::bdt::Bdt;
+use biodivine_aeon_desktop::scc::algo_interleaved_transition_guided_reduction::interleaved_transition_guided_reduction;
+use biodivine_aeon_desktop::scc::algo_xie_beerel::xie_beerel_attractors;
 use biodivine_aeon_desktop::scc::{Class, Classifier};
 use biodivine_aeon_desktop::GraphTaskContext;
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
+use biodivine_lib_param_bn::BooleanNetwork;
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
@@ -152,4 +156,101 @@ impl Computation {
                 .as_millis()
         })
     }
+}
+
+/// Prepare thread for computation.
+pub fn prepare_computation_thread(session_key: String, network: BooleanNetwork) -> JoinHandle<()> {
+    std::thread::spawn(move || {
+        let cmp: Arc<RwLock<Option<Computation>>> = get_locked_computation(session_key.as_str());
+        match SymbolicAsyncGraph::new(network) {
+            Ok(graph) => {
+                // Now that we have graph, we can create classifier and progress
+                // and save them into the computation.
+                let classifier = Arc::new(Classifier::new(&graph));
+                let graph = Arc::new(graph);
+                {
+                    if let Some(cmp) = cmp.write().unwrap().as_mut() {
+                        cmp.graph = Some(graph.clone());
+                        cmp.classifier = Some(classifier.clone());
+                    } else {
+                        panic!("Cannot save graph. No computation found.")
+                    }
+                }
+
+                if let Some(cmp) = cmp.read().unwrap().as_ref() {
+                    // TODO: Note that this holds the read-lock on computation
+                    // for the  whole time, which is mostly ok because it can be
+                    // cancelled without write-lock, but we should find a
+                    // way to avoid this!
+                    let task_context = &cmp.task;
+                    task_context.restart(&graph);
+
+                    // Now we can actually start the computation...
+
+                    // First, perform ITGR reduction.
+                    let (universe, active_variables) = interleaved_transition_guided_reduction(
+                        task_context,
+                        &graph,
+                        graph.mk_unit_colored_vertices(),
+                    );
+
+                    // Then run Xie-Beerel to actually detect the components.
+                    xie_beerel_attractors(
+                        task_context,
+                        &graph,
+                        &universe,
+                        &active_variables,
+                        |component| {
+                            println!("Component {}", component.approx_cardinality());
+                            classifier.add_component(component, &graph);
+                        },
+                    );
+                }
+
+                {
+                    if let Some(cmp) = cmp.write().unwrap().as_mut() {
+                        cmp.finished_timestamp = Some(SystemTime::now());
+                    } else {
+                        panic!("Cannot finish computation. No computation found.")
+                    }
+                }
+
+                {
+                    // Check if the session still exists because window might be already closed
+                    if is_there_session(session_key.as_str()) {
+                        let result = classifier.export_result();
+                        let tree = get_locked_tree(session_key.as_str());
+                        let mut tree = tree.write().unwrap();
+                        *tree = Some(Bdt::new_from_graph(result, &graph));
+                        println!("Saved decision tree.");
+                    } else if let Some(cmp) = cmp.read().unwrap().as_ref() {
+                        if cmp.is_cancelled() {
+                            return;
+                        } else {
+                            panic!("Computation lost session but is not cancelled.");
+                        }
+                    } else {
+                        panic!("Cannot save tree. Thread lost its computation")
+                    }
+                }
+
+                println!("Component search done...");
+            }
+            Err(error) => {
+                if let Some(cmp) = cmp.write().unwrap().as_mut() {
+                    cmp.error = Some(error);
+                } else {
+                    panic!("Cannot save computation error. No computation found.")
+                }
+            }
+        }
+        {
+            // Remove reference to thread, since we are done now...
+            if let Some(cmp) = cmp.write().unwrap().as_mut() {
+                cmp.thread = None;
+            } else {
+                panic!("Cannot finalize thread. No computation found.");
+            };
+        }
+    })
 }

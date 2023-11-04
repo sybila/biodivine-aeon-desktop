@@ -1,21 +1,12 @@
 hasLocalStorage = false;
 
-function init() {
-	// TODO - What about version when there is no server anymore?
-	// Update version links and label to match expected engine version:
-	// let version_string = "v"+EXPECTED_ENGINE_VERSION;
-	// document.getElementById("version").innerHTML = version_string;
-	// document.getElementById("engine-link-windows").href = document
-	// 	.getElementById("engine-link-windows")
-	// 	.href.replace("VERSION", version_string);
-	//
-	// document.getElementById("engine-link-macos").href = document
-	// 	.getElementById("engine-link-macos")
-	// 	.href.replace("VERSION", version_string);
-	//
-	// document.getElementById("engine-link-linux").href = document
-	// 	.getElementById("engine-link-linux")
-	// 	.href.replace("VERSION", version_string);
+async function init() {
+
+	// Set program version
+	let version = await TAURI.invoke('get_version', {})
+	document.title = document.title + " (" + version + ")";
+	document.getElementById("version").innerHTML = "v" + version
+
 
 	try {
 		localStorage.setItem('testing', '1');

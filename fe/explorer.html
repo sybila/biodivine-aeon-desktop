@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-    <title>[Aeon] Attractor Explorer</title>
+    <title>Biodivine/Aeon - Attractor Explorer</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="style.css" type="text/css">
 
@@ -40,10 +40,11 @@
     <script src="script/UI.js"></script>
     <script src="script/CytoscapeEditor.js"></script>
     <script src="script/ModelEditor.js"></script>
-    <script src="script/endpoints/ComputationResultsEndpoints.js"></script>
+    <script src="script/tauriCommands/ComputationResultsCommands.js"></script>
     <script src="script/explorerMain.js"></script>
     <script src="script/events/ExplorerWindowEvent.js"></script>
     <script src="script/Windows.js"></script>
+    <script src="script/Menu.js"></script>
 
     <style>
         .vis-network:focus, canvas:focus {
@@ -54,7 +55,16 @@
 
 <body onload="init()">
 
+<div id="loading-indicator" class="invisible">
+    <img src="img/progress.gif"/><br><br>Loading...
+</div>
+
+<div id="content">
+
 <h1 id='logo'>Aeon/<span id='title'>BIODIVINE</span></h1>
+
+<!-- Do not change it here, this is a placeholder. -->
+<span id="version">v0.0.0</span>
 
 <div style="position:absolute" id="explorer-witness-panel" class="main-panel gone">
     <img alt="close" src="img/close-24px.svg" class="panel-close-button" onclick="witnessPanelVisible(false)">
@@ -75,9 +85,6 @@
     <div id="explorer-witness-text">
         <div></div>
 
-        <!-- engine address  -->
-        <div id="engine-address" style="display:none">http://localhost:8000/</div>
-
         <div style="position: absolute;">
             <div id="side-menu">
                 <div class="button-group" onclick='witnessPanelVisible()'>
@@ -88,6 +95,8 @@
             </div>
         </div>
     </div>
+</div>
+
 </div>
 
 </body>

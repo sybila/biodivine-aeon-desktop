@@ -3,18 +3,16 @@
 
 extern crate lazy_static;
 
-use crate::multi_window::menu_init;
+use crate::menu::menu_init;
 use tauri::WindowBuilder;
 
-mod common;
 mod computation;
-mod computation_commands;
 mod computation_results;
-mod computation_results_commands;
-mod model_commands;
-mod multi_window;
+mod menu;
+mod model;
 mod session;
-mod tree_explorer_commands;
+mod tauri_commands;
+mod types;
 
 fn main() {
     let menu = menu_init();
@@ -22,45 +20,48 @@ fn main() {
         .setup(|app| {
             WindowBuilder::new(
                 app,
-                "main-window".to_string(),
+                "model-window-main".to_string(),
                 tauri::WindowUrl::App("index.html".into()),
             )
             .menu(menu)
-            .title("Aeon/BIODIVINE")
+            .title("Aeon/BIODIVINE - model editor")
             .inner_size(1000f64, 700f64)
             .build()?;
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            model_commands::check_update_function,
-            model_commands::sbml_to_aeon,
-            model_commands::aeon_to_sbml,
-            model_commands::aeon_to_sbml_instantiated,
-            session::add_window_session,
-            session::remove_window_session,
-            session::has_running_computation,
-            computation_commands::start_computation,
-            computation_commands::cancel_computation,
-            computation_commands::get_results,
-            computation_commands::get_computation_process_info,
-            multi_window::open_model_window,
-            multi_window::open_computation_window,
-            multi_window::open_explorer_window,
-            multi_window::open_tree_explorer_window,
-            computation_results_commands::get_witness,
-            computation_results_commands::get_tree_witness,
-            computation_results_commands::get_stability_witness,
-            computation_results_commands::get_attractors,
-            computation_results_commands::get_tree_attractors,
-            computation_results_commands::get_stability_attractors,
-            computation_results_commands::get_bifurcation_tree,
-            tree_explorer_commands::auto_expand,
-            tree_explorer_commands::get_attributes,
-            tree_explorer_commands::apply_tree_precision,
-            tree_explorer_commands::get_tree_precision,
-            tree_explorer_commands::apply_attribute,
-            tree_explorer_commands::revert_decision,
-            tree_explorer_commands::get_stability_data,
+            tauri_commands::model_commands::check_update_function,
+            tauri_commands::model_commands::sbml_to_aeon,
+            tauri_commands::model_commands::aeon_to_sbml,
+            tauri_commands::model_commands::aeon_to_sbml_instantiated,
+            tauri_commands::session_commands::add_session,
+            tauri_commands::session_commands::remove_session,
+            tauri_commands::session_commands::has_running_computation,
+            tauri_commands::computation_commands::start_computation,
+            tauri_commands::computation_commands::cancel_computation,
+            tauri_commands::computation_commands::get_results,
+            tauri_commands::computation_commands::get_computation_process_info,
+            tauri_commands::window_commands::open_model_window,
+            tauri_commands::window_commands::open_computation_window,
+            tauri_commands::window_commands::open_explorer_window,
+            tauri_commands::window_commands::open_tree_explorer_window,
+            tauri_commands::window_commands::open_help_window,
+            tauri_commands::window_commands::open_manual_window,
+            tauri_commands::computation_results_commands::get_witness,
+            tauri_commands::computation_results_commands::get_tree_witness,
+            tauri_commands::computation_results_commands::get_stability_witness,
+            tauri_commands::computation_results_commands::get_attractors,
+            tauri_commands::computation_results_commands::get_tree_attractors,
+            tauri_commands::computation_results_commands::get_stability_attractors,
+            tauri_commands::computation_results_commands::get_bifurcation_tree,
+            tauri_commands::tree_explorer_commands::auto_expand,
+            tauri_commands::tree_explorer_commands::get_attributes,
+            tauri_commands::tree_explorer_commands::apply_tree_precision,
+            tauri_commands::tree_explorer_commands::get_tree_precision,
+            tauri_commands::tree_explorer_commands::apply_attribute,
+            tauri_commands::tree_explorer_commands::revert_decision,
+            tauri_commands::tree_explorer_commands::get_stability_data,
+            tauri_commands::version_command::get_version,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

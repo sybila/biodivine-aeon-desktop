@@ -168,8 +168,10 @@ let CytoscapeEditor = {
 		let addButton = document.getElementById("button-add-variable");
 		addButton.onclick = function() {			
 			if (data.treeData["attributes"] === undefined) {
-				TreeExplorerEndpoints.getDecisionAttributes(data.id)
+				UI.isLoading(true)
+				TreeExplorerCommands.getDecisionAttributes(data.id)
 					.then((okResponseObject) => {
+						UI.isLoading(false)
 						addButton.classList.add("gone");
 						for (attr of okResponseObject) {
 							// Prepare data:

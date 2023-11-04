@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-    <title>Biodivine/Aeon</title>
+    <title>Biodivine/Aeon - Computation</title>
     <meta charset="utf-8">
 
     <!-- Favicon -->
@@ -33,9 +33,11 @@
 
     <script src="script/common/const.js"></script>
     <script src="script/common/Strings.js"></script>
+    <script src="script/common/Model.js"></script>
     <script src="script/Results.js"></script>
     <script src="script/Computation.js"></script>
-    <script src="script/endpoints/ModelEndpoints.js"></script>
+    <script src="script/tauriCommands/ModelCommands.js"></script>
+    <script src="script/tauriCommands/WindowsCommands.js"></script>
     <script src="script/common/Examples.js"></script>
     <script src="script/LiveModel.js"></script>
     <script src="script/UI.js"></script>
@@ -43,18 +45,25 @@
     <script src="script/ModelEditor.js"></script>
     <script src="script/common/Dialog.js"></script>
     <script src="script/events/ComputationWindowEvent.js"></script>
-    <script src="script/Session.js"></script>
-    <script src="script/endpoints/ComputationResultsEndpoints.js"></script>
-    <script src="script/endpoints/ComputationEndpoints.js"></script>
+    <script src="script/tauriCommands/SessionCommands.js"></script>
+    <script src="script/tauriCommands/ComputationResultsCommands.js"></script>
+    <script src="script/tauriCommands/ComputationCommands.js"></script>
     <script src="script/Windows.js"></script>
     <script src="script/computationMain.js"></script>
+    <script src="script/Menu.js"></script>
 </head>
 
 <body onload="init()" style="background-color: #f5f5f5;">
 
+<div id="loading-indicator" class="invisible">
+    <img src="img/progress.gif"/><br><br>Loading...
+</div>
+
+<div id="content">
+
 <div style="position: absolute;">
 
-    <div id="tab-engine" class="new-window-panel">
+    <div id="content-engine" class="new-window-panel">
         <h3 id="compute-engine-status" style="margin: 0 auto; font-size: 20px; text-align: center;  font-family: 'FiraMono'; text-transform: uppercase;"> ● Computation</h3>
         <div style="height: 20px;"></div>
 
@@ -65,7 +74,7 @@
             Discovered classes: <span id="computation-classes">-</span></span>
 
             <div style="margin-top: 25px; text-align: center;">
-                <button id="computation-cancel" class="image-button" onclick="ComputationEndpoints.cancelComputation();" style="margin-right: 4px;">Cancel job <img src="img/cancel-24px.svg" alt="cancel"></button>
+                <button id="computation-cancel" class="image-button" onclick="ComputationCommands.cancelComputation();" style="margin-right: 4px;">Cancel job <img src="img/cancel-24px.svg" alt="cancel"></button>
                 <button id="computation-download" class="image-button" onclick="Results.show();" style="margin-left: 4px;">Show partial result <img src="img/cloud_download-24px.svg" alt="download"></button>
             </div>
         </div>
@@ -73,7 +82,7 @@
         <div style="clear: both;"></div>
     </div>
 
-    <div id="tab-results" class="new-window-panel gone">
+    <div id="content-results" class="new-window-panel gone">
         <h2 style="margin: 0 auto; font-size: 20px; text-align: center;">Bifurcation Function</h2>
 
         <div style="text-align: center; padding: 12px;">
@@ -92,6 +101,11 @@
             <span class='table-behavior'>D</span> disorder | <span class='table-behavior'>O</span> oscillation | <span class='table-behavior'>S</span> stability
         </div>
     </div>
+
+</div>
+
+    <!-- Do not change it here, this is a placeholder. -->
+    <span id="version">v0.0.0</span>
 
 </div>
 </body>

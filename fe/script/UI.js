@@ -1,7 +1,5 @@
 let ContentTabs = {
-	engine: "tab-engine",
 	modelEditor: "tab-model-editor",
-	results: "tab-results",
 }
 
 const DOUBLE_CLICK_DELAY = 400;
@@ -18,6 +16,7 @@ let UI = {
 	_edgeMenu: undefined,
 	// Contains pairs of elements of the form { button: ..., tab: ... } corresponding to the side menu.
 	_tabsAndButtons: undefined,
+	_isLoading: false,
 
 
 
@@ -61,22 +60,6 @@ let UI = {
 		}		
 	},
 
-	openHelpWindow() {
-		const helpWindow = TAURI.window.WebviewWindow.getByLabel("help-window")
-
-		// If the window is already opened, just focus on it
-		if (helpWindow !== null) {
-			helpWindow.setFocus()
-			return
-		}
-
-		new TAURI.window.WebviewWindow('help-window', {
-			url: 'help-window.html',
-			title: 'About & Help',
-			width: 530,
-			height: 700,
-		})
-	},
 
 	updateComputationStatus(activeStatus, data) {
 		let cmp = document.getElementById("computation");
@@ -86,7 +69,7 @@ let UI = {
 		let cmpClasses = document.getElementById("computation-classes");
 		let cmpCancel = document.getElementById("computation-cancel");
 		let cmpDownload = document.getElementById("computation-download");
-		let resultsWindow = document.getElementById("tab-results");
+		let resultsWindow = document.getElementById("content-results");
 
 		// Reset classes
 		cmpLabel.classList.remove("green", "orange");
@@ -137,6 +120,7 @@ let UI = {
 				cmp.classList.remove("gone");
 				if (data.error !== null) {
 					status += ", error: " + data.error;
+					cmpStatus.classList.add("orange");
 				}
 				cmpStatus.innerHTML = status;
 				cmpProgress.textContent = data.progress;
@@ -193,6 +177,10 @@ let UI = {
 	// Close any content tab, if open.
 	closeContent() {
 		this.ensureContentTabOpen(undefined);
+	},
+
+	isWaitingForResult() {
+		return this._isLoading
 	},
 
 	// A small utility method to show quick help.
@@ -264,10 +252,16 @@ let UI = {
 	},
 
 	isLoading(status) {
+		const windowContent = document.getElementById("content")
+		const loading = document.getElementById("loading-indicator")
 		if (status) {
-			document.getElementById("loading-indicator").classList.remove("invisible");
+			windowContent.classList.add("freeze")
+			loading.classList.remove("invisible")
+			this._isLoading = true
 		} else {
-			document.getElementById("loading-indicator").classList.add("invisible");
+			windowContent.classList.remove("freeze")
+			loading.classList.add("invisible");
+			this._isLoading = false
 		}
 	},
 
@@ -296,11 +290,14 @@ let UI = {
         	filename = "model";
         }
 
-		ModelEndpoints.aeonToSbml(aeonModel)
+		this.isLoading(true)
+		ModelCommands.aeonToSbml(aeonModel)
 			.then((sbmlModel) => {
+				this.isLoading(false)
 				this._downloadFile(filename + ".sbml", sbmlModel);
 			})
 			.catch((errorMessage) => {
+				this.isLoading(false)
 				Dialog.errorMessage(errorMessage)
 			})
 	},
@@ -316,11 +313,14 @@ let UI = {
         	filename = "model";
         }
 
-		ModelEndpoints.aeonToSbmlInstantiated(aeonModel)
+		this.isLoading(true)
+		ModelCommands.aeonToSbmlInstantiated(aeonModel)
 			.then((sbmlModel) => {
+				this.isLoading(false)
 				this._downloadFile(filename + "_instantiated.sbml", sbmlModel);
 			})
 			.catch((errorMessage) => {
+				this.isLoading(false)
 				Dialog.errorMessage(errorMessage);
 			})
 	},
@@ -350,6 +350,8 @@ let UI = {
 			return;
 		}
 
+		ModelEditor.setModelFilePath(filePath)
+
 		const aeonFileContent = await TAURI.fs.readTextFile(filePath);
 
 		let error = await LiveModel.handleAeonModelImport(aeonFileContent);
@@ -372,15 +374,28 @@ let UI = {
 			return;
 		}
 
+		ModelEditor.setModelFilePath(filePath)
+
 		const sbmlFileContent = await TAURI.fs.readTextFile(filePath);
 
-		ModelEndpoints.sbmlToAeon(sbmlFileContent)
+		this.isLoading(true)
+		ModelCommands.sbmlToAeon(sbmlFileContent)
 			.then((model) => {
+				this.isLoading(false)
 				LiveModel.handleAeonModelImport(model);
 			})
 			.catch((errorMessage) => {
+				this.isLoading(false)
 				Dialog.errorMessage(errorMessage);
 			})
+	},
+
+	startAnalysis(aeonString) {
+		if (aeonString === undefined) {
+			Dialog.errorMessage("Empty model.")
+			return undefined;
+		}
+		Windows.openComputationWindow(aeonString)
 	},
 
 	// Add a listener to each button to display hint texts when hovered.

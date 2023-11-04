@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <title>[Aeon] Bifurcation tree</title>
+    <title>Biodivine/Aeon - Bifurcation tree</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="style.css" type="text/css">
 
@@ -35,13 +35,17 @@
     <script src="script/common/const.js"></script>
     <script src="script/common/Strings.js"></script>
     <script src="script/common/Dialog.js"></script>
-    <script src="script/endpoints/ComputationResultsEndpoints.js"></script>
+    <script src="script/common/Model.js"></script>
+    <script src="script/tauriCommands/ComputationResultsCommands.js"></script>
+    <script src="script/tauriCommands/WindowsCommands.js"></script>
     <script src="script/Windows.js"></script>
+    <script src="script/UI.js"></script>
     <script src="script/CytoscapeTreeEditor.js"></script>
     <script src="script/Computation.js"></script>
-    <script src="script/endpoints/TreeExplorerEndpoints.js"></script>
+    <script src="script/tauriCommands/TreeExplorerCommands.js"></script>
     <script src="script/treeExplorerMain.js"></script>
     <script src="script/events/TreeExplorerWindowEvent.js"></script>
+    <script src="script/Menu.js"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HTCNPH6WMB"></script>
@@ -59,6 +63,17 @@
 </head>
 
 <body onload="init()" id="tree-explorer">
+
+<div id="loading-indicator" class="invisible">
+    <img src="img/progress.gif" alt="loading"/><br><br>Loading...
+</div>
+
+
+<div id="content">
+
+<!-- Do not change it here, this is a placeholder. -->
+<span id="version">v0.0.0</span>
+
 
 <div id="cytoscape-editor">
 </div>
@@ -291,6 +306,9 @@
     Precision: <span id="precision-value">100%</span>
 </div>
 
+
+
+</div>
 
 </body>
 </html>

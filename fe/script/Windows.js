@@ -1,12 +1,15 @@
 let Windows = {
 
+    openNewModelEditorWindow() {
+        let windowLabel = 'model-window:' + Date.now()
+        WindowsCommands.openModelWindow(windowLabel)
+    },
+
     // Open model in new window and return label of this window
     async openModelInNewWindow(modelString) {
         let windowLabel = 'model-window:' + Date.now()
 
-        await TAURI.invoke("open_model_window", {
-            label: windowLabel
-        })
+        await WindowsCommands.openModelWindow(windowLabel)
             .then(() => {
                 const newModelWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel)
 
@@ -24,26 +27,33 @@ let Windows = {
     },
 
     openComputationWindow(aeonString) {
-        let windowLabel = 'computation-window:' + Date.now()
+        let timestamp = Date.now()
+        let windowLabel = 'computation-window:' + timestamp
 
-        TAURI.invoke("open_computation_window", {
-            label: windowLabel
-        })
+        let modelTitle = Model.getModelName(aeonString)
+        if (modelTitle === undefined || modelTitle.length < 1) {
+            let filePath = ModelEditor.getModelFilePath()
+            modelTitle = filePath !== undefined ? filePath : "Model without name"
+        }
+
+        let windowTitle = modelTitle + ", started: " + new Date(timestamp).toLocaleTimeString('en-GB')
+
+        WindowsCommands.openComputationWindow(windowLabel, windowTitle)
             .then(() => {
                 const newComputationWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel)
 
                 // Wait until the new window is initialized
                 newComputationWindow.once('ready', () => {
                     // Emit to the new computation window to start computation
-                    newComputationWindow.emit('start-computation', { aeonString: aeonString })
+                    newComputationWindow.emit('start-computation', { aeonString: aeonString, modelTitle: modelTitle, windowTimestamp: timestamp })
                 })
             }).catch((errorMessage) => {
-            Dialog.errorMessage(errorMessage)
+                Dialog.errorMessage(errorMessage)
         })
     },
 
     async newWitnessWindow(witness) {
-        const witnessWindowLabel = await this.openModelInNewWindow(witness)
+        const witnessWindowLabel = await this.openModelInNewWindow(witness, true)
         if (witnessWindowLabel !== null) {
             const witnessWindow = TAURI.window.WebviewWindow.getByLabel(witnessWindowLabel)
 
@@ -53,31 +63,40 @@ let Windows = {
     },
 
     openWitnessWindow(witness) {
-        ComputationResultsEndpoints.getWitness(witness)
+        UI.isLoading(true)
+        ComputationResultsCommands.getWitness(witness)
             .then((witness) => {
+                UI.isLoading(false)
                 this.newWitnessWindow(witness)
             })
             .catch((errorMessage) => {
+                UI.isLoading(false)
                 Dialog.errorMessage(errorMessage)
             })
     },
 
     openTreeWitnessWindow(node) {
-        ComputationResultsEndpoints.getTreeWitness(node)
+        UI.isLoading(true)
+        ComputationResultsCommands.getTreeWitness(node)
             .then((witness) => {
+                UI.isLoading(false)
                 this.newWitnessWindow(witness)
             })
             .catch((errorMessage) => {
+                UI.isLoading(false)
                 Dialog.errorMessage(errorMessage)
             })
     },
 
     openStabilityWitnessWindow(node, behavior, variable, vector) {
-        ComputationResultsEndpoints.getStabilityWitness(node, behavior, variable, vector)
+        UI.isLoading(true)
+        ComputationResultsCommands.getStabilityWitness(node, behavior, variable, vector)
             .then((witness) => {
+                UI.isLoading(false)
                 this.newWitnessWindow(witness)
             })
             .catch((errorMessage) => {
+                UI.isLoading(false)
                 Dialog.errorMessage(errorMessage)
             })
     },
@@ -85,9 +104,7 @@ let Windows = {
     openAttractorExplorerWindow(behavior) {
         let explorerWindowLabel = "explorer-window:" + Date.now()
 
-        TAURI.invoke('open_explorer_window', {
-            label: explorerWindowLabel
-        })
+        WindowsCommands.openExplorerWindow(explorerWindowLabel)
             .then(() => {
                 const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel)
 
@@ -96,7 +113,7 @@ let Windows = {
                     // Emit to get attractors
                     newExplorerWindow.emit('get-attractors', {
                         behavior: behavior,
-                        windowSessionKey: Computation.getWindowSessionKey()
+                        sessionKey: Computation.getSessionKey()
                     })
                 })
             }).catch((errorMessage) => {
@@ -107,9 +124,7 @@ let Windows = {
     openTreeAttractorExplorerWindow(node) {
         let explorerWindowLabel = "explorer-window:" + Date.now()
 
-        TAURI.invoke('open_explorer_window', {
-            label: explorerWindowLabel
-        })
+        WindowsCommands.openExplorerWindow(explorerWindowLabel)
             .then(() => {
                 const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel)
 
@@ -118,7 +133,7 @@ let Windows = {
                     // Emit to get tree attractors
                     newExplorerWindow.emit('get-tree-attractors', {
                         node: node,
-                        windowSessionKey: Computation.getWindowSessionKey()
+                        sessionKey: Computation.getSessionKey()
                     })
                 })
             }).catch((errorMessage) => {
@@ -129,9 +144,7 @@ let Windows = {
     openStabilityAttractorExplorerWindow(node, behavior, variable, vector) {
         let explorerWindowLabel = "explorer-window:" + Date.now()
 
-        TAURI.invoke('open_explorer_window', {
-            label: explorerWindowLabel
-        })
+        WindowsCommands.openExplorerWindow(explorerWindowLabel)
             .then(() => {
                 const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel)
 
@@ -143,7 +156,7 @@ let Windows = {
                         behavior: behavior,
                         variable: variable,
                         vector: vector,
-                        windowSessionKey: Computation.getWindowSessionKey()
+                        sessionKey: Computation.getSessionKey()
                     })
                 })
             }).catch((errorMessage) => {
@@ -153,22 +166,54 @@ let Windows = {
 
 
     openTreeExplorerWindow() {
-        let treeWindowLabel = "tree-window:" + Date.now()
+        let treeWindowLabel = Computation.getTreeExplorerWindowLabel()
 
-        TAURI.invoke('open_tree_explorer_window', {
-            label: treeWindowLabel
-        })
+        // If the window is already opened, just focus on it
+        if (treeWindowLabel !== undefined) {
+            const treeWindow = TAURI.window.WebviewWindow.getByLabel(treeWindowLabel)
+            treeWindow.setFocus()
+            return
+        }
+
+        treeWindowLabel = "tree-window:" + Date.now()
+        Computation.setTreeExplorerWindowLabel(treeWindowLabel)
+        let windowTitle = Computation.getModelTitle() + ", started: " + new Date(Computation.getWindowTimestamp()).toLocaleTimeString('en-GB')
+
+        WindowsCommands.openTreeExplorerWindow(treeWindowLabel, windowTitle)
             .then(() => {
                 const newTreeWindow = TAURI.window.WebviewWindow.getByLabel(treeWindowLabel)
 
                 // Wait until the new tree explorer window is initialized
                 newTreeWindow.once('ready', () => {
                     // Emit to send window session key
-                    newTreeWindow.emit('send-window-session-key', { windowSessionKey: Computation.getWindowSessionKey() })
+                    newTreeWindow.emit('send-window-session-key', { sessionKey: Computation.getSessionKey() })
                 })
             }).catch((errorMessage) => {
             Dialog.errorMessage(errorMessage)
         })
     },
 
+    openHelpWindow() {
+        const helpWindow = TAURI.window.WebviewWindow.getByLabel("help-window")
+
+        // If the window is already opened, just focus on it
+        if (helpWindow !== null) {
+            helpWindow.setFocus()
+            return
+        }
+
+        WindowsCommands.openHelpWindow()
+    },
+
+    openManualWindow() {
+        const manualWindow = TAURI.window.WebviewWindow.getByLabel("manual-window")
+
+        // If the window is already opened, just focus on it
+        if (manualWindow !== null) {
+            manualWindow.setFocus()
+            return
+        }
+
+        WindowsCommands.openManualWindow()
+    },
 }

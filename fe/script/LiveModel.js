@@ -399,15 +399,6 @@ let LiveModel = {
 		return this.importAeon(modelString)
 	},
 
-	startAnalysis(aeonString) {
-		if (aeonString === undefined) {
-			Dialog.errorMessage("Empty model.")
-			return undefined;
-		}
-		Windows.openComputationWindow(aeonString)
-	},
-
-
 	// Import model from Aeon file. If the import is successful, return undefined,
 	// otherwise return an error string.
 	importAeon(modelString) {
@@ -578,7 +569,7 @@ let LiveModel = {
 		if (this._disable_dynamic_validation) return;
 		let modelFragment = this._updateFunctionModelFragment(id);
 		if (modelFragment !== undefined) {
-			ModelEndpoints.validateUpdateFunction(modelFragment)
+			ModelCommands.validateUpdateFunction(modelFragment)
 				.then((cardinality) => {
 					ModelEditor.setUpdateFunctionStatus(id, "Possible instantiations: " + cardinality, false);
 				})

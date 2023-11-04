@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title>Biodivine/Aeon</title>
+        <title>Biodivine/Aeon - Model editor</title>
         <meta charset="utf-8">
 
         <!-- Favicon -->
@@ -34,10 +34,12 @@
 
         <script src="script/common/const.js"></script>
         <script src="script/common/Strings.js"></script>
+        <script src="script/common/Model.js"></script>
         <script src="script/Results.js"></script>
         <script src="script/Computation.js"></script>
+        <script src="script/tauriCommands/WindowsCommands.js"></script>
         <script src="script/Windows.js"></script>
-        <script src="script/endpoints/ModelEndpoints.js"></script>
+        <script src="script/tauriCommands/ModelCommands.js"></script>
         <script src="script/common/Examples.js"></script>
         <script src="script/LiveModel.js"></script>
         <script src="script/UI.js"></script>
@@ -62,13 +64,19 @@
 
     <body onload="init()">
 
+        <div id="loading-indicator" class="invisible">
+            <img src="img/progress.gif"/><br><br>Loading...
+        </div>
+
+        <div id="content">
+
         <!-- Hosts the interactive model editor -->        
         <div id="cytoscape-editor">
         </div>
 
         <h1 id='logo'>Aeon/<span id='title'>BIODIVINE</span></h1>
 
-        <!-- Do not change it here, this is a placeholder. Change it in const.js -->
+        <!-- Do not change it here, this is a placeholder. -->
         <span id="version">v0.0.0</span>
 
         <!-- A menu element that is shown for selected graph nodes in the editor. -->
@@ -174,7 +182,7 @@
             <div id="side-menu">
                 <div class="button-group-fake">
                     <img alt="Compute Bifurcation" id="side-menu-compute" src="img/play_circle_filled-48px.svg"
-                         onclick="LiveModel.startAnalysis(LiveModel.exportAeon());" class="button-fake">
+                         onclick="UI.startAnalysis(LiveModel.exportAeon());" class="button-fake">
                     <span class="hint invisible">Start Analysis</span>
                 </div>
 
@@ -189,8 +197,8 @@
                     <span class="hint invisible">Apply Layout</span>
                 </div>
             </div>
+        </div>
 
-            <div id="loading-indicator" class="invisible"><img src="img/progress.gif"/><br><br>Waiting for server...</div>
         </div>
 
     </body>
