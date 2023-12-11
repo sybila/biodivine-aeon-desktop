@@ -66,7 +66,7 @@ pub async fn open_tree_explorer_window(
     tauri::WindowBuilder::new(
         &handle,
         label,
-        tauri::WindowUrl::App("tree_explorer.html".into()),
+        tauri::WindowUrl::App("tree-explorer.html".into()),
     )
     .center()
     .menu(menu_init())
