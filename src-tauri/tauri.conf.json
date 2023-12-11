@@ -4,8 +4,8 @@
     "beforeBuildCommand": "",
     "beforeDevCommand": "",
     "withGlobalTauri": true,
-    "devPath": "../fe",
-    "distDir": "../fe"
+    "devPath": "../frontend",
+    "distDir": "../frontend"
   },
   "package": {
     "productName": "aeon_desktop",
