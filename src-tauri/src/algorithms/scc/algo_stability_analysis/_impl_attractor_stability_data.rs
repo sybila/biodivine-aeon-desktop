@@ -1,4 +1,4 @@
-use crate::scc::algo_stability_analysis::{AttractorStabilityData, Stability};
+use crate::algorithms::scc::algo_stability_analysis::{AttractorStabilityData, Stability};
 use crate::util::functional::Functional;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use biodivine_lib_param_bn::symbolic_async_graph::{

@@ -1,4 +1,4 @@
-use crate::scc::ProgressTracker;
+use crate::algorithms::scc::ProgressTracker;
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColoredVertices, SymbolicAsyncGraph};
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Mutex;

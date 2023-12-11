@@ -4,8 +4,8 @@ use crate::computation_results::{
 use crate::session::{get_locked_computation, get_locked_tree};
 use crate::types::ErrorMessage;
 use biodivine_aeon_desktop::bdt::BdtNodeId;
-use biodivine_aeon_desktop::scc::algo_stability_analysis::{StabilityVector, VariableStability};
-use biodivine_aeon_desktop::scc::{Behaviour, Class};
+use biodivine_aeon_desktop::algorithms::scc::algo_stability_analysis::{StabilityVector, VariableStability};
+use biodivine_aeon_desktop::algorithms::scc::{Behaviour, Class};
 use biodivine_aeon_desktop::util::functional::Functional;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use serde_json::{from_str, Value};

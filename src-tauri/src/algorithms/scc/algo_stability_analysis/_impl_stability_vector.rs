@@ -1,4 +1,4 @@
-use crate::scc::algo_stability_analysis::{Stability, StabilityVector};
+use crate::algorithms::scc::algo_stability_analysis::{Stability, StabilityVector};
 use crate::util::functional::Functional;
 use json::JsonValue;
 use std::convert::TryFrom;

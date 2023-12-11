@@ -2,7 +2,7 @@ use crate::bdt::{
     entropy, information_gain, AppliedAttribute, Attribute, AttributeId, AttributeIds, Bdt,
     BdtNode, BdtNodeId, BdtNodeIds, BifurcationFunction,
 };
-use crate::scc::Class;
+use crate::algorithms::scc::Class;
 use crate::util::functional::Functional;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use biodivine_lib_param_bn::symbolic_async_graph::GraphColors;

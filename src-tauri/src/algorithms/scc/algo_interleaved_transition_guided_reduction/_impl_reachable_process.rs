@@ -1,7 +1,7 @@
-use crate::scc::algo_interleaved_transition_guided_reduction::{
+use crate::algorithms::scc::algo_interleaved_transition_guided_reduction::{
     ExtendedComponentProcess, FwdProcess, Process, ReachableProcess, Scheduler,
 };
-use crate::scc::algo_saturated_reachability::reach_bwd;
+use crate::algorithms::scc::algo_saturated_reachability::reach_bwd;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColoredVertices, SymbolicAsyncGraph};
 use biodivine_lib_param_bn::VariableId;

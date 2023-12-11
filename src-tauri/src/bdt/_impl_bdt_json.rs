@@ -1,6 +1,6 @@
 use crate::bdt::_impl_bdt_node::class_list_cardinality;
 use crate::bdt::{AttributeId, Bdt, BdtNode, BdtNodeId, BifurcationFunction};
-use crate::scc::Class;
+use crate::algorithms::scc::Class;
 use crate::util::functional::Functional;
 use biodivine_lib_param_bn::symbolic_async_graph::GraphColors;
 use json::JsonValue;

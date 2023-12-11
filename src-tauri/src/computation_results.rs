@@ -1,7 +1,7 @@
 use crate::model::read_layout;
 use crate::session::get_locked_computation;
 use crate::types::ErrorMessage;
-use biodivine_aeon_desktop::scc::{Behaviour, Class, Classifier};
+use biodivine_aeon_desktop::algorithms::scc::{Behaviour, Class, Classifier};
 use biodivine_lib_param_bn::biodivine_std::bitvector::{ArrayBitVector, BitVector};
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};

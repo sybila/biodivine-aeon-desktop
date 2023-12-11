@@ -1,8 +1,8 @@
 use crate::session::{get_locked_computation, get_locked_tree, is_there_session};
 use biodivine_aeon_desktop::bdt::Bdt;
-use biodivine_aeon_desktop::scc::algo_interleaved_transition_guided_reduction::interleaved_transition_guided_reduction;
-use biodivine_aeon_desktop::scc::algo_xie_beerel::xie_beerel_attractors;
-use biodivine_aeon_desktop::scc::{Class, Classifier};
+use biodivine_aeon_desktop::algorithms::scc::algo_interleaved_transition_guided_reduction::interleaved_transition_guided_reduction;
+use biodivine_aeon_desktop::algorithms::scc::algo_xie_beerel::xie_beerel_attractors;
+use biodivine_aeon_desktop::algorithms::scc::{Class, Classifier};
 use biodivine_aeon_desktop::GraphTaskContext;
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
 use biodivine_lib_param_bn::BooleanNetwork;

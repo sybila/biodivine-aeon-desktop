@@ -1,4 +1,4 @@
-use crate::scc::algo_stability_analysis::Stability;
+use crate::algorithms::scc::algo_stability_analysis::Stability;
 use std::convert::TryFrom;
 use std::fmt::{Display, Formatter};
 

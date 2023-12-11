@@ -1,5 +1,5 @@
-use crate::scc::Behaviour;
 use std::convert::TryFrom;
+use crate::algorithms::scc::Behaviour;
 
 impl TryFrom<&str> for Behaviour {
     type Error = String;

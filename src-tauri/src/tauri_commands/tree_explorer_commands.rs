@@ -1,8 +1,8 @@
 use crate::session::{get_locked_computation, get_locked_tree};
 use crate::types::ErrorMessage;
 use biodivine_aeon_desktop::bdt::{AttributeId, BdtNodeId};
-use biodivine_aeon_desktop::scc::algo_stability_analysis::compute_stability;
-use biodivine_aeon_desktop::scc::Behaviour;
+use biodivine_aeon_desktop::algorithms::scc::algo_stability_analysis::compute_stability;
+use biodivine_aeon_desktop::algorithms::scc::Behaviour;
 use biodivine_aeon_desktop::util::functional::Functional;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use json::{array, object, JsonValue};

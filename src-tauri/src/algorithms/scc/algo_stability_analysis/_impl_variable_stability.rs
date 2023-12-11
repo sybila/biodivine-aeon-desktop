@@ -1,4 +1,4 @@
-use crate::scc::algo_stability_analysis::{
+use crate::algorithms::scc::algo_stability_analysis::{
     AttractorStabilityData, Stability, StabilityVector, VariableStability,
 };
 use crate::util::functional::Functional;
