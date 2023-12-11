@@ -98,7 +98,7 @@ let ModelEditor = {
 		variableName.addEventListener("change", (e) => {			
 			let error = LiveModel.renameVariable(id, variableName.value);
 			if (error !== undefined) {
-				alert(error);
+				Dialog.errorMessage(error)
 				variableName.classList.add("error");
 			} else {
 				variableName.classList.remove("error");
@@ -108,7 +108,7 @@ let ModelEditor = {
 		updateFunction.addEventListener("focusout", (e) => {		
 			let error = LiveModel.setUpdateFunction(id, updateFunction.textContent);
 			if (error !== undefined) {
-				alert(error);
+				Dialog.errorMessage(error)
 				updateFunction.classList.add("error");
 			} else {
 				updateFunction.classList.remove("error");
