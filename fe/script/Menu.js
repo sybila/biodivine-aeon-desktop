@@ -60,7 +60,7 @@ function isModelWindowAction() {
     let currentWindowLabel = TAURI.window.getCurrent().label
     console.log(currentWindowLabel)
     if (!currentWindowLabel.startsWith("model-window")) {
-        Dialog.errorMessage(Strings.unsupportedAction)
+        Dialog.warningMessage(Strings.unsupportedAction)
         return false
     }
     return true
