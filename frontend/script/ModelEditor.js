@@ -1,4 +1,3 @@
-
 /*
 	Responsible for managing the UI of the model editor, i.e. adding/removing variables and regulations, focusing
 	right elements when needed, etc.

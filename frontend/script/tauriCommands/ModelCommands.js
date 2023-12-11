@@ -1,6 +1,10 @@
+/*
+    Responsible for calling Tauri commands dealing with .aeon and .sbml model.
+    Commands return Promises.
+ */
 let ModelCommands = {
 
-    validateUpdateFunction(modelFragment,) {
+    validateUpdateFunction(modelFragment) {
         return TAURI.invoke('check_update_function', {
             data: modelFragment
         })

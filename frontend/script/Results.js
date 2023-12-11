@@ -1,4 +1,7 @@
-let Results = {	
+/*
+	Handles showing of computation results in computation window.
+ */
+let Results = {
 
 	clear() {
 		document.getElementById("open-tree-explorer").classList.add("gone");

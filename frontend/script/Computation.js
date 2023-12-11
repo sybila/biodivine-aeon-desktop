@@ -1,9 +1,12 @@
+/*
+    Stores information about Computation related to window.
+ */
 let Computation = {
     _sessionKey: undefined, // window session key is computation window label
-    _lastComputation: undefined,
-    _modelTitle: undefined,
-    _windowTimestamp: undefined,
-    _treeExplorerWindowLabel: undefined,
+    _lastComputation: undefined, // timestamp of last computation
+    _modelTitle: undefined, // title of computed model
+    _windowTimestamp: undefined, // timestamp of computation window
+    _treeExplorerWindowLabel: undefined, // identification label of tree explorer window for this cmp
 
     setSessionKey(sessionKey) {
         this._sessionKey = sessionKey

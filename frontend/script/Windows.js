@@ -1,5 +1,9 @@
+/*
+    Handles what happens when new window is created/opened.
+ */
 let Windows = {
 
+    // Open empty model editor window.
     openNewModelEditorWindow() {
         let windowLabel = 'model-window:' + Date.now()
         WindowsCommands.openModelWindow(windowLabel)
@@ -26,6 +30,7 @@ let Windows = {
         return windowLabel
     },
 
+    // Open computation window and start computation
     openComputationWindow(aeonString) {
         let timestamp = Date.now()
         let windowLabel = 'computation-window:' + timestamp
@@ -52,6 +57,7 @@ let Windows = {
         })
     },
 
+    // Open witness model in new window
     async newWitnessWindow(witness) {
         const witnessWindowLabel = await this.openModelInNewWindow(witness, true)
         if (witnessWindowLabel !== null) {
@@ -62,6 +68,7 @@ let Windows = {
         }
     },
 
+    // Get witness from computation and try to open it in new window
     openWitnessWindow(witness) {
         UI.isLoading(true)
         ComputationResultsCommands.getWitness(witness)
@@ -75,6 +82,7 @@ let Windows = {
             })
     },
 
+    // Get witness from tree explorer and try to open it in new window
     openTreeWitnessWindow(node) {
         UI.isLoading(true)
         ComputationResultsCommands.getTreeWitness(node)
@@ -88,6 +96,7 @@ let Windows = {
             })
     },
 
+    // Get witness from stability analysis and try to open it in new window
     openStabilityWitnessWindow(node, behavior, variable, vector) {
         UI.isLoading(true)
         ComputationResultsCommands.getStabilityWitness(node, behavior, variable, vector)

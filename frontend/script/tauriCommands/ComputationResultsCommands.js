@@ -1,3 +1,7 @@
+/*
+    Responsible for calling Tauri commands dealing with results of Computation.
+    Commands return Promises.
+ */
 let ComputationResultsCommands = {
 
     // Witness

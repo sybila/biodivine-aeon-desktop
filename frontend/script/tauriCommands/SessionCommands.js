@@ -1,3 +1,7 @@
+/*
+    Responsible for calling Tauri commands dealing with Session - relation between computation and computation window.
+    Commands return Promises.
+ */
 let SessionCommands = {
     _sessionKey: undefined,
 

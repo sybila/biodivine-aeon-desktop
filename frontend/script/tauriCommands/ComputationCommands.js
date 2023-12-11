@@ -1,3 +1,7 @@
+/*
+    Responsible for calling Tauri commands dealing with Computation.
+    Commands return Promises.
+ */
 let ComputationCommands = {
 
     startComputation(aeonString, sessionKey) {

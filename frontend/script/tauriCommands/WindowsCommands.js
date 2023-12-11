@@ -1,3 +1,7 @@
+/*
+    Responsible for calling Tauri commands creating new Webview windows.
+    Commands return Promises.
+ */
 let WindowsCommands = {
 
     openModelWindow(windowLabel) {

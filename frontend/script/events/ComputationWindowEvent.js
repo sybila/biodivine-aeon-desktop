@@ -1,4 +1,4 @@
-// Listen for 'start-computation' event and start computation from (this) new window
+// Listen for 'start-computation' event and start computation from current new window
 TAURI.event.listen('start-computation', (event) => {
     const aeonString = event.payload['aeonString']
     const modelTitle = event.payload['modelTitle']
@@ -46,6 +46,7 @@ TAURI.window.getCurrent().listen("tauri://close-requested", async () => {
             Dialog.errorMessage(errorMessage)
         })
 })
+
 
 // Listen for event when tree explorer window is closed
 TAURI.event.listen('tree-explorer-window-closed', () => {

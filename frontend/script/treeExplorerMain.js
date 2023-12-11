@@ -25,6 +25,7 @@ function Math_percent(cardinality, total) {
 	return Math.round((cardinality / total) * 100);
 }
 
+// Main onload function for Bifurcation decision tree explorer window
 async function init() {
 
 	// Set program version

@@ -382,6 +382,7 @@ let LiveModel = {
 		return true;
 	},
 
+	// Handle situation when user wants to open new model.
 	async handleAeonModelImport(modelString) {
 		if (!this.isEmpty()) {
 			const userDecision = await this.askToOpenInNewWindow();

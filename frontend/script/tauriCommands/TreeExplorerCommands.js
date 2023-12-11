@@ -1,3 +1,7 @@
+/*
+    Responsible for calling Tauri commands dealing with bifurcation decision tree.
+    Commands return Promises.
+ */
 let TreeExplorerCommands = {
 
     autoExpandBifurcationTree(nodeId, depth) {

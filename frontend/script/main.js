@@ -1,5 +1,6 @@
 hasLocalStorage = false;
 
+// Main onload function for model editor window
 async function init() {
 
 	// Set program version

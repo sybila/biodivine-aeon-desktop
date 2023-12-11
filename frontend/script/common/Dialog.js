@@ -12,8 +12,6 @@ let Dialog = {
         TAURI.dialog.message(message, { title: 'Error', type: 'error' });
     },
 
-
-
     confirm(title, message) {
         return TAURI.dialog.ask(message, {
             title: title,

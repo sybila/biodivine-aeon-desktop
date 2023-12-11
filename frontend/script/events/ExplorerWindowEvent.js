@@ -16,6 +16,7 @@ TAURI.event.listen('get-attractors', (event) => {
         })
 });
 
+
 // Listen for 'get-tree-attractors' event to show attractors in explorer window
 TAURI.event.listen('get-tree-attractors', (event) => {
     Computation.setSessionKey(event.payload['sessionKey'])
@@ -33,6 +34,7 @@ TAURI.event.listen('get-tree-attractors', (event) => {
             Dialog.errorMessage(errorMessage)
         })
 });
+
 
 // Listen for 'get-stability-attractors' event to show attractors in explorer window
 TAURI.event.listen('get-stability-attractors', (event) => {

@@ -8,6 +8,7 @@ TAURI.event.listen('send-window-session-key', (event) => {
     showTree()
 });
 
+
 // Send message to computation window before closing this tree explorer window
 TAURI.window.getCurrent().listen("tauri://close-requested", async () => {
     let confirmClose = true

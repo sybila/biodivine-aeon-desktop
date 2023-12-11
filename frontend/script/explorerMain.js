@@ -29,6 +29,7 @@ let options = {
     },
 };
 
+// Main onload function for attractor explorer window
 async function init() {
     container = document.getElementById('visjs-container');
 

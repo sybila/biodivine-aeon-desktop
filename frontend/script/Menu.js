@@ -55,6 +55,8 @@ TAURI.window.appWindow.onMenuClicked(({ payload: menuItemId }) => {
     }
 });
 
+// Check if menu action is supported for current window.
+// If not, warn user with warning dialog.
 function isModelWindowAction() {
     let currentWindowLabel = TAURI.window.getCurrent().label
     console.log(currentWindowLabel)

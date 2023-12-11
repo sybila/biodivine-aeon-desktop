@@ -1,3 +1,4 @@
+//  Main onload function for computation window
 async function init() {
 
     // Set program version
