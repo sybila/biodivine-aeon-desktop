@@ -56,7 +56,6 @@ TAURI.window.appWindow.onMenuClicked(({ payload: menuItemId }) => {
 });
 
 function isModelWindowAction() {
-    console.log("aaa")
     let currentWindowLabel = TAURI.window.getCurrent().label
     console.log(currentWindowLabel)
     if (!currentWindowLabel.startsWith("model-window")) {

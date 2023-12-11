@@ -64,6 +64,11 @@ let Results = {
 				document.getElementById("open-tree-explorer").classList.remove("gone");
 				document.getElementById("content-results").classList.remove("gone");
 
+				// Hide "Explore Bifurcation Function" link when result are partial
+				if (isPartial) {
+					document.getElementById("open-tree-explorer").classList.add("gone");
+				}
+
 				// Hide "Show partial result" button after it is clicked on cancelled computation
 				if (isCancelled) {
 					document.getElementById("computation-download").classList.add("gone");

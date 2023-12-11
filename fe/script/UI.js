@@ -70,6 +70,7 @@ let UI = {
 		let cmpCancel = document.getElementById("computation-cancel");
 		let cmpDownload = document.getElementById("computation-download");
 		let resultsWindow = document.getElementById("content-results");
+		let treeExplorerLink = document.getElementById("open-tree-explorer");
 
 		// Reset classes
 		cmpLabel.classList.remove("green", "orange");
@@ -86,6 +87,7 @@ let UI = {
 					if (data["is_cancelled"]) {
 						status = "awaiting cancellation";
 						resultsWindow.classList.add("gone");
+						cmpDownload.classList.add("gone");
 					}
 					// ...but, if it is not running, and it is not cancelled, then it must be done...
 					if (!data["is_running"] && !data["is_cancelled"]) {
