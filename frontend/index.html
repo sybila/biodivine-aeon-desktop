@@ -1,32 +1,13 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
     <head>
         <title>Biodivine/Aeon - Model editor</title>
-        <meta charset="utf-8">
 
-        <!-- Favicon -->
-        <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="favicon/apple-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="favicon/apple-icon-114x114.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="favicon/apple-icon-144x144.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-icon-180x180.png">
-        <link rel="icon" type="image/png" sizes="192x192"  href="favicon/android-icon-192x192.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-        <link rel="manifest" href="manifest.json">
-        <meta name="msapplication-TileColor" content="#ffffff">
-        <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
-        <meta name="theme-color" content="#ffffff">
+        <meta charset="utf-8">
 
         <link rel="stylesheet" href="style.css" type="text/css">
 
-        <!-- TODO - remove unused scripts -->
         <script src="script/dependencies/cytoscape.min.js"></script>
         <script src="script/dependencies/lodash.js"></script>
         <script src="script/dependencies/cytoscape-edgehandles.js"></script>
@@ -51,21 +32,12 @@
         <script src="script/events/ModelWindowEvent.js"></script>
         <script src="script/events/WitnessWindowEvent.js"></script>
 
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-HTCNPH6WMB"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'G-HTCNPH6WMB');
-        </script>
     </head>
 
     <body onload="init()" style="overflow: hidden;">
 
         <div id="loading-indicator" class="gone">
-            <img src="img/progress.gif"/><br><br>Loading...
+            <img src="img/progress.gif" alt="Loading animation"/><br><br>Loading...
         </div>
 
         <div id="content">
@@ -133,7 +105,7 @@
 
         <div style="position: absolute;">            
 
-            <div id="tab-model-editor" class="main-panel gone" style="padding-bottom: 0px;">
+            <div id="tab-model-editor" class="main-panel gone" style="padding-bottom: 0;">
                 <div class="invisible-input full-line">
                     <input id="model-name" class="center" type="text" name="model-name" placeholder="(model name)" style="font-size: 20px;">
                 </div>
@@ -141,7 +113,7 @@
                 <div class="invisible-input full-line" id="model-description" contenteditable data-placeholder="(model description)" style="margin-top: 4px; margin-bottom: 4px;"></div>      
 
                 <div style="height: 30px;">
-                    <h3 style="font-family: 'FiraMono'; text-transform: uppercase;"> ● Overview</h3>
+                    <h3 style="font-family: 'FiraMono',serif; text-transform: uppercase;"> ● Overview</h3>
                 </div>
                 <table id="model-stats">
                     <tr class="row">    <td>Variables: </td>        <td class="value">-</td>     <td>Parameter space size: </td>  <td class="value">-</td> </tr>
@@ -150,8 +122,8 @@
                     <tr class="row">    <td colspan="2">Explicit parameters: </td>  <td colspan="2">(none)</td>   </tr>
                 </table>                   
                 <div style="height: 40px;">
-                    <h3 style="float: left; font-family: 'FiraMono'; text-transform: uppercase;"> ● Variables</h3>
-                    <button id="button-add-variable" class="image-button" onclick="let id = LiveModel.addVariable(); CytoscapeEditor.showNode(id);" style="float: right;">Add variable (N) <img src="img/add_box-24px.svg"></button>
+                    <h3 style="float: left; font-family: 'FiraMono',serif; text-transform: uppercase;"> ● Variables</h3>
+                    <button id="button-add-variable" class="image-button" onclick="let id = LiveModel.addVariable(); CytoscapeEditor.showNode(id);" style="float: right;">Add variable (N) <img src="img/add_box-24px.svg" alt="add"></button>
                 </div>
                 <div style="clear: both;"></div>
                 <div id="model-variables" class="full-line"></div>                       
@@ -200,6 +172,5 @@
         </div>
 
         </div>
-
     </body>
 </html>
