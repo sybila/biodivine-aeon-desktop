@@ -3,25 +3,8 @@
 <html lang="en">
 <head>
   <title>Help</title>
-  <meta charset="utf-8">
 
-  <!-- Favicon -->
-  <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="favicon/apple-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="favicon/apple-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="favicon/apple-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-icon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192"  href="favicon/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-  <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
-  <meta name="theme-color" content="#ffffff">
+  <meta charset="utf-8">
 
   <link rel="stylesheet" href="style.css" type="text/css">
 
@@ -36,16 +19,16 @@
 
 <body style="background-color: #f5f5f5; overflow: hidden;">
 
-<div id="help" class="new-window-panel" style="font-family: 'FiraMono';">
+<div id="help" class="new-window-panel" style="font-family: 'FiraMono',serif;">
   <h2 style="margin: 0 auto; font-size: 20px; text-align: center;">About & Help</h2>
 
-  <p>Aeon is a tool for analysing <b style="font-family: 'FiraMonoBold';">long-term behaviour of Boolean networks with parameters</b>. Use the editor to create a new network, or import your own from .sbml or .aeon. You can leave the update functions in the network blank (this will automatically consider all admissible instantiations of such function) or specify an exact update function. In the update function, you can use <b style="font-family: 'FiraMonoBold';">arbitrary uninterpreted functions as parameters</b> (see Budding Yeast-Irons example). Aeon will then automatically consider all admissible instantiations of such functions when analysing the model.</p>
+  <p>Aeon is a tool for analysing <b style="font-family: 'FiraMonoBold',serif;">long-term behaviour of Boolean networks with parameters</b>. Use the editor to create a new network, or import your own from .sbml or .aeon. You can leave the update functions in the network blank (this will automatically consider all admissible instantiations of such function) or specify an exact update function. In the update function, you can use <b style="font-family: 'FiraMonoBold',serif;">arbitrary uninterpreted functions as parameters</b> (see Budding Yeast-Irons example). Aeon will then automatically consider all admissible instantiations of such functions when analysing the model.</p>
 
-  <p>Once your network is ready, you can run the long-term behaviour analysis which will show you the behaviour classes of the model. The classes are separated based on <b style="font-family: 'FiraMonoBold';">stable, oscillating or disordered</b> behaviour. For each class, you can generate a <b style="font-family: 'FiraMonoBold';">witness network</b> that exihibits the specified behaviour.</p>
+  <p>Once your network is ready, you can run the long-term behaviour analysis which will show you the behaviour classes of the model. The classes are separated based on <b style="font-family: 'FiraMonoBold',serif;">stable, oscillating or disordered</b> behaviour. For each class, you can generate a <b style="font-family: 'FiraMonoBold',serif;">witness network</b> that exihibits the specified behaviour.</p>
 
   <h3>Manual</h3>
 
-  Full description of the functionality Aeon provides is available in the <u onclick="Windows.openManualWindow()">tool manual</u>.
+  Full description of the functionality Aeon provides is available in the <a class="inline-button" onclick="Windows.openManualWindow()">tool manual</a>.
 
 
   <h3>Quick Help</h3>
