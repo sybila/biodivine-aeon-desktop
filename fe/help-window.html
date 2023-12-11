@@ -26,11 +26,15 @@
   <link rel="stylesheet" href="style.css" type="text/css">
 
   <script src="script/common/const.js"></script>
+  <script src="script/common/Strings.js"></script>
+  <script src="script/common/Dialog.js"></script>
   <script src="script/Menu.js"></script>
+  <script src="script/tauriCommands/WindowsCommands.js"></script>
+  <script src="script/Windows.js"></script>
 
 </head>
 
-<body style="background-color: #f5f5f5; overflow-y: hidden;">
+<body style="background-color: #f5f5f5; overflow: hidden;">
 
 <div id="help" class="new-window-panel" style="font-family: 'FiraMono';">
   <h2 style="margin: 0 auto; font-size: 20px; text-align: center;">About & Help</h2>
@@ -41,7 +45,7 @@
 
   <h3>Manual</h3>
 
-  Full description of the functionality Aeon provides is available in the <a href="https://biodivine.fi.muni.cz/aeon/manual/v0.4.0/">tool manual</a>.
+  Full description of the functionality Aeon provides is available in the <u onclick="Windows.openManualWindow()">tool manual</u>.
 
 
   <h3>Quick Help</h3>
@@ -61,12 +65,6 @@
     <li>(M) Change monotonicity of the selected regulation.</li>
     <li>(H) Show this help message.</li>
   </ul>
-
-  <h3>Attributions</h3>
-
-  <p>Compute Engine: crossbeam, rayon, rocket, json.</p>
-
-  <p>Online client: cytoscape with edgehandles, material icons, hotkeys.</p>
 
 </div>
 

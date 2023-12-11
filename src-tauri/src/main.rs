@@ -23,9 +23,11 @@ fn main() {
                 "model-window-main".to_string(),
                 tauri::WindowUrl::App("index.html".into()),
             )
+            .center()
             .menu(menu)
             .title("Aeon/BIODIVINE - model editor")
             .inner_size(1000f64, 700f64)
+            .min_inner_size(600f64, 300f64)
             .build()?;
             Ok(())
         })
