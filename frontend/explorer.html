@@ -3,43 +3,18 @@
 <html lang="en">
 <head>
     <title>Biodivine/Aeon - Attractor Explorer</title>
+
     <meta charset="utf-8">
+
     <link rel="stylesheet" href="style.css" type="text/css">
 
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-    <link rel="manifest" href="manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
-
-    <script src="script/dependencies/lodash.js"></script>
-    <script src="script/dependencies/hotkeys.min.js"></script>
     <script src="script/dependencies/vis-network.min.js"></script>
 
-    <!-- TODO - remove unused scripts -->
     <script src="script/common/const.js"></script>
     <script src="script/common/Strings.js"></script>
     <script src="script/common/Dialog.js"></script>
-    <script src="script/Results.js"></script>
     <script src="script/Computation.js"></script>
-    <script src="script/common/Examples.js"></script>
-    <script src="script/LiveModel.js"></script>
     <script src="script/UI.js"></script>
-    <script src="script/CytoscapeEditor.js"></script>
-    <script src="script/ModelEditor.js"></script>
     <script src="script/tauriCommands/ComputationResultsCommands.js"></script>
     <script src="script/explorerMain.js"></script>
     <script src="script/events/ExplorerWindowEvent.js"></script>
@@ -56,15 +31,12 @@
 <body onload="init()" style="overflow: hidden;">
 
 <div id="loading-indicator" class="gone">
-    <img src="img/progress.gif"/><br><br>Loading...
+    <img src="img/progress.gif" alt="loading animation"/><br><br>Loading...
 </div>
 
 <div id="content">
 
 <h1 id='logo'>Aeon/<span id='title'>BIODIVINE</span></h1>
-
-<!-- Do not change it here, this is a placeholder. -->
-<span id="version">v0.0.0</span>
 
 <div style="position:absolute" id="explorer-witness-panel" class="main-panel gone">
     <img alt="close" src="img/close-24px.svg" class="panel-close-button" onclick="witnessPanelVisible(false)">
@@ -97,7 +69,9 @@
     </div>
 </div>
 
-</div>
+    <!-- Do not change it here, this is a placeholder. -->
+    <span id="version">v0.0.0</span>
 
+</div>
 </body>
 </html>
