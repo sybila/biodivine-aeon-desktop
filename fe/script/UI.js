@@ -258,11 +258,11 @@ let UI = {
 		const loading = document.getElementById("loading-indicator")
 		if (status) {
 			windowContent.classList.add("freeze")
-			loading.classList.remove("invisible")
+			loading.classList.remove("gone")
 			this._isLoading = true
 		} else {
 			windowContent.classList.remove("freeze")
-			loading.classList.add("invisible");
+			loading.classList.add("gone");
 			this._isLoading = false
 		}
 	},

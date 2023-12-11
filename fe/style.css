@@ -32,6 +32,7 @@ body {
 }
 
 #loading-indicator {
+    z-index: 999;
     text-align: center;
     background: #fff;
     border-radius: 24px;
