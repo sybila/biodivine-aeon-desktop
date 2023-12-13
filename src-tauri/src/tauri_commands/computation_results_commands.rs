@@ -10,6 +10,7 @@ use biodivine_aeon_desktop::util::functional::Functional;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use serde_json::{from_str, Value};
 
+/// Get witness of behaviour class.
 #[tauri::command]
 pub async fn get_witness(class_str: String, session_key: &str) -> Result<String, ErrorMessage> {
     let mut class = Class::new_empty();
@@ -48,6 +49,7 @@ pub async fn get_witness(class_str: String, session_key: &str) -> Result<String,
     }
 }
 
+/// Get witness of behaviour class from tree node.
 #[tauri::command]
 pub async fn get_tree_witness(node_id: String, session_key: &str) -> Result<String, ErrorMessage> {
     let locked_tree = get_locked_tree(session_key);
@@ -70,6 +72,7 @@ pub async fn get_tree_witness(node_id: String, session_key: &str) -> Result<Stri
     };
 }
 
+/// Get witness of behaviour class from stability analysis.
 #[tauri::command]
 pub async fn get_stability_witness(
     node_id: String,
@@ -165,6 +168,7 @@ pub async fn get_stability_witness(
     }
 }
 
+/// Get attractors of behaviour class.
 #[tauri::command]
 pub async fn get_attractors(class_str: String, session_key: &str) -> Result<Value, ErrorMessage> {
     let mut class = Class::new_empty();
@@ -201,6 +205,7 @@ pub async fn get_attractors(class_str: String, session_key: &str) -> Result<Valu
     }
 }
 
+/// Get attractors of behaviour class from tree node.
 #[tauri::command]
 pub async fn get_tree_attractors(
     node_id: String,
@@ -226,6 +231,7 @@ pub async fn get_tree_attractors(
     };
 }
 
+/// Get attractors of behaviour class from stability analysis.
 #[tauri::command]
 pub async fn get_stability_attractors(
     node_id: String,
@@ -321,6 +327,7 @@ pub async fn get_stability_attractors(
     }
 }
 
+/// Get bifurcation tree as a result of computation.
 #[tauri::command]
 pub async fn get_bifurcation_tree(session_key: &str) -> Result<Value, ErrorMessage> {
     let locked_tree = get_locked_tree(session_key);

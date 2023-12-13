@@ -88,7 +88,7 @@ pub async fn open_manual_window(handle: tauri::AppHandle) -> Result<(), ()> {
     )
     .center()
     .menu(menu_init())
-    .inner_size(1000f64, 700f64)
+    .inner_size(1300f64, 700f64)
     .title("Manual")
     .build()
     .expect("Error while creating new manual window.");
