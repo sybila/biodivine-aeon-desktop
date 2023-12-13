@@ -5,12 +5,12 @@
 let SessionCommands = {
     _sessionKey: undefined,
 
-    createSession(sessionKey) {
+    addSession(sessionKey) {
         this._sessionKey = sessionKey
         TAURI.invoke('add_session', { sessionKey: sessionKey })
     },
 
-    destroySession() {
+    renameSession() {
         return TAURI.invoke('remove_session', { sessionKey: this._sessionKey })
     },
 

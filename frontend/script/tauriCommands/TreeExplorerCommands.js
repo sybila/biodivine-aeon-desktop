@@ -32,7 +32,7 @@ let TreeExplorerCommands = {
         })
     },
 
-    selectDecisionAttribute(nodeId, attrId) {
+    applyDecisionAttribute(nodeId, attrId) {
         return TAURI.invoke('apply_attribute', {
             nodeId: nodeId,
             attributeId: attrId,
@@ -40,7 +40,7 @@ let TreeExplorerCommands = {
         })
     },
 
-    deleteDecision(nodeId) {
+    revertDecision(nodeId) {
         return TAURI.invoke('revert_decision', {
             nodeId: nodeId,
             sessionKey: Computation.getSessionKey()

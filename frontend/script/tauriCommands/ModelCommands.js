@@ -4,7 +4,7 @@
  */
 let ModelCommands = {
 
-    validateUpdateFunction(modelFragment) {
+    checkUpdateFunction(modelFragment) {
         return TAURI.invoke('check_update_function', {
             data: modelFragment
         })

@@ -55,8 +55,8 @@ let Computation = {
         this._treeExplorerWindowLabel = label
     },
 
-    update_computation_process() {
-        ComputationCommands.update_computation_process()
+    updateComputationProcess() {
+        ComputationCommands.getComputationProcessInfo()
             .then((computationInfoObject) => {
                 // Update UI of Computation Window
                 if (typeof UI !== 'undefined') {
@@ -65,7 +65,7 @@ let Computation = {
 
                 // Update recursively again if computation is still running
                 if (computationInfoObject["is_running"]) {
-                    setTimeout(() => { this.update_computation_process(); }, 1000)
+                    setTimeout(() => { this.updateComputationProcess(); }, 1000)
                 }
             })
             .catch((errorMessage) => {

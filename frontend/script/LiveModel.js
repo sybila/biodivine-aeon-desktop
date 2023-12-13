@@ -570,7 +570,7 @@ let LiveModel = {
 		if (this._disable_dynamic_validation) return;
 		let modelFragment = this._updateFunctionModelFragment(id);
 		if (modelFragment !== undefined) {
-			ModelCommands.validateUpdateFunction(modelFragment)
+			ModelCommands.checkUpdateFunction(modelFragment)
 				.then((cardinality) => {
 					ModelEditor.setUpdateFunctionStatus(id, "Possible instantiations: " + cardinality, false);
 				})

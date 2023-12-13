@@ -11,7 +11,7 @@ let ComputationCommands = {
         })
     },
 
-    update_computation_process() {
+    getComputationProcessInfo() {
         return TAURI.invoke('get_computation_process_info', {
             sessionKey: Computation.getSessionKey()
         })

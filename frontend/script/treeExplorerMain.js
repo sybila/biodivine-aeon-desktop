@@ -350,7 +350,7 @@ function loadBifurcationTree(fit = true) {
 function setPrecision(precision) {
 	UI.isLoading(true)
 	TreeExplorerCommands.applyTreePrecision(precision)
-		.then((okResponse) => {
+		.then(() => {
 			UI.isLoading(false)
 			loadBifurcationTree(false);
 		})
@@ -362,7 +362,7 @@ function setPrecision(precision) {
 
 function removeNode(nodeId) {
 	UI.isLoading(true)
-	TreeExplorerCommands.deleteDecision(nodeId)
+	TreeExplorerCommands.revertDecision(nodeId)
 		.then((okResponseObject) => {
 			UI.isLoading(false)
 			if (okResponseObject.removed.length > 0) {
@@ -381,12 +381,9 @@ function removeNode(nodeId) {
 		})
 }
 
-// TODO:
-//  - From where is this function called/used?
-//  - 'node' and 'attr' parameters should be string but are numeric
 function selectAttribute(node, attr) {
 	UI.isLoading(true)
-	TreeExplorerCommands.selectDecisionAttribute(node, attr)
+	TreeExplorerCommands.applyDecisionAttribute(node, attr)
 		.then((okResponseObject) => {
 			UI.isLoading(false)
 			for (node of okResponseObject) {

@@ -5,7 +5,7 @@ TAURI.event.listen('start-computation', (event) => {
     const windowTimestamp = event.payload['windowTimestamp']
 
     const sessionKey = TAURI.window.getCurrent().label;
-    SessionCommands.createSession(sessionKey)
+    SessionCommands.addSession(sessionKey)
     Computation.setSessionKey(sessionKey)
     Computation.setModelTitle(modelTitle)
     Computation.setWindowTimestamp(windowTimestamp)
@@ -14,7 +14,7 @@ TAURI.event.listen('start-computation', (event) => {
         .then((startTimestamp) => {
             console.log("Started computation ", startTimestamp)
             Computation.setLastComputation(startTimestamp)
-            Computation.update_computation_process()
+            Computation.updateComputationProcess()
         })
         .catch((errorMessage) => {
             Dialog.errorMessage(errorMessage)
@@ -37,8 +37,8 @@ TAURI.window.getCurrent().listen("tauri://close-requested", async () => {
         }
     }
 
-    SessionCommands.destroySession()
-        .then(async (okMessage) => {
+    SessionCommands.renameSession()
+        .then(async () => {
             const currentWindow = TAURI.window.getCurrent();
             await currentWindow.close();
         })
