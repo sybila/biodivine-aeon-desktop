@@ -1,10 +1,9 @@
 [package]
 name = "biodivine-aeon-desktop"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+authors = ["Stefan Sidlovsky <514508@mail.muni.cz>"]
+license = "MIT"
+repository = "https://github.com/sybila/biodivine-aeon-desktop"
 default-run = "biodivine-aeon-desktop"
 edition = "2021"
 rust-version = "1.60"
