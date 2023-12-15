@@ -4,7 +4,11 @@
     "eslint": "^8.55.0"
   },
   "scripts": {
-    "tauri": "tauri"
+    "start": "tauri dev",
+    "js-code-check": "eslint ./frontend/script/",
+    "js-code-fix": "eslint --fix ./frontend/script/",
+    "rust-code-format": "cd ./src-tauri/src && cargo fmt",
+    "rust-code-check": "cd ./src-tauri/src && cargo clippy"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.4.0"
