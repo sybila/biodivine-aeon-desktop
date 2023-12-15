@@ -13,12 +13,12 @@ let Results = {
 	},
 
 	show() {
-		UI.isLoading(true)
+		UI.isLoading(true);
 		ComputationCommands.getResults()
 			.then((resultsObject) => {
-				UI.isLoading(false)
-				let isPartial = resultsObject["isPartial"]
-				let isCancelled = resultsObject["isCancelled"]
+				UI.isLoading(false);
+				let isPartial = resultsObject["isPartial"];
+				let isCancelled = resultsObject["isCancelled"];
 
 				let result = resultsObject.data.sort((a, b) => b.sat_count - a.sat_count);
 				if (!result) {
@@ -28,9 +28,9 @@ let Results = {
 				const paramsNum = result.reduce((acc, curr) => acc + curr.sat_count, 0);
 				//DomElements.statusPanels.result.innerText = 'total parametrizations: ' + paramsNum;
 
-				var table = '';
+				var table = "";
 				result.forEach(({ sat_count, phenotype })=> {
-					var behavior = phenotype.map(x => x[0]).sort().join('');
+					var behavior = phenotype.map(x => x[0]).sort().join("");
 					let behaviorString = behavior;
 					if (behaviorString === 0) {
 						behaviorString = "<span style=\"font-family: 'FiraMono'; letter-spacing: normal;\">unclassified</span>";
@@ -78,9 +78,9 @@ let Results = {
 				}
 			})
 			.catch((errorMessage) => {
-				UI.isLoading(false)
-				Dialog.errorMessage(errorMessage)
-			})
+				UI.isLoading(false);
+				Dialog.errorMessage(errorMessage);
+			});
 	},
 
-}
+};

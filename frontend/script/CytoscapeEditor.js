@@ -2,7 +2,7 @@ let EdgeMonotonicity = {
 	unspecified: "unspecified",
 	activation: "activation",
 	inhibition: "inhibition",
-}
+};
 
 /*
 	Responsible for managing the cytoscape editor object. It has its own representation of the graph,
@@ -21,18 +21,18 @@ let CytoscapeEditor = {
 		this._cytoscape = cytoscape(this.initOptions());
 		this._edgehandles = this._cytoscape.edgehandles(this.edgeOptions());
 		// When the user moves or zooms the graph, position of menu must update as well.
-		this._cytoscape.on('zoom', (e) => {
+		this._cytoscape.on("zoom", (e) => {
 			this._renderMenuForSelectedNode();
 			this._renderMenuForSelectedEdge();
 		});
-		this._cytoscape.on('pan', (e) => { 
+		this._cytoscape.on("pan", (e) => { 
 			this._renderMenuForSelectedNode();
 			this._renderMenuForSelectedEdge();
 		});
-		this._cytoscape.on('click', (e) => {
+		this._cytoscape.on("click", (e) => {
 			let now = (new Date()).getTime();
 			if (this._lastClickTimestamp && now - this._lastClickTimestamp < DOUBLE_CLICK_DELAY) {				
-				LiveModel.addVariable([e.position['x'], e.position['y']]);
+				LiveModel.addVariable([e.position["x"], e.position["y"]]);
 			}
 			this._lastClickTimestamp = now;
 		});
@@ -40,16 +40,16 @@ let CytoscapeEditor = {
 
 	layoutCose() {
 		this._cytoscape.layout({
-                name: 'cose',
-                padding: 250,
-                animate: true,
-                nodeRepulsion: function(node) { return 100000; },
-                animate: true,
-                animationDuration: 300,
-                refresh: 20,
-                fit: true,
-                nodeDimensionsIncludeLabels: true,
-        }).start();
+			name: "cose",
+			padding: 250,
+			animate: true,
+			nodeRepulsion: function(node) { return 100000; },
+			animate: true,
+			animationDuration: 300,
+			refresh: 20,
+			fit: true,
+			nodeDimensionsIncludeLabels: true,
+		}).start();
 	},
 
 	// Return an id of the selected node, or undefined if nothing is selected.
@@ -65,16 +65,16 @@ let CytoscapeEditor = {
 		let node = this._cytoscape.add({
 			data: { id: id, name: name },
 			position: { x: position[0], y: position[1] },
-		})
-		node.on('mouseover', (e) => {
-			node.addClass('hover');	
+		});
+		node.on("mouseover", (e) => {
+			node.addClass("hover");	
 			ModelEditor.hoverVariable(id, true);		
 		});
-		node.on('mouseout', (e) => {
-			node.removeClass('hover');			
+		node.on("mouseout", (e) => {
+			node.removeClass("hover");			
 			ModelEditor.hoverVariable(id, false);		
 		});
-		node.on('select', (e) => {			
+		node.on("select", (e) => {			
 			// deselect any previous selection - we don't support multiselection yet
 			for (let selected of this._cytoscape.$(":selected")) {
 				if (selected.data().id != id) {
@@ -83,18 +83,18 @@ let CytoscapeEditor = {
 			}			
 			CytoscapeEditor._renderMenuForSelectedNode(node);
 			ModelEditor.selectVariable(id, true);
-		})
-		node.on('unselect', (e) => {
+		});
+		node.on("unselect", (e) => {
 			UI.toggleNodeMenu();
 			ModelEditor.selectVariable(id, false);
-		})
-		node.on('click', (e) => {						
+		});
+		node.on("click", (e) => {						
 			this._lastClickTimestamp = undefined; // ensure that we cannot double-click inside the node
-		})
-		node.on('drag', (e) => {			
+		});
+		node.on("drag", (e) => {			
 			if (node.selected()) CytoscapeEditor._renderMenuForSelectedNode(node);
 			CytoscapeEditor._renderMenuForSelectedEdge();
-		})
+		});
 	},
 
 	// Set the given node as selected.
@@ -134,9 +134,9 @@ let CytoscapeEditor = {
 	hoverNode(id, isHover) {
 		let node = this._cytoscape.getElementById(id);
 		if (isHover) {
-			node.addClass('hover');
+			node.addClass("hover");
 		} else {
-			node.removeClass('hover');
+			node.removeClass("hover");
 		}
 	},
 
@@ -159,7 +159,7 @@ let CytoscapeEditor = {
 			// Taken from https://github.com/cytoscape/cytoscape.js/issues/1691
 			let zoom    = 1.1;
 		    let bb = node.boundingBox(); 
-		    let w   = this._cytoscape.width()
+		    let w   = this._cytoscape.width();
 		    let h = this._cytoscape.height();
 		    var pan = {
 	    	  // add some random padding so it does not end up under the editor panel
@@ -198,7 +198,7 @@ let CytoscapeEditor = {
 		} else {
 			// Edge does not exist - create a new one
 			let edge = this._cytoscape.add({
-				group: 'edges', data: { 
+				group: "edges", data: { 
 					source: regulation.regulator, target: regulation.target,
 					observable: regulation.observable, monotonicity: regulation.monotonicity
 				}
@@ -300,145 +300,145 @@ let CytoscapeEditor = {
 	            animationThreshold: 250,
 	            refresh: 20,
 	            fit: true,
-	            name: 'cose',
+	            name: "cose",
 	            padding: 250,
 	            nodeRepulsion: function(node) { return 100000; },
 	            nodeDimensionsIncludeLabels: true,
         	},
         	boxSelectionEnabled: false,
-  			selectionType: 'single',
+  			selectionType: "single",
   			style: [
   				{ 	// Style of the graph nodes
-  					'selector': 'node[name]',
-  					'style': {
+  					"selector": "node[name]",
+  					"style": {
   						// 
-  						'label': 'data(name)',	
+  						"label": "data(name)",	
   						// put label in the middle of the node (vertically)
-  						'text-valign': 'center',
-  						'width': 'label', 'height': 'label',
+  						"text-valign": "center",
+  						"width": "label", "height": "label",
   						// a rectangle with slightly sloped edges
-  						'shape': 'round-rectangle',
+  						"shape": "round-rectangle",
   						// when selecting, do not display any overlay
-  						'overlay-opacity': 0,
+  						"overlay-opacity": 0,
   						// other visual styles
-		                'padding': 12,		                
-		                'background-color': '#dddddd',
-		                'font-family': 'FiraMono',
-		                'font-size': '12pt',
-		                'border-width': '1px',
-		                'border-color': '#bbbbbb',
-		                'border-style': 'solid',
+		                "padding": 12,		                
+		                "background-color": "#dddddd",
+		                "font-family": "FiraMono",
+		                "font-size": "12pt",
+		                "border-width": "1px",
+		                "border-color": "#bbbbbb",
+		                "border-style": "solid",
   					}
   				},  				
   				{	// When a node is highlighted by mouse, show it with a dashed blue border.
-  					'selector': 'node.hover',
-  					'style': {
-  						'border-width': '2.0px',
-  						'border-color': '#6a7ea5',
-						'border-style': 'dashed',                		
+  					"selector": "node.hover",
+  					"style": {
+  						"border-width": "2.0px",
+  						"border-color": "#6a7ea5",
+						"border-style": "dashed",                		
   					}
   				},
   				{	// When a node is selected, show it with a thick blue border.
-  					'selector': 'node:selected',
-  					'style': {
-  						'border-width': '2.0px',
-  						'border-color': '#6a7ea5',
-  						'border-style': 'solid',                		
+  					"selector": "node:selected",
+  					"style": {
+  						"border-width": "2.0px",
+  						"border-color": "#6a7ea5",
+  						"border-style": "solid",                		
   					}
   				},
   				{	// General style of the graph edge
-		            'selector': 'edge',
-		            'style': {
-		                'width': 3.0,
-		                'curve-style': 'bezier',
-		                'loop-direction': '-15deg',
-		                'loop-sweep': '30deg',
-		                'text-outline-width': 2.3,
-		                'text-outline-color': '#cacaca',
-		                'font-family': 'FiraMono',
+		            "selector": "edge",
+		            "style": {
+		                "width": 3.0,
+		                "curve-style": "bezier",
+		                "loop-direction": "-15deg",
+		                "loop-sweep": "30deg",
+		                "text-outline-width": 2.3,
+		                "text-outline-color": "#cacaca",
+		                "font-family": "FiraMono",
 		            }
 		        },
 		        {
-		        	'selector': 'edge.hover',
-		        	'style': { 'overlay-opacity': 0.1 },
+		        	"selector": "edge.hover",
+		        	"style": { "overlay-opacity": 0.1 },
 		        },
 		        {	// Show non-observable edges as dashed
-		            'selector': 'edge[observable]',
-		            'style': {
-		            	'line-style': (edge) => { if (edge.data().observable) { return "solid"; } else { return "dashed"; } },
-		                'line-dash-pattern': [8, 3],
+		            "selector": "edge[observable]",
+		            "style": {
+		            	"line-style": (edge) => { if (edge.data().observable) { return "solid"; } else { return "dashed"; } },
+		                "line-dash-pattern": [8, 3],
 		            }
 		        },
 		        {	// When the edge is an activation, show it as green with normal arrow
-		            'selector': 'edge[monotonicity="activation"]',
-		            'style': {
-		                'line-color': '#4abd73',
-		                'target-arrow-color': '#4abd73',
-		                'target-arrow-shape': 'triangle'
+		            "selector": "edge[monotonicity=\"activation\"]",
+		            "style": {
+		                "line-color": "#4abd73",
+		                "target-arrow-color": "#4abd73",
+		                "target-arrow-shape": "triangle"
 		            }
 		        },
 		        {	// When the edge is an inhibition, show it as red with a `tee` arrow
-		            'selector': 'edge[monotonicity="inhibition"]',
-		            'style': {
-		                'line-color': '#d05d5d',
-		                'target-arrow-color': '#d05d5d',
-		                'target-arrow-shape': 'tee',
+		            "selector": "edge[monotonicity=\"inhibition\"]",
+		            "style": {
+		                "line-color": "#d05d5d",
+		                "target-arrow-color": "#d05d5d",
+		                "target-arrow-shape": "tee",
 		            }
 		        },
 		        {	// When the edge has unspecified monotonicity, show it as grey with normal arrow
-		            'selector': 'edge[monotonicity="unspecified"]',
-		            'style': {
-		                'line-color': '#797979',
-		                'target-arrow-color': '#797979',
-		                'target-arrow-shape': 'triangle',
+		            "selector": "edge[monotonicity=\"unspecified\"]",
+		            "style": {
+		                "line-color": "#797979",
+		                "target-arrow-color": "#797979",
+		                "target-arrow-shape": "triangle",
 		            }
 		        },
 		        {	// A selected edge should be drawn with an overlay
-		            'selector': 'edge:selected',
-		            'style': {
-		                'overlay-opacity': 0.1,
+		            "selector": "edge:selected",
+		            "style": {
+		                "overlay-opacity": 0.1,
 		            }
 		        },
   				{	// Edge handles pseudo-node for adding
-		            'selector': '.eh-handle',
-		            'style': {
-		                'width': '32px',
-		                'height': '32px',
-		                'shape': 'square',
-		                'background-opacity': 0,
-		                'background-image': function(e) {
-		                	return 'data:image/svg+xml;utf8,' + encodeURIComponent(_add_box_svg);
+		            "selector": ".eh-handle",
+		            "style": {
+		                "width": "32px",
+		                "height": "32px",
+		                "shape": "square",
+		                "background-opacity": 0,
+		                "background-image": function(e) {
+		                	return "data:image/svg+xml;utf8," + encodeURIComponent(_add_box_svg);
 		                },
-		                'background-width': '32px',
-		                'background-height': '32px',
-		                'padding': 0,
-		                'overlay-opacity': 0,
-		                'border-width': 0,
-		                'border-opacity': 0,
+		                "background-width": "32px",
+		                "background-height": "32px",
+		                "padding": 0,
+		                "overlay-opacity": 0,
+		                "border-width": 0,
+		                "border-opacity": 0,
 		            }
 		        },		        
 		        {	// Change ghost edge preview colors
-		            'selector': '.eh-preview, .eh-ghost-edge',
-		            'style': {
-		                'background-color': '#797979',
-		                'line-color': '#797979',
-		                'target-arrow-color': '#797979',
-		                'target-arrow-shape': 'triangle',
+		            "selector": ".eh-preview, .eh-ghost-edge",
+		            "style": {
+		                "background-color": "#797979",
+		                "line-color": "#797979",
+		                "target-arrow-color": "#797979",
+		                "target-arrow-shape": "triangle",
 		            }
 		        },
 		        {	// Hide ghost edge when a snapped preview is visible
-		            'selector': '.eh-ghost-edge.eh-preview-active',
-		            'style': { 'opacity': 0 }
+		            "selector": ".eh-ghost-edge.eh-preview-active",
+		            "style": { "opacity": 0 }
 		        }
 			],		
-		}
+		};
 	},
 
 	edgeOptions() {
 		return {
 			preview: true, // whether to show added edges preview before releasing selection
 	        hoverDelay: 150, // time spent hovering over a target node before it is considered selected
-	        handleNodes: 'node', // selector/filter function for whether edges can be made from a given node
+	        handleNodes: "node", // selector/filter function for whether edges can be made from a given node
 	        snap: false,
 	        snapThreshold: 50,
 	        snapFrequency: 15,
@@ -446,9 +446,9 @@ let CytoscapeEditor = {
 	        disableBrowserGestures: true, 
 	        nodeLoopOffset: -50,
 	        // The `+` button should be drawn on top of each node
-	        handlePosition: function(node) { return 'middle top'; },
+	        handlePosition: function(node) { return "middle top"; },
 	        handleInDrawMode: false,
-	        edgeType: function(sourceNode, targetNode) { return 'flat'; },
+	        edgeType: function(sourceNode, targetNode) { return "flat"; },
 	        // Loops are always allowed
 	        loopAllowed: function(node) { return true; },	        
 	        // Initialize edge with default parameters
@@ -465,8 +465,8 @@ let CytoscapeEditor = {
 	        },
 		};
 	},
-}
+};
 
 // Modified version of the add_box-24px.svg with color explicitly set to blue and an additional background element which makes sure the plus sign is filled.
-let _add_box_svg = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#ffffff" d="M4 4h16v16H4z"/><path fill="#6a7ea5" d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'
+let _add_box_svg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path fill=\"#ffffff\" d=\"M4 4h16v16H4z\"/><path fill=\"#6a7ea5\" d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z\"/><path d=\"M0 0h24v24H0z\" fill=\"none\"/></svg>";
 

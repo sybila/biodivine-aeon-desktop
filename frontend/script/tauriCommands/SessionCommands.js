@@ -3,18 +3,18 @@
     Commands return Promises.
  */
 let SessionCommands = {
-    _sessionKey: undefined,
+	_sessionKey: undefined,
 
-    addSession(sessionKey) {
-        this._sessionKey = sessionKey
-        TAURI.invoke('add_session', { sessionKey: sessionKey })
-    },
+	addSession(sessionKey) {
+		this._sessionKey = sessionKey;
+		TAURI.invoke("add_session", { sessionKey: sessionKey });
+	},
 
-    renameSession() {
-        return TAURI.invoke('remove_session', { sessionKey: this._sessionKey })
-    },
+	renameSession() {
+		return TAURI.invoke("remove_session", { sessionKey: this._sessionKey });
+	},
 
-    hasRunningComputation() {
-        return TAURI.invoke('has_running_computation', {sessionKey: this._sessionKey})
-    }
-}
+	hasRunningComputation() {
+		return TAURI.invoke("has_running_computation", {sessionKey: this._sessionKey});
+	}
+};

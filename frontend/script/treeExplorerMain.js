@@ -29,12 +29,12 @@ function Math_percent(cardinality, total) {
 async function init() {
 
 	// Set program version
-	let version = await TAURI.invoke('get_version', {})
+	let version = await TAURI.invoke("get_version", {});
 	document.title = document.title + " (" + version + ")";
-	document.getElementById("version").innerHTML = "v" + version
+	document.getElementById("version").innerHTML = "v" + version;
 
 	// Emit when the window is fully initialized and ready
-	TAURI.event.emit('ready', {});
+	TAURI.event.emit("ready", {});
 }
 
 function showTree() {
@@ -42,7 +42,7 @@ function showTree() {
 
 	let checkbox = document.getElementById("mass-distribution");
 	let label = document.getElementById("mass-distribution-label");
-	checkbox.addEventListener('change', (event) => {
+	checkbox.addEventListener("change", (event) => {
 	  	if (event.target.checked) {
     		CytoscapeEditor.setMassEnabled();
     		label.classList.add("primary");
@@ -54,10 +54,10 @@ function showTree() {
   		}
 	});
 
-	document.fonts.load('1rem "symbols"').then(() => {
-	document.fonts.load('1rem "FiraMono"').then(() => {
-		loadBifurcationTree();
-	})});
+	document.fonts.load("1rem \"symbols\"").then(() => {
+		document.fonts.load("1rem \"FiraMono\"").then(() => {
+			loadBifurcationTree();
+		});});
 
 	let slider = document.getElementById("precision-slider");
 	let output = document.getElementById("precision-value");
@@ -65,23 +65,23 @@ function showTree() {
 
 	slider.oninput = function() {
   		output.innerHTML = this.value/100.0 + "%";
-	}
+	};
 
 	slider.onmouseup = function() {
 		setPrecision(slider.value);
-	}
+	};
 
-	UI.isLoading(true)
+	UI.isLoading(true);
 	TreeExplorerCommands.getTreePrecision()
 		.then((precision) => {
-			UI.isLoading(false)
+			UI.isLoading(false);
 			slider.value = precision;
 			output.innerHTML = precision / 100.0 + "%";
 		})
 		.catch((errorMessage) => {
-			UI.isLoading(false)
-			Dialog.errorMessage(errorMessage)
-		})
+			UI.isLoading(false);
+			Dialog.errorMessage(errorMessage);
+		});
 
 	let depth = document.getElementById("auto-expand-slider");
 	let autoExpand = document.getElementById("button-auto-expand");
@@ -93,11 +93,11 @@ function showTree() {
 		} else {
 			autoExpand.innerHTML = "Auto expand ("+value+" levels)  <img src='img/graph-24px.svg' alt='graph'>";
 		}		
-	}
+	};
 
 	autoExpand.onclick = function() {
 		autoExpandBifurcationTree(CytoscapeEditor.getSelectedNodeId(), depth.value);
-	}
+	};
 
 	// Setup mutually exclusive sort checkboxes.
 	for (sort of SORTS) {
@@ -108,7 +108,7 @@ function showTree() {
 			}
 			this.checked = true;
 			setSort(this.id);
-		}
+		};
 	}
 }
 
@@ -247,7 +247,7 @@ function renderAttributeTable(id, attributes, totalCardinality) {
                 	<td class="symbols phenotype">${CytoscapeEditor._normalizeClass(cls.class)}</td>
             	</tr>
             `;
-            return html + row;
+			return html + row;
 		}, "");
 		let rightTable = rightNode.getElementsByClassName("table")[0];
 		rightTable.innerHTML = attr.right.reduce((html, cls) => {
@@ -261,7 +261,7 @@ function renderAttributeTable(id, attributes, totalCardinality) {
                 	<td class="distribution">${Math_percent(cls.cardinality, rightTotal)}%</td>
             	</tr>
             `;
-            return html + row;
+			return html + row;
 		}, "");								
 		let expandButton = attrNode.getElementsByClassName("expand-button")[0];
 		if (attr.left.length === 1 && attr.right.length === 1) {
@@ -279,7 +279,7 @@ function renderAttributeTable(id, attributes, totalCardinality) {
 					leftTable.classList.add("collapsed");
 					rightTable.classList.add("collapsed");
 				}
-			}
+			};
 			expandButton.onclick = expandButtonEvent;
 		}					
 	}
@@ -287,13 +287,13 @@ function renderAttributeTable(id, attributes, totalCardinality) {
 
 function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 	if (nodeId === undefined || nodeId.length < 1) {
-		Dialog.errorMessage("No node selected.")
+		Dialog.errorMessage("No node selected.");
 	}
 
-	UI.isLoading(true)
+	UI.isLoading(true);
 	TreeExplorerCommands.autoExpandBifurcationTree(nodeId, depth)
 		.then((okResponseObject) => {
-			UI.isLoading(false)
+			UI.isLoading(false);
 			if (okResponseObject.length > 0) {
 				for (node of okResponseObject) {
 					CytoscapeEditor.ensureNode(node);
@@ -311,18 +311,18 @@ function autoExpandBifurcationTree(nodeId, depth, fit = true) {
 			}
 		})
 		.catch((errorMessage) => {
-			UI.isLoading(false)
-			Dialog.errorMessage(errorMessage)
-		})
+			UI.isLoading(false);
+			Dialog.errorMessage(errorMessage);
+		});
 
 	CytoscapeEditor.refreshSelection();
 }
 
 function loadBifurcationTree(fit = true) {
-	UI.isLoading(true)
+	UI.isLoading(true);
 	ComputationResultsCommands.getBifurcationTree()
 		.then((okResponseObject) => {
-			UI.isLoading(false)
+			UI.isLoading(false);
 			if (okResponseObject.length > 0) {
 				CytoscapeEditor.removeAll();	// remove old tree if present
 				for (node of okResponseObject) {
@@ -342,29 +342,29 @@ function loadBifurcationTree(fit = true) {
 			}
 		})
 		.catch((errorMessage) => {
-			UI.isLoading(false)
-			Dialog.errorMessage(errorMessage)
-		})
+			UI.isLoading(false);
+			Dialog.errorMessage(errorMessage);
+		});
 }
 
 function setPrecision(precision) {
-	UI.isLoading(true)
+	UI.isLoading(true);
 	TreeExplorerCommands.applyTreePrecision(precision)
 		.then(() => {
-			UI.isLoading(false)
+			UI.isLoading(false);
 			loadBifurcationTree(false);
 		})
 		.catch((errorMessage) => {
-			UI.isLoading(false)
-			Dialog.errorMessage(errorMessage)
-		})
+			UI.isLoading(false);
+			Dialog.errorMessage(errorMessage);
+		});
 }
 
 function removeNode(nodeId) {
-	UI.isLoading(true)
+	UI.isLoading(true);
 	TreeExplorerCommands.revertDecision(nodeId)
 		.then((okResponseObject) => {
-			UI.isLoading(false)
+			UI.isLoading(false);
 			if (okResponseObject.removed.length > 0) {
 				for (removed of okResponseObject.removed) {
 					CytoscapeEditor.removeNode(removed);
@@ -376,16 +376,16 @@ function removeNode(nodeId) {
 			}
 		})
 		.catch((errorMessage) => {
-			UI.isLoading(false)
-			Dialog.errorMessage(errorMessage)
-		})
+			UI.isLoading(false);
+			Dialog.errorMessage(errorMessage);
+		});
 }
 
 function selectAttribute(node, attr) {
-	UI.isLoading(true)
+	UI.isLoading(true);
 	TreeExplorerCommands.applyDecisionAttribute(node, attr)
 		.then((okResponseObject) => {
-			UI.isLoading(false)
+			UI.isLoading(false);
 			for (node of okResponseObject) {
 				CytoscapeEditor.ensureNode(node);
 			}
@@ -399,9 +399,9 @@ function selectAttribute(node, attr) {
 			CytoscapeEditor.refreshSelection();
 		})
 		.catch((errorMessage) => {
-			UI.isLoading(false)
-			Dialog.errorMessage(errorMessage)
-		})
+			UI.isLoading(false);
+			Dialog.errorMessage(errorMessage);
+		});
 }
 
 /* Open witness network for the currently selected tree node. */
@@ -410,7 +410,7 @@ function openTreeWitness() {
 	if (node === undefined) {
 		return;
 	}
-	Windows.openTreeWitnessWindow(node)
+	Windows.openTreeWitnessWindow(node);
 }
 
 function openStabilityWitness(variable, behaviour, vector) {
@@ -418,7 +418,7 @@ function openStabilityWitness(variable, behaviour, vector) {
 	if (node === undefined) {
 		return;
 	}
-	Windows.openStabilityWitnessWindow(node, behaviour, variable, vector)
+	Windows.openStabilityWitnessWindow(node, behaviour, variable, vector);
 }
 
 /* Open attractors for the currently selected tree node. */
@@ -427,7 +427,7 @@ function openTreeAttractor() {
 	if (node === undefined) {
 		return;
 	}
-	Windows.openTreeAttractorExplorerWindow(node)
+	Windows.openTreeAttractorExplorerWindow(node);
 }
 
 function openStabilityAttractor(variable, behaviour, vector) {
@@ -435,7 +435,7 @@ function openStabilityAttractor(variable, behaviour, vector) {
 	if (node === undefined) {
 		return;
 	}
-	Windows.openStabilityAttractorExplorerWindow(node, behaviour, variable, vector)
+	Windows.openStabilityAttractorExplorerWindow(node, behaviour, variable, vector);
 }
 
 function vector_to_string(vector) {
@@ -445,7 +445,7 @@ function vector_to_string(vector) {
 		if (first) {
 			first = false;		
 		} else {
-			result += ","
+			result += ",";
 		}
 		if (item === "true") {
 			result += "<span class='green'><b>true</b></span>";
@@ -461,12 +461,12 @@ function vector_to_string(vector) {
 
 // Used to initialize a stability analysis button in the detail panels.
 function initStabilityButton(id, button, dropdown, container) {
-    button.onclick = function() {
-        let behaviour = dropdown.value;
-		UI.isLoading(true)
+	button.onclick = function() {
+		let behaviour = dropdown.value;
+		UI.isLoading(true);
 		TreeExplorerCommands.getStabilityData(id, behaviour)
 			.then((okResponseObject) => {
-				UI.isLoading(false)
+				UI.isLoading(false);
 				let content = "<h4>Stability analysis:</h4>";
 				for (item of okResponseObject) {
 					let variableName = item.variable;
@@ -477,16 +477,16 @@ function initStabilityButton(id, button, dropdown, container) {
 						for (data of item.data) {
 							content += " - " + vector_to_string(data.vector) + ": " + data.colors + getWitnessPanelForVariable(variableName, behaviour, data.vector) + "</br>";
 						}
-						content += "</div>"
+						content += "</div>";
 					}
 				}
 				container.innerHTML = content;
 			})
 			.catch((errorMessage) => {
-				UI.isLoading(false)
-				Dialog.errorMessage("Cannot load stability data: " + errorMessage)
-			})
-    }
+				UI.isLoading(false);
+				Dialog.errorMessage("Cannot load stability data: " + errorMessage);
+			});
+	};
 }
 
 function getWitnessPanelForVariable(variable, behaviour, vector) {
@@ -495,7 +495,7 @@ function getWitnessPanelForVariable(variable, behaviour, vector) {
 
 // Keyboard shortcuts for basic navigation:
 
-hotkeys('up', function(event, handler) {	
+hotkeys("up", function(event, handler) {	
 	let selected = CytoscapeEditor.getSelectedNodeId();
 	if (selected === undefined) {
 		CytoscapeEditor.selectNode("0");	
@@ -507,7 +507,7 @@ hotkeys('up', function(event, handler) {
 	}	
 });
 
-hotkeys('left', function(event, handler) {
+hotkeys("left", function(event, handler) {
 	let selected = CytoscapeEditor.getSelectedNodeId();
 	if (selected === undefined) {
 		CytoscapeEditor.selectNode("0");	
@@ -520,7 +520,7 @@ hotkeys('left', function(event, handler) {
 	}	
 });
 
-hotkeys('right', function(event, handler) {
+hotkeys("right", function(event, handler) {
 	let selected = CytoscapeEditor.getSelectedNodeId();
 	if (selected === undefined) {
 		CytoscapeEditor.selectNode("0");	
@@ -532,7 +532,7 @@ hotkeys('right', function(event, handler) {
 	}	
 });
 
-hotkeys('down', function(event, handler) {
+hotkeys("down", function(event, handler) {
 	let selected = CytoscapeEditor.getSelectedNodeId();
 	if (selected === undefined) {
 		CytoscapeEditor.selectNode("0");	
@@ -544,7 +544,7 @@ hotkeys('down', function(event, handler) {
 	}	
 });
 
-hotkeys('shift+down', function(event, handler) {
+hotkeys("shift+down", function(event, handler) {
 	let selected = CytoscapeEditor.getSelectedNodeId();
 	if (selected === undefined) {
 		CytoscapeEditor.selectNode("0");	
@@ -556,7 +556,7 @@ hotkeys('shift+down', function(event, handler) {
 	}	
 });
 
-hotkeys('backspace', function(event, handler) {	
+hotkeys("backspace", function(event, handler) {	
 	let selected = CytoscapeEditor.getSelectedNodeId();
 	if (selected !== undefined && CytoscapeEditor.getNodeType(selected) === "decision") {
 		event.preventDefault();
@@ -566,16 +566,16 @@ hotkeys('backspace', function(event, handler) {
 	}	
 });
 
-hotkeys('h', { keyup: true }, function(event, handler) {
-	if (event.type === 'keydown') {
+hotkeys("h", { keyup: true }, function(event, handler) {
+	if (event.type === "keydown") {
 		document.getElementById("quick-help").classList.remove("gone");
 	}
-	if (event.type === 'keyup') {
+	if (event.type === "keyup") {
 		document.getElementById("quick-help").classList.add("gone");
 	}	
 });
 
-hotkeys('s', function(event, handler) {
+hotkeys("s", function(event, handler) {
 	let panel = document.getElementById("mixed-info");
 	if (!panel.classList.contains("gone")) {
 		fireEvent(document.getElementById("mixed-stability-analysis-button"), "click");
@@ -592,20 +592,20 @@ hotkeys('s', function(event, handler) {
 	}
 });
 
-hotkeys('d', function(event, handler) {
+hotkeys("d", function(event, handler) {
 	let panel = document.getElementById("mixed-info");
 	if (!panel.classList.contains("gone")) {
 		fireEvent(document.getElementById("button-add-variable"), "click");
 	}
-})
+});
 
 // utility function to fire events on UI elements - we mainly need it to simulate clicks
 function fireEvent(el, etype){
-  if (el.fireEvent) {
-    el.fireEvent('on' + etype);
-  } else {
-    let evObj = document.createEvent('Events');
-    evObj.initEvent(etype, true, false);
-    el.dispatchEvent(evObj);
-  }
+	if (el.fireEvent) {
+		el.fireEvent("on" + etype);
+	} else {
+		let evObj = document.createEvent("Events");
+		evObj.initEvent(etype, true, false);
+		el.dispatchEvent(evObj);
+	}
 }

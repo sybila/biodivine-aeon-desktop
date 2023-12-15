@@ -42,7 +42,7 @@ let LiveModel = {
 		if (position === undefined) {
 			position = [0.0, 0.0];
 		}
-		this._variables[id] = { name: name, id: id }
+		this._variables[id] = { name: name, id: id };
 		CytoscapeEditor.addNode(id, name, position);
 		ModelEditor.addVariable(id, name);
 		ModelEditor.updateStats();
@@ -94,10 +94,10 @@ let LiveModel = {
 	async removeVariable(id, force = false) {
 		let variable = this._variables[id];
 		if (variable === undefined) return;	// nothing to remove
-		let confirmRemove = force
+		let confirmRemove = force;
 		// prompt user to confirm action
 		if (!force) {
-			confirmRemove = await Dialog.confirm("Confirm", Strings.removeNodeCheck(variable['name']))
+			confirmRemove = await Dialog.confirm("Confirm", Strings.removeNodeCheck(variable["name"]));
 		}
 		if (confirmRemove) {
 			// First, explicitly remove all regulations that have something to do with us.
@@ -222,7 +222,7 @@ let LiveModel = {
 		let regulation = {
 			regulator: regulatorId, target: targetId,
 			observable: isObservable, monotonicity: monotonicity
-		}
+		};
 		this._regulations.push(regulation);
 		this._regulationChanged(regulation);
 		ModelEditor.updateStats();
@@ -371,9 +371,9 @@ let LiveModel = {
 	// If he decides No, ask him if he wants to overwrite current model - if Yes, return false.
 	// Return undefined if the user answers No or closes the dialog window.
 	async askToOpenInNewWindow() {
-		const openNewWindow = await Dialog.confirm('New window', Strings.openNewWindow)
+		const openNewWindow = await Dialog.confirm("New window", Strings.openNewWindow);
 		if (!openNewWindow) {
-			const overwriteCurrentModel = await Dialog.confirm('Model overwrite', Strings.modelWillBeOverwritten)
+			const overwriteCurrentModel = await Dialog.confirm("Model overwrite", Strings.modelWillBeOverwritten);
 			if (!overwriteCurrentModel) {
 				return undefined;
 			}
@@ -387,17 +387,17 @@ let LiveModel = {
 		if (!this.isEmpty()) {
 			const userDecision = await this.askToOpenInNewWindow();
 			switch (userDecision) {
-				case true:
-					Windows.openModelInNewWindow(modelString)
-					break;
-				case false:
-					return this.importAeon(modelString)
-				default: // userDecision could be undefined/null
-					break;
+			case true:
+				Windows.openModelInNewWindow(modelString);
+				break;
+			case false:
+				return this.importAeon(modelString);
+			default: // userDecision could be undefined/null
+				break;
 			}
 			return undefined;
 		}
-		return this.importAeon(modelString)
+		return this.importAeon(modelString);
 	},
 
 	// Import model from Aeon file. If the import is successful, return undefined,
@@ -549,7 +549,7 @@ let LiveModel = {
 		if (!hasLocalStorage) return;
 		try {
 			if (!this.isEmpty()) {
-				localStorage.setItem('last_model', this.exportAeon());
+				localStorage.setItem("last_model", this.exportAeon());
 			}			
 		} catch (e) {
 			console.log(e);
@@ -557,11 +557,11 @@ let LiveModel = {
 	},
 
 	loadFromLocalStorage() {
-		let modelString = localStorage.getItem('last_model');
+		let modelString = localStorage.getItem("last_model");
 		if (modelString !== undefined && modelString !== null && modelString.length > 0) {
 			this.handleAeonModelImport(modelString);
 		} else {
-			Dialog.errorMessage("No recent model available.")
+			Dialog.errorMessage("No recent model available.");
 		}
 	},
 
@@ -576,7 +576,7 @@ let LiveModel = {
 				})
 				.catch((errorMessage) => {
 					ModelEditor.setUpdateFunctionStatus(id, "Error: " + errorMessage, true);
-				})
+				});
 		} else {
 			ModelEditor.setUpdateFunctionStatus(id, "", false);
 		}	
@@ -802,7 +802,7 @@ let LiveModel = {
 		return tokens;
 	},
 
-}
+};
 
 /// Given a token list and a result set, output all names in the form { name: "...", cardinality: x }
 /// that occur in the function.
@@ -845,39 +845,39 @@ function _tokenize_update_function_recursive(str, i, top) {
 		let c = str[i];
 		i += 1;	// move to next char immediately...
 		if (/\s/.test(c)) { continue; }
-		else if (c == '!') { result.push({ token: "not", text: "!" }); }
-		else if (c == ',') { result.push({ token: "comma", text: "," }); }
-		else if (c == '&') { result.push({ token: "and", text: "&" }); }
-        else if (c == '|') { result.push({ token: "or", text: "|" }); }
-        else if (c == '^') { result.push({ token: "xor", text: "^" }); }
-        else if (c == '=') { 
-        	if (i < str.length && str[i] == '>') {
+		else if (c == "!") { result.push({ token: "not", text: "!" }); }
+		else if (c == ",") { result.push({ token: "comma", text: "," }); }
+		else if (c == "&") { result.push({ token: "and", text: "&" }); }
+		else if (c == "|") { result.push({ token: "or", text: "|" }); }
+		else if (c == "^") { result.push({ token: "xor", text: "^" }); }
+		else if (c == "=") { 
+        	if (i < str.length && str[i] == ">") {
         		i += 1;
         		result.push({ token: "imp", text: "=>" });
         	} else {
         		return { error: "Expected '=>' after '='." };
         	}        	
-        }
-        else if (c == '<') {
-        	if (i+1 < str.length && str[i] == '=' && str[i+1] =='>') {
+		}
+		else if (c == "<") {
+        	if (i+1 < str.length && str[i] == "=" && str[i+1] ==">") {
         		i += 2;
         		result.push({ token: "iff", text: "<=>" });
         	} else {
         		return { error: "Expected '<=>' after '<'." };
         	}
-        }
-        // '>' is invalid as a start of a token
-        else if (c == '>') {
+		}
+		// '>' is invalid as a start of a token
+		else if (c == ">") {
         	return { error: "Unexpected '>'." };
-        }
-        else if (c == ')') {
+		}
+		else if (c == ")") {
         	if (!top) {
         		return { data: result, continue_at: i };
         	} else {
         		return { error: "Unexpected ')'." };
         	}
-        }
-        else if (c == '(') {
+		}
+		else if (c == "(") {
         	let nested = _tokenize_update_function_recursive(str, i, false);
         	if (nested.error === undefined) {
         		i = nested.continue_at;
@@ -885,8 +885,8 @@ function _tokenize_update_function_recursive(str, i, top) {
         	} else {
         		return { error: nested.error };
         	}
-        }
-        else if (/[a-zA-Z0-9{}_]+/.test(c)) {
+		}
+		else if (/[a-zA-Z0-9{}_]+/.test(c)) {
         	// start of a name
         	let name = c;
         	while (i < str.length) {
@@ -902,12 +902,12 @@ function _tokenize_update_function_recursive(str, i, top) {
         	} else {
         		result.push({ token: "name", data: name, text: name });
         	}        	
-        }
-        else { return { error: "Unexpected '"+c+"'." }; }        
+		}
+		else { return { error: "Unexpected '"+c+"'." }; }        
 	}
 	if (top) {
 		if (i < str.length) {	// this should not happen, but just in case...
-			return { error: "Unexpected '"+str[i]+"'." }
+			return { error: "Unexpected '"+str[i]+"'." };
 		} else {				// strictly speaking, continue_at is useless here, but whatever
 			return { data: result, continue_at: i };
 		}		

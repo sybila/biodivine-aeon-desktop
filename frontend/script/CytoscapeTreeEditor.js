@@ -2,7 +2,7 @@ let EdgeMonotonicity = {
 	unspecified: "unspecified",
 	activation: "activation",
 	inhibition: "inhibition",
-}
+};
 
 /*
 	Responsible for managing the cytoscape editor object. It has its own representation of the graph,
@@ -17,24 +17,24 @@ let CytoscapeEditor = {
 	
 	init: function() {
 		this._cytoscape = cytoscape(this.initOptions());			
-		this._cytoscape.on('select', (e) => {
+		this._cytoscape.on("select", (e) => {
 			document.getElementById("quick-help").classList.add("gone");
 			console.log(e.target.data());
 			let data = e.target.data();
-			if (data.action == 'remove') {
+			if (data.action == "remove") {
 				// This is a remove button for a specifc tree node.
 				removeNode(data.targetId);
 			} else if (data.type == "leaf") {
-				this._showLeafPanel(data)
+				this._showLeafPanel(data);
 			} else if (data.type == "decision") {
 				this._showDecisionPanel(data);
 				let currentPosition = e.target.position();
 				// Show close button
 				let closeButton = {					
-					classes: ['remove-button'],
+					classes: ["remove-button"],
 					grabbable: false,
 					data: {
-						action: 'remove',
+						action: "remove",
 						targetId: e.target.data().id,
 					},
 					position: {
@@ -44,19 +44,19 @@ let CytoscapeEditor = {
 					}
 				};
 				let node = CytoscapeEditor._cytoscape.add(closeButton);
-				node.on('mouseover', (e) => {
-					node.addClass('hover');	
+				node.on("mouseover", (e) => {
+					node.addClass("hover");	
 				});
-				node.on('mouseout', (e) => {
-					node.removeClass('hover');			
+				node.on("mouseout", (e) => {
+					node.removeClass("hover");			
 				});
 			} else if (data.type == "unprocessed") {
 				this._showMixedPanel(data);				
 			}
 		});
-		this._cytoscape.on('unselect', (e) => {
+		this._cytoscape.on("unselect", (e) => {
 			// Clear remove button
-			CytoscapeEditor._cytoscape.$(".remove-button").remove()
+			CytoscapeEditor._cytoscape.$(".remove-button").remove();
 			// Close panels
 			let leafInfo = document.getElementById("leaf-info");
 			leafInfo.classList.add("gone");
@@ -75,7 +75,7 @@ let CytoscapeEditor = {
 			document.getElementById("mixed-stability-analysis").innerHTML = "";
 			document.getElementById("leaf-stability-analysis").innerHTML = "";
 			document.getElementById("decision-stability-analysis").innerHTML = "";
-		})
+		});
 	},
 
 	removeAll() {
@@ -168,10 +168,10 @@ let CytoscapeEditor = {
 		let addButton = document.getElementById("button-add-variable");
 		addButton.onclick = function() {			
 			if (data.treeData["attributes"] === undefined) {
-				UI.isLoading(true)
+				UI.isLoading(true);
 				TreeExplorerCommands.getDecisionAttributes(data.id)
 					.then((okResponseObject) => {
-						UI.isLoading(false)
+						UI.isLoading(false);
 						addButton.classList.add("gone");
 						for (attr of okResponseObject) {
 							// Prepare data:
@@ -190,7 +190,7 @@ let CytoscapeEditor = {
 						}
 						data.treeData["attributes"] = okResponseObject;
 						renderAttributeTable(data.id, okResponseObject, data.treeData.cardinality);
-					})
+					});
 			} else {
 				renderAttributeTable(data.id, data.treeData["attributes"], data.treeData.cardinality);
 			}			
@@ -272,124 +272,124 @@ let CytoscapeEditor = {
 		return {
 			container: document.getElementById("cytoscape-editor"),			
 			boxSelectionEnabled: false,
-  			selectionType: 'single', 
+  			selectionType: "single", 
   			style: [
   				{ 	// Style of the graph nodes
-  					'selector': 'node[label]',
-  					'style': {
+  					"selector": "node[label]",
+  					"style": {
   						// 
-  						'label': 'data(label)',	
+  						"label": "data(label)",	
   						// put label in the middle of the node (vertically)
-  						'text-valign': 'center',
-  						'width': 'label', 'height': 'label',
-  						'shape': 'round-rectangle',
+  						"text-valign": "center",
+  						"width": "label", "height": "label",
+  						"shape": "round-rectangle",
   						// when selecting, do not display any overlay
-  						'overlay-opacity': 0,
-  						'opacity': 'data(opacity)',
+  						"overlay-opacity": 0,
+  						"opacity": "data(opacity)",
   						// other visual styles
-		                'padding': "12",		   
-		                'background-color': '#dddddd',
+		                "padding": "12",		   
+		                "background-color": "#dddddd",
 		                //'background-opacity': '0',
-		                'font-family': 'FiraMono',
-		                'font-size': '12pt',
-		                'border-width': '1px',
-		                'border-color': '#bbbbbb',
-		                'border-style': 'solid',
-		                'text-max-width': 150,
-		                'text-wrap': 'wrap',
+		                "font-family": "FiraMono",
+		                "font-size": "12pt",
+		                "border-width": "1px",
+		                "border-color": "#bbbbbb",
+		                "border-style": "solid",
+		                "text-max-width": 150,
+		                "text-wrap": "wrap",
   					}
   				},
   				{
-  					'selector': '.remove-button',
-  					'style': {
-  						'text-valign': 'top',
-  						'text-halign': 'right',
-  						'shape': 'round-rectangle',
-  						'background-opacity': 0,
-		                'background-image': function(e) {
-		                	return 'data:image/svg+xml;utf8,' + encodeURIComponent(_remove_svg);
+  					"selector": ".remove-button",
+  					"style": {
+  						"text-valign": "top",
+  						"text-halign": "right",
+  						"shape": "round-rectangle",
+  						"background-opacity": 0,
+		                "background-image": function(e) {
+		                	return "data:image/svg+xml;utf8," + encodeURIComponent(_remove_svg);
 		                },
-		                'background-width': '24px',
-		                'background-height': '24px',
-  						'width': '32px', 
-  						'height': '32px',
+		                "background-width": "24px",
+		                "background-height": "24px",
+  						"width": "32px", 
+  						"height": "32px",
   					}
   				},
   				{
-  					'selector': '.remove-button.hover',
-  					'style': {
-  						'background-width': '32px',
-		                'background-height': '32px',  						
+  					"selector": ".remove-button.hover",
+  					"style": {
+  						"background-width": "32px",
+		                "background-height": "32px",  						
   					}
   				},
   				{	// When a node is selected, show it with a thick blue border.
-  					'selector': 'node:selected',
-  					'style': {
-  						'border-width': '4.0px',
-  						'border-color': '#6a7ea5',
-  						'border-style': 'solid',                		
+  					"selector": "node:selected",
+  					"style": {
+  						"border-width": "4.0px",
+  						"border-color": "#6a7ea5",
+  						"border-style": "solid",                		
   					}
   				},
   				{
-  					'selector': 'node[type = "unprocessed"]',
-  					'style': {  						
-  						'background-color': '#EFEFEF',
-  						'border-color': '#616161',
+  					"selector": "node[type = \"unprocessed\"]",
+  					"style": {  						
+  						"background-color": "#EFEFEF",
+  						"border-color": "#616161",
   					}
   				},
   				{
-  					'selector': 'node[type = "leaf"]',
-  					'style': {  						
-  						'border-color': '#546E7A',
-  						'font-family': 'symbols',
-  						'font-size': '16pt',
+  					"selector": "node[type = \"leaf\"]",
+  					"style": {  						
+  						"border-color": "#546E7A",
+  						"font-family": "symbols",
+  						"font-size": "16pt",
   					}  					
   				},
   				{
-  					'selector': 'node[subtype = "disorder"]',
-  					'style': {
-  						'background-color': '#FFE0B2',
+  					"selector": "node[subtype = \"disorder\"]",
+  					"style": {
+  						"background-color": "#FFE0B2",
   					}  					
   				},
   				{
-  					'selector': 'node[subtype = "oscillation"]',
-  					'style': {
-  						'background-color': '#F0F4C3',
+  					"selector": "node[subtype = \"oscillation\"]",
+  					"style": {
+  						"background-color": "#F0F4C3",
   					}  					
   				},
   				{
-  					'selector': 'node[subtype = "stability"]',
-  					'style': {
-  						'background-color': '#B2DFDB',
+  					"selector": "node[subtype = \"stability\"]",
+  					"style": {
+  						"background-color": "#B2DFDB",
   					}  					
   				},
   				{
-  					'selector': 'edge',
-  					'style': {
-  						'curve-style': 'taxi',
-  						'taxi-direction': 'vertical',
-  						'target-arrow-shape': 'triangle',  						
+  					"selector": "edge",
+  					"style": {
+  						"curve-style": "taxi",
+  						"taxi-direction": "vertical",
+  						"target-arrow-shape": "triangle",  						
   					}
   				},
   				{
-  					'selector': 'edge[positive = "true"]',
-  					'style': {
-  						'line-color': '#4abd73',
-		                'target-arrow-color': '#4abd73',
+  					"selector": "edge[positive = \"true\"]",
+  					"style": {
+  						"line-color": "#4abd73",
+		                "target-arrow-color": "#4abd73",
   					}
   				},
   				{
-  					'selector': 'edge[positive = "false"]',
-  					'style': {
-  						'line-color': '#d05d5d',
-		                'target-arrow-color': '#d05d5d',
+  					"selector": "edge[positive = \"false\"]",
+  					"style": {
+  						"line-color": "#d05d5d",
+		                "target-arrow-color": "#d05d5d",
   					}
   				},
   				/*{
   					'selector': 'node[type="decision"]'
   				} */ 				 			
   			]
-		}
+		};
 	},
 
 	ensureNode(treeData) {		
@@ -418,8 +418,8 @@ let CytoscapeEditor = {
 		} else {
 			// Make new edge
 			this._cytoscape.add({
-				group: 'edges', data: { source: sourceId, target: targetId, positive: positive.toString() }
-			})
+				group: "edges", data: { source: sourceId, target: targetId, positive: positive.toString() }
+			});
 		}
 	},
 
@@ -473,7 +473,7 @@ let CytoscapeEditor = {
 				} else {
 					return -1;
 				}
-			})
+			});
 		}		
 		data.treeData = treeData;
 		data.type = treeData.type;
@@ -504,7 +504,7 @@ let CytoscapeEditor = {
 	},
 
 	_normalizeClass(cls) {
-		return JSON.parse(cls).map(x => x[0]).sort().join('');
+		return JSON.parse(cls).map(x => x[0]).sort().join("");
 	},
 
 	removeNode(nodeId) {
@@ -516,7 +516,7 @@ let CytoscapeEditor = {
 
 	applyTreeLayout() {
 		this._cytoscape.layout({
-			name: 'dagre',
+			name: "dagre",
 			spacingFactor: 1.0,
 			roots: [0],
 			directed: true,
@@ -527,8 +527,8 @@ let CytoscapeEditor = {
 		}).start();
 	},
 
-}
+};
 
 // Modified version of the cancel-24px.svg with color explicitly set to red and an additional background element which makes sure the X is filled.
-let _remove_svg = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#ffffff" d="M4 6h14v14H6z"/><path fill="#d05d5d" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'
+let _remove_svg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path fill=\"#ffffff\" d=\"M4 6h14v14H6z\"/><path fill=\"#d05d5d\" d=\"M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z\"/><path d=\"M0 0h24v24H0z\" fill=\"none\"/></svg>";
 

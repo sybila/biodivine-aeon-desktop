@@ -1,6 +1,6 @@
 let ContentTabs = {
 	modelEditor: "tab-model-editor",
-}
+};
 
 const DOUBLE_CLICK_DELAY = 400;
 
@@ -182,7 +182,7 @@ let UI = {
 	},
 
 	isWaitingForResult() {
-		return this._isLoading
+		return this._isLoading;
 	},
 
 	// A small utility method to show quick help.
@@ -254,16 +254,16 @@ let UI = {
 	},
 
 	isLoading(status) {
-		const windowContent = document.getElementById("content")
-		const loading = document.getElementById("loading-indicator")
+		const windowContent = document.getElementById("content");
+		const loading = document.getElementById("loading-indicator");
 		if (status) {
-			windowContent.classList.add("freeze")
-			loading.classList.remove("gone")
-			this._isLoading = true
+			windowContent.classList.add("freeze");
+			loading.classList.remove("gone");
+			this._isLoading = true;
 		} else {
-			windowContent.classList.remove("freeze")
+			windowContent.classList.remove("freeze");
 			loading.classList.add("gone");
-			this._isLoading = false
+			this._isLoading = false;
 		}
 	},
 
@@ -275,33 +275,33 @@ let UI = {
 			return;
 		}
 		let filename = ModelEditor.getModelName();
-        if (filename === undefined) {
+		if (filename === undefined) {
         	filename = "model";
-        }
-        this._downloadFile(filename + ".aeon", modelFile)        
+		}
+		this._downloadFile(filename + ".aeon", modelFile);        
 	},
 
 	downloadSBML() {
 		let aeonModel = LiveModel.exportAeon();
 		if (aeonModel === undefined) {
-			Dialog.errorMessage(Strings.modelEmpty)
+			Dialog.errorMessage(Strings.modelEmpty);
 			return;
 		}
 		let filename = ModelEditor.getModelName();
-        if (filename === undefined) {
+		if (filename === undefined) {
         	filename = "model";
-        }
+		}
 
-		this.isLoading(true)
+		this.isLoading(true);
 		ModelCommands.aeonToSbml(aeonModel)
 			.then((sbmlModel) => {
-				this.isLoading(false)
+				this.isLoading(false);
 				this._downloadFile(filename + ".sbml", sbmlModel);
 			})
 			.catch((errorMessage) => {
-				this.isLoading(false)
-				Dialog.errorMessage(errorMessage)
-			})
+				this.isLoading(false);
+				Dialog.errorMessage(errorMessage);
+			});
 	},
 
 	downloadSBMLInstantiated() {
@@ -311,26 +311,26 @@ let UI = {
 			return;
 		}
 		let filename = ModelEditor.getModelName();
-        if (filename === undefined) {
+		if (filename === undefined) {
         	filename = "model";
-        }
+		}
 
-		this.isLoading(true)
+		this.isLoading(true);
 		ModelCommands.aeonToSbmlInstantiated(aeonModel)
 			.then((sbmlModel) => {
-				this.isLoading(false)
+				this.isLoading(false);
 				this._downloadFile(filename + "_instantiated.sbml", sbmlModel);
 			})
 			.catch((errorMessage) => {
-				this.isLoading(false)
+				this.isLoading(false);
 				Dialog.errorMessage(errorMessage);
-			})
+			});
 	},
 
 	async _downloadFile(name, content) {
 		const saveLocation = await TAURI.dialog.save({
 			defaultPath: name,
-			title: 'Download model'
+			title: "Download model"
 		});
 		if (saveLocation !== null) {
 			await TAURI.fs.writeTextFile(saveLocation, content);
@@ -343,16 +343,16 @@ let UI = {
 			multiple: false,
 			directory: false,
 			filters: [{
-				name: 'AEON file',
-				extensions: ['aeon', 'txt']
+				name: "AEON file",
+				extensions: ["aeon", "txt"]
 			}],
-			title: 'Import .AEON'
+			title: "Import .AEON"
 		});
 		if (!filePath || filePath.length === 0) {
 			return;
 		}
 
-		ModelEditor.setModelFilePath(filePath)
+		ModelEditor.setModelFilePath(filePath);
 
 		const aeonFileContent = await TAURI.fs.readTextFile(filePath);
 
@@ -367,37 +367,37 @@ let UI = {
 			multiple: false,
 			directory: false,
 			filters: [{
-				name: 'SBML file',
-				extensions: ['sbml', 'xml']
+				name: "SBML file",
+				extensions: ["sbml", "xml"]
 			}],
-			title: 'Import .SBML'
+			title: "Import .SBML"
 		});
 		if (!filePath || filePath.length === 0) {
 			return;
 		}
 
-		ModelEditor.setModelFilePath(filePath)
+		ModelEditor.setModelFilePath(filePath);
 
 		const sbmlFileContent = await TAURI.fs.readTextFile(filePath);
 
-		this.isLoading(true)
+		this.isLoading(true);
 		ModelCommands.sbmlToAeon(sbmlFileContent)
 			.then((model) => {
-				this.isLoading(false)
+				this.isLoading(false);
 				LiveModel.handleAeonModelImport(model);
 			})
 			.catch((errorMessage) => {
-				this.isLoading(false)
+				this.isLoading(false);
 				Dialog.errorMessage(errorMessage);
-			})
+			});
 	},
 
 	startAnalysis(aeonString) {
 		if (aeonString === undefined) {
-			Dialog.errorMessage("Empty model.")
+			Dialog.errorMessage("Empty model.");
 			return undefined;
 		}
-		Windows.openComputationWindow(aeonString)
+		Windows.openComputationWindow(aeonString);
 	},
 
 	// Add a listener to each button to display hint texts when hovered.
@@ -501,7 +501,7 @@ let UI = {
 			if (selectedNodeId !== undefined) {
 				ModelEditor.focusFunctionInput(selectedNodeId);
 			}
-		})
+		});
 	},
 
 	// Add a hover listener to all side menu items to show hint when needed.
@@ -541,4 +541,4 @@ let UI = {
 		}
 	},
 	
-}
+};

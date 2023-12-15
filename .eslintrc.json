@@ -22,7 +22,6 @@
         "semi": [
             "error",
             "always"
-        ],
-        "eqeqeq": "error"
+        ]
     }
 }

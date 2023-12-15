@@ -43,11 +43,11 @@ let ModelEditor = {
 	},
 
 	getModelFilePath() {
-		return this._modelFilePath
+		return this._modelFilePath;
 	},
 
 	setModelFilePath(filePath) {
-		this._modelFilePath = filePath
+		this._modelFilePath = filePath;
 	},
 
 	setModelName(name) {
@@ -97,7 +97,7 @@ let ModelEditor = {
 		variableName.addEventListener("change", (e) => {			
 			let error = LiveModel.renameVariable(id, variableName.value);
 			if (error !== undefined) {
-				Dialog.errorMessage(error)
+				Dialog.errorMessage(error);
 				variableName.classList.add("error");
 			} else {
 				variableName.classList.remove("error");
@@ -107,7 +107,7 @@ let ModelEditor = {
 		updateFunction.addEventListener("focusout", (e) => {		
 			let error = LiveModel.setUpdateFunction(id, updateFunction.textContent);
 			if (error !== undefined) {
-				Dialog.errorMessage(error)
+				Dialog.errorMessage(error);
 				updateFunction.classList.add("error");
 			} else {
 				updateFunction.classList.remove("error");
@@ -278,7 +278,7 @@ let ModelEditor = {
 				});
 				monotonicity.addEventListener("click", (e) => {
 					LiveModel.toggleMonotonicity(regulation.regulator, regulation.target);
-				})
+				});
 				row.addEventListener("mouseenter", (e) => {
 					row.classList.add("hover");
 					CytoscapeEditor.hoverEdge(regulation.regulator, regulation.target, true);
@@ -356,4 +356,4 @@ let ModelEditor = {
 		return undefined;
 	},
 
-}
+};

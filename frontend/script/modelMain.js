@@ -4,13 +4,13 @@ hasLocalStorage = false;
 async function init() {
 
 	// Set program version
-	let version = await TAURI.invoke('get_version', {})
+	let version = await TAURI.invoke("get_version", {});
 	document.title = document.title + " (" + version + ")";
-	document.getElementById("version").innerHTML = "v" + version
+	document.getElementById("version").innerHTML = "v" + version;
 
 
 	try {
-		localStorage.setItem('testing', '1');
+		localStorage.setItem("testing", "1");
 		hasLocalStorage = true;
 		console.log("Local storage available.");
 	} catch (e) {
@@ -22,7 +22,7 @@ async function init() {
 	CytoscapeEditor.init();
 
 	// Emit when the window is fully initialized and ready
-	TAURI.event.emit('ready', {});
+	TAURI.event.emit("ready", {});
 }
 
 
@@ -48,21 +48,21 @@ function ensurePlaceholder(el) {
 	}
 */
 
-hotkeys('e', function(event, handler) {	
+hotkeys("e", function(event, handler) {	
 	if (UI.isNodeMenuVisible()) {
 		event.preventDefault();
 		fireEvent(document.getElementById("node-menu-edit-name"), "click");
 	}	
 });
 
-hotkeys('f', function(event, handler) {	
+hotkeys("f", function(event, handler) {	
 	if (UI.isNodeMenuVisible()) {
 		event.preventDefault();
 		fireEvent(document.getElementById("node-menu-edit-function"), "click");
 	}	
 });
 
-hotkeys('backspace', function(event, handler) {	
+hotkeys("backspace", function(event, handler) {	
 	if (UI.isNodeMenuVisible()) {
 		event.preventDefault();
 		fireEvent(document.getElementById("node-menu-remove"), "click");
@@ -73,31 +73,31 @@ hotkeys('backspace', function(event, handler) {
 	}
 });
 
-hotkeys('o', function(event, handler) {	
+hotkeys("o", function(event, handler) {	
 	if (UI.isEdgeMenuVisible()) {
 		event.preventDefault();
 		fireEvent(document.getElementById("edge-menu-observability"), "click");
 	}	
 });
 
-hotkeys('m', function(event, handler) {	
+hotkeys("m", function(event, handler) {	
 	if (UI.isEdgeMenuVisible()) {
 		event.preventDefault();
 		fireEvent(document.getElementById("edge-menu-monotonicity"), "click");
 	}	
 });
 
-hotkeys('n,+', function(event, handler) {	
+hotkeys("n,+", function(event, handler) {	
 	event.preventDefault();
 	let id = LiveModel.addVariable();
 	CytoscapeEditor.showNode(id);
 });
 
-hotkeys('h', { keyup: true }, function(event, handler) {
-	if (event.type === 'keydown') {
+hotkeys("h", { keyup: true }, function(event, handler) {
+	if (event.type === "keydown") {
 		UI.setQuickHelpVisible(true);
 	}
-	if (event.type === 'keyup') {
+	if (event.type === "keyup") {
 		UI.setQuickHelpVisible(false);
 	}	
 });
@@ -105,11 +105,11 @@ hotkeys('h', { keyup: true }, function(event, handler) {
 
 // utility function to fire events on UI elements - we mainly need it to simulate clicks
 function fireEvent(el, etype){
-  if (el.fireEvent) {
-    el.fireEvent('on' + etype);
-  } else {
-    var evObj = document.createEvent('Events');
-    evObj.initEvent(etype, true, false);
-    el.dispatchEvent(evObj);
-  }
+	if (el.fireEvent) {
+		el.fireEvent("on" + etype);
+	} else {
+		var evObj = document.createEvent("Events");
+		evObj.initEvent(etype, true, false);
+		el.dispatchEvent(evObj);
+	}
 }
