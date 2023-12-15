@@ -1,7 +1,6 @@
 use crate::algorithms::scc::algo_stability_analysis::{Stability, StabilityVector};
 use crate::util::functional::Functional;
 use json::JsonValue;
-use std::convert::TryFrom;
 use std::fmt::{Display, Formatter};
 use std::ops::Shr;
 
@@ -134,6 +133,7 @@ impl StabilityVector {
 
 #[cfg(test)]
 mod tests {
+    use crate::algorithms::scc::algo_stability_analysis::StabilityVector;
     use crate::scc::algo_stability_analysis::StabilityVector;
     use std::convert::TryFrom;
 

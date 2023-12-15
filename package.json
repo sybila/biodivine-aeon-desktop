@@ -4,6 +4,7 @@
     "eslint": "^8.55.0"
   },
   "scripts": {
+    "tauri": "tauri",
     "start": "tauri dev",
     "js-code-check": "eslint ./frontend/script/",
     "js-code-format": "eslint --fix ./frontend/script/",

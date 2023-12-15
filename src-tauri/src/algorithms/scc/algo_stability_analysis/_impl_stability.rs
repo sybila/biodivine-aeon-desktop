@@ -1,5 +1,4 @@
 use crate::algorithms::scc::algo_stability_analysis::Stability;
-use std::convert::TryFrom;
 use std::fmt::{Display, Formatter};
 
 impl Display for Stability {
@@ -27,6 +26,7 @@ impl TryFrom<&str> for Stability {
 
 #[cfg(test)]
 mod tests {
+    use crate::algorithms::scc::algo_stability_analysis::Stability;
     use crate::scc::algo_stability_analysis::Stability;
     use std::convert::TryFrom;
 
