@@ -46,6 +46,7 @@ fn main() {
             tauri_commands::window_commands::open_model_window,
             tauri_commands::window_commands::open_computation_window,
             tauri_commands::window_commands::open_explorer_window,
+            tauri_commands::window_commands::open_witness_window,
             tauri_commands::window_commands::open_tree_explorer_window,
             tauri_commands::window_commands::open_help_window,
             tauri_commands::window_commands::open_manual_window,

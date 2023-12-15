@@ -59,7 +59,6 @@ TAURI.window.appWindow.onMenuClicked(({ payload: menuItemId }) => {
 // If not, warn user with warning dialog.
 function isModelWindowAction() {
     let currentWindowLabel = TAURI.window.getCurrent().label
-    console.log(currentWindowLabel)
     if (!currentWindowLabel.startsWith("model-window")) {
         Dialog.warningMessage(Strings.unsupportedAction)
         return false

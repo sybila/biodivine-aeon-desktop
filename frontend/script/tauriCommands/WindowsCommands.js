@@ -23,6 +23,13 @@ let WindowsCommands = {
         })
     },
 
+    openWitnessWindow(windowLabel, windowTitle) {
+        return TAURI.invoke('open_witness_window', {
+            label: windowLabel,
+            title: windowTitle
+        })
+    },
+
     openTreeExplorerWindow(windowLabel, windowTitle) {
         return TAURI.invoke('open_tree_explorer_window', {
             label: windowLabel,

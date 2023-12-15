@@ -56,6 +56,20 @@ pub async fn open_explorer_window(label: &str, handle: tauri::AppHandle) -> Resu
     Ok(())
 }
 
+/// Open new window with witness model.
+#[tauri::command]
+pub async fn open_witness_window(label: &str, title: &str, handle: tauri::AppHandle) -> Result<(), ()> {
+    tauri::WindowBuilder::new(&handle, label, tauri::WindowUrl::App("witness-window.html".into()))
+        .center()
+        .menu(menu_init())
+        .inner_size(1000f64, 700f64)
+        .min_inner_size(600f64, 300f64)
+        .title(title)
+        .build()
+        .expect("Error while creating new model window.");
+    Ok(())
+}
+
 /// Open new window with bifurcation decision tree.
 #[tauri::command]
 pub async fn open_tree_explorer_window(

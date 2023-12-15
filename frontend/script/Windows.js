@@ -41,7 +41,7 @@ let Windows = {
             modelTitle = filePath !== undefined ? filePath : "Model without name"
         }
 
-        let windowTitle = modelTitle + ", started: " + new Date(timestamp).toLocaleTimeString('en-GB')
+        let windowTitle = modelTitle + ", computation started: " + new Date(timestamp).toLocaleTimeString('en-GB')
 
         WindowsCommands.openComputationWindow(windowLabel, windowTitle)
             .then(() => {
@@ -57,24 +57,38 @@ let Windows = {
         })
     },
 
-    // Open witness model in new window
-    async newWitnessWindow(witness) {
-        const witnessWindowLabel = await this.openModelInNewWindow(witness, true)
-        if (witnessWindowLabel !== null) {
-            const witnessWindow = TAURI.window.WebviewWindow.getByLabel(witnessWindowLabel)
+    // Open witness model in a new window and open model editor tab
+    async openWitnessInNewWindow(witnessModelString) {
+        let windowLabel = 'witness-window:' + Date.now()
+        let windowTitle = await TAURI.window.getCurrent().title()
+        windowTitle = "Witness of " + windowTitle
 
-            // Emit to open model editor tab in new witness window
-            witnessWindow.emit('open-editor-tab', {})
-        }
+        WindowsCommands.openWitnessWindow(windowLabel, windowTitle)
+            .then(() => {
+                const newWitnessWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel)
+
+                // Wait until the new window is initialized
+                newWitnessWindow.once('ready', () => {
+
+                    // Emit model string to the new window
+                    newWitnessWindow.emit('import-model', { modelString: witnessModelString })
+
+                    // Open model editor tab in new witness window
+                    newWitnessWindow.emit('open-editor-tab', {})
+                })
+            }).catch((errorMessage) => {
+                Dialog.errorMessage(errorMessage)
+                windowLabel = null
+            })
     },
 
-    // Get witness from computation and try to open it in new window
+    // Get witness from computation and try to open it in a new window
     openWitnessWindow(witness) {
         UI.isLoading(true)
         ComputationResultsCommands.getWitness(witness)
             .then((witness) => {
                 UI.isLoading(false)
-                this.newWitnessWindow(witness)
+                this.openWitnessInNewWindow(witness)
             })
             .catch((errorMessage) => {
                 UI.isLoading(false)
@@ -88,7 +102,7 @@ let Windows = {
         ComputationResultsCommands.getTreeWitness(node)
             .then((witness) => {
                 UI.isLoading(false)
-                this.newWitnessWindow(witness)
+                this.openWitnessInNewWindow(node)
             })
             .catch((errorMessage) => {
                 UI.isLoading(false)
@@ -102,7 +116,7 @@ let Windows = {
         ComputationResultsCommands.getStabilityWitness(node, behavior, variable, vector)
             .then((witness) => {
                 UI.isLoading(false)
-                this.newWitnessWindow(witness)
+                this.openWitnessInNewWindow(witness)
             })
             .catch((errorMessage) => {
                 UI.isLoading(false)
@@ -186,7 +200,7 @@ let Windows = {
 
         treeWindowLabel = "tree-window:" + Date.now()
         Computation.setTreeExplorerWindowLabel(treeWindowLabel)
-        let windowTitle = Computation.getModelTitle() + ", started: " + new Date(Computation.getWindowTimestamp()).toLocaleTimeString('en-GB')
+        let windowTitle = Computation.getModelTitle() + ", computation started: " + new Date(Computation.getWindowTimestamp()).toLocaleTimeString('en-GB')
 
         WindowsCommands.openTreeExplorerWindow(treeWindowLabel, windowTitle)
             .then(() => {

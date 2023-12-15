@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "@tauri-apps/cli": "^1.4.0"
+    "@tauri-apps/cli": "^1.4.0",
+    "eslint": "^8.55.0"
   },
   "scripts": {
     "tauri": "tauri"
