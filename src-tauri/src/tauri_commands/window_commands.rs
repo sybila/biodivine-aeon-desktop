@@ -40,7 +40,7 @@ pub async fn open_computation_window(
 
 /// Open new window with attractors explorer.
 #[tauri::command]
-pub async fn open_explorer_window(label: &str, handle: tauri::AppHandle) -> Result<(), ()> {
+pub async fn open_explorer_window(label: &str, title: &str, handle: tauri::AppHandle) -> Result<(), ()> {
     tauri::WindowBuilder::new(
         &handle,
         label,
@@ -50,7 +50,7 @@ pub async fn open_explorer_window(label: &str, handle: tauri::AppHandle) -> Resu
     .menu(menu_init())
     .inner_size(1000f64, 700f64)
     .min_inner_size(800f64, 300f64)
-    .title("Aeon/BIODIVINE - attractor explorer")
+    .title(title)
     .build()
     .expect("Error while creating new explorer window.");
     Ok(())

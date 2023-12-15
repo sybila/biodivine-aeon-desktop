@@ -124,10 +124,12 @@ let Windows = {
             })
     },
 
-    openAttractorExplorerWindow(behavior) {
+    async openAttractorExplorerWindow(behavior) {
         let explorerWindowLabel = "explorer-window:" + Date.now()
+        let explorerWindowTitle = await TAURI.window.getCurrent().title()
+        explorerWindowTitle = "Attractor of " + explorerWindowTitle
 
-        WindowsCommands.openExplorerWindow(explorerWindowLabel)
+        WindowsCommands.openExplorerWindow(explorerWindowLabel, explorerWindowTitle)
             .then(() => {
                 const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel)
 
@@ -144,10 +146,12 @@ let Windows = {
             })
     },
 
-    openTreeAttractorExplorerWindow(node) {
+    async openTreeAttractorExplorerWindow(node) {
         let explorerWindowLabel = "explorer-window:" + Date.now()
+        let explorerWindowTitle = await TAURI.window.getCurrent().title()
+        explorerWindowTitle = "Attractor of " + explorerWindowTitle
 
-        WindowsCommands.openExplorerWindow(explorerWindowLabel)
+        WindowsCommands.openExplorerWindow(explorerWindowLabel, explorerWindowTitle)
             .then(() => {
                 const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel)
 
@@ -164,10 +168,12 @@ let Windows = {
         })
     },
 
-    openStabilityAttractorExplorerWindow(node, behavior, variable, vector) {
+    async openStabilityAttractorExplorerWindow(node, behavior, variable, vector) {
         let explorerWindowLabel = "explorer-window:" + Date.now()
+        let explorerWindowTitle = await TAURI.window.getCurrent().title()
+        explorerWindowTitle = "Attractor of " + explorerWindowTitle
 
-        WindowsCommands.openExplorerWindow(explorerWindowLabel)
+        WindowsCommands.openExplorerWindow(explorerWindowLabel, explorerWindowTitle)
             .then(() => {
                 const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel)
 

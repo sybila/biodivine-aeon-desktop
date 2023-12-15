@@ -17,9 +17,10 @@ let WindowsCommands = {
         })
     },
 
-    openExplorerWindow(windowLabel) {
+    openExplorerWindow(windowLabel, windowTitle) {
         return TAURI.invoke('open_explorer_window', {
             label: windowLabel,
+            title: windowTitle
         })
     },
 
