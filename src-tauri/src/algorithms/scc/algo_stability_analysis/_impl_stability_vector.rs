@@ -134,7 +134,6 @@ impl StabilityVector {
 #[cfg(test)]
 mod tests {
     use crate::algorithms::scc::algo_stability_analysis::StabilityVector;
-    use crate::scc::algo_stability_analysis::StabilityVector;
     use std::convert::TryFrom;
 
     #[test]
