@@ -57,8 +57,7 @@ pub fn start_computation(session_key: &str, aeon_string: &str) -> Result<Timesta
 
 /// Cancel running computation.
 #[tauri::command]
-pub fn cancel_computation(session_key: &str)
-    -> Result<String, String> {
+pub fn cancel_computation(session_key: &str) -> Result<String, String> {
     let locked_computation: Arc<RwLock<Option<Computation>>> = get_locked_computation(session_key);
     let read_computation = locked_computation.read().unwrap();
 

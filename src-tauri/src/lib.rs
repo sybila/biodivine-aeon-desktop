@@ -1,8 +1,8 @@
 #[macro_use]
 extern crate json;
 
-use std::sync::atomic::AtomicBool;
 use crate::algorithms::scc::ProgressTracker;
+use std::sync::atomic::AtomicBool;
 
 /// Contains all non-trivial long-running symbolic algorithms that are used within AEON.
 pub mod algorithms;

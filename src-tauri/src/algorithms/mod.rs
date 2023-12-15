@@ -32,7 +32,6 @@ mod asymptotic_behaviour_counter;
 /// only remembers whether the behaviour was seen.
 mod asymptotic_behaviour_classifier;
 
-
 pub mod scc;
 
 // Re-export stuff from private modules to public scope as part of `algorithms` module:

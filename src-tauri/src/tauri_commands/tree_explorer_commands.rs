@@ -1,8 +1,8 @@
 use crate::session::{get_locked_computation, get_locked_tree};
 use crate::types::ErrorMessage;
-use biodivine_aeon_desktop::bdt::{AttributeId, BdtNodeId};
 use biodivine_aeon_desktop::algorithms::scc::algo_stability_analysis::compute_stability;
 use biodivine_aeon_desktop::algorithms::scc::Behaviour;
+use biodivine_aeon_desktop::bdt::{AttributeId, BdtNodeId};
 use biodivine_aeon_desktop::util::functional::Functional;
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use json::{array, object, JsonValue};
@@ -62,7 +62,6 @@ pub async fn get_attributes(node_id: String, session_key: &str) -> Result<Value,
     }
 }
 
-
 /// Apply precision to Bdt tree.
 #[tauri::command]
 pub async fn apply_tree_precision(
@@ -82,7 +81,6 @@ pub async fn apply_tree_precision(
         Err(String::from("Given precision is not a number."))
     }
 }
-
 
 /// Get current precision of Bdt tree.
 #[tauri::command]
@@ -133,7 +131,6 @@ pub async fn apply_attribute(
         Err(String::from("No tree present. Run computation first."))
     };
 }
-
 
 /// Revert decision that was applied to Bdt tree node.
 #[tauri::command]
