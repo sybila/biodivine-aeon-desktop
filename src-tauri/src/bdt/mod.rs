@@ -1,4 +1,4 @@
-use crate::scc::Class;
+use crate::algorithms::scc::Class;
 use biodivine_lib_param_bn::symbolic_async_graph::GraphColors;
 use biodivine_lib_param_bn::VariableId;
 use std::collections::hash_map::Keys;

@@ -1,5 +1,5 @@
+use crate::algorithms::scc::Class;
 use crate::bdt::BdtNode;
-use crate::scc::Class;
 use biodivine_lib_param_bn::symbolic_async_graph::GraphColors;
 use std::collections::HashMap;
 

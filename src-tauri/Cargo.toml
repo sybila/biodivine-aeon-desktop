@@ -1,10 +1,9 @@
 [package]
 name = "biodivine-aeon-desktop"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+authors = ["Stefan Sidlovsky <514508@mail.muni.cz>"]
+license = "MIT"
+repository = "https://github.com/sybila/biodivine-aeon-desktop"
 default-run = "biodivine-aeon-desktop"
 edition = "2021"
 rust-version = "1.60"
@@ -17,7 +16,7 @@ tauri-build = { version = "1.4.0", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.4.0", features = [ "window-all", "fs-all", "dialog-all"] }
+tauri = { version = "1.4.0", features = [ "window-set-focus", "window-close", "fs-write-file", "fs-read-file", "dialog-open", "dialog-message", "dialog-ask", "dialog-confirm", "dialog-save"] }
 biodivine-lib-param-bn = "0.4.5"
 biodivine-lib-bdd = "0.5.1"
 rocket = "0.5.0-rc.1"

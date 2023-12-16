@@ -26,6 +26,7 @@ impl Drop for Session {
 }
 
 lazy_static! {
+    /// Collection that stores relations between computation windows and computations.
     /// Hashmap with all sessions: key = window label, value = ArcComputation.
     pub static ref SESSIONS: Arc<RwLock<HashMap<String, Session>>> = Arc::new(RwLock::new(HashMap::new()));
 }

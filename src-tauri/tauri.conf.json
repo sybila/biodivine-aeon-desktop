@@ -4,8 +4,8 @@
     "beforeBuildCommand": "",
     "beforeDevCommand": "",
     "withGlobalTauri": true,
-    "devPath": "../fe",
-    "distDir": "../fe"
+    "devPath": "../frontend",
+    "distDir": "../frontend"
   },
   "package": {
     "productName": "aeon_desktop",
@@ -14,13 +14,19 @@
   "tauri": {
     "allowlist": {
       "dialog": {
-        "all": true
+        "ask": true,
+        "confirm": true,
+        "message": true,
+        "open": true,
+        "save": true
       },
       "fs": {
-        "all": true
+        "readFile": true,
+        "writeFile": true
       },
       "window": {
-        "all": true
+        "close": true,
+        "setFocus": true
       }
     },
     "bundle": {

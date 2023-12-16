@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Biodivine/Aeon - Attractor Explorer</title>
+
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="style.css" type="text/css">
+
+    <script src="script/dependencies/vis-network.min.js"></script>
+
+    <script src="script/common/const.js"></script>
+    <script src="script/common/Strings.js"></script>
+    <script src="script/common/Dialog.js"></script>
+    <script src="script/Computation.js"></script>
+    <script src="script/UI.js"></script>
+    <script src="script/tauriCommands/ComputationResultsCommands.js"></script>
+    <script src="script/tauriCommands/WindowsCommands.js"></script>
+    <script src="script/explorerMain.js"></script>
+    <script src="script/events/ExplorerWindowEvent.js"></script>
+    <script src="script/Windows.js"></script>
+    <script src="script/Menu.js"></script>
+
+    <style>
+        .vis-network:focus, canvas:focus {
+            outline: none;
+        }
+    </style>
+</head>
+
+<body onload="init()" style="overflow: hidden;">
+
+<div id="loading-indicator" class="gone">
+    <img src="img/progress.gif" alt="loading animation"/><br><br>Loading...
+</div>
+
+<div id="content">
+
+<h1 id='logo'>Aeon/<span id='title'>BIODIVINE</span></h1>
+
+<div style="position:absolute" id="explorer-witness-panel" class="main-panel gone">
+    <img alt="close" src="img/close-24px.svg" class="panel-close-button" onclick="witnessPanelVisible(false)">
+    <h2 style="margin: 0 auto; font-size: 20px; text-align: center;">Witness update functions</h2>
+    <ul id='explorer-update-functions' style='list-style:none'></ul>
+</div>
+
+
+<div id="visjs-container"></div>
+
+<!-- A valuation panel -->
+<div style="display:none" id="explorer-valuations">
+    <div id="explorer-valuations-text"></div>
+</div>
+
+<!-- A witness panel -->
+<div id="explorer-witness-panel">
+    <div id="explorer-witness-text">
+        <div></div>
+
+        <div style="position: absolute;">
+            <div id="side-menu">
+                <div class="button-group" onclick='witnessPanelVisible()'>
+                    <img alt="Update functions" id="side-menu-functions" src="img/functions-48px.svg" class="button"
+                         tab-id="tab-functions">
+                    <span class="hint invisible">Update functions</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Do not change it here, this is a placeholder. -->
+    <span id="version">v0.0.0</span>
+
+</div>
+</body>
+</html>

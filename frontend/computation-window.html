@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Biodivine/Aeon - Computation</title>
+
+    <meta charset="utf-8">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="style.css" type="text/css">
+
+    <script src="script/common/const.js"></script>
+    <script src="script/common/Strings.js"></script>
+    <script src="script/Results.js"></script>
+    <script src="script/Computation.js"></script>
+    <script src="script/tauriCommands/WindowsCommands.js"></script>
+    <script src="script/UI.js"></script>
+    <script src="script/common/Dialog.js"></script>
+    <script src="script/events/ComputationWindowEvent.js"></script>
+    <script src="script/tauriCommands/SessionCommands.js"></script>
+    <script src="script/tauriCommands/ComputationResultsCommands.js"></script>
+    <script src="script/tauriCommands/ComputationCommands.js"></script>
+    <script src="script/Windows.js"></script>
+    <script src="script/computationMain.js"></script>
+    <script src="script/Menu.js"></script>
+</head>
+
+<body onload="init()" style="background-color: #f5f5f5;">
+
+<div id="loading-indicator" class="gone">
+    <img src="img/progress.gif" alt="loading animation"/><br><br>Loading...
+</div>
+
+<div id="content">
+
+<div style="position: absolute;">
+
+    <div id="content-engine" class="new-window-panel">
+        <h3 id="compute-engine-status" style="margin: 0 auto; font-size: 20px; text-align: center;  font-family: 'FiraMono',serif; text-transform: uppercase;"> ● Computation</h3>
+        <div style="height: 20px;"></div>
+
+        <!-- Computation status -->
+        <div id="computation">
+            Computation: <span id="computation-status">(none)</span><br><span>
+            Progress: <span id="computation-progress">unknown</span><br>
+            Discovered classes: <span id="computation-classes">-</span></span>
+
+            <div style="margin-top: 25px; text-align: center;">
+                <button id="computation-cancel" class="image-button" onclick="ComputationCommands.cancelComputation();" style="margin-right: 4px;">Cancel job <img src="img/cancel-24px.svg" alt="cancel"></button>
+                <button id="computation-download" class="image-button" onclick="Results.show();" style="margin-left: 4px;">Show partial result <img src="img/cloud_download-24px.svg" alt="download"></button>
+            </div>
+        </div>
+
+        <div style="clear: both;"></div>
+    </div>
+
+    <div id="content-results" class="new-window-panel gone">
+        <h2 style="margin: 0 auto; font-size: 20px; text-align: center;">Bifurcation Function</h2>
+
+        <div style="text-align: center; padding: 12px;">
+            <span id="results-expired" class="orange center gone">The computation has been overwritten. <br>These results are no longer available!</span>
+        </div>
+
+        <div id="results">
+            <div style="text-align: center; width: 350px; margin: 0 auto;">No results loaded. Run analysis to show bifurcation function overview for the currently loaded model.</div>
+        </div>
+
+        <div id="open-tree-explorer" class="gone" style="text-align: center; margin: 8px;">
+            <a class="inline-button" onclick="Windows.openTreeExplorerWindow()"> >> Explore Bifurcation Function &lt;&lt; </a>
+        </div>
+
+        <div id='result-legend'>
+            <span class='table-behavior'>D</span> disorder | <span class='table-behavior'>O</span> oscillation | <span class='table-behavior'>S</span> stability
+        </div>
+    </div>
+
+</div>
+
+    <!-- Do not change it here, this is a placeholder. -->
+    <span id="version">v0.0.0</span>
+
+</div>
+</body>
+</html>

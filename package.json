@@ -1,9 +1,15 @@
 {
   "devDependencies": {
-    "@tauri-apps/cli": "^1.4.0"
+    "@tauri-apps/cli": "^1.4.0",
+    "eslint": "^8.55.0"
   },
   "scripts": {
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "start": "tauri dev",
+    "js-code-check": "eslint ./frontend/script/",
+    "js-code-format": "eslint --fix ./frontend/script/",
+    "rust-code-check": "cd ./src-tauri/src && cargo clippy",
+    "rust-code-format": "cd ./src-tauri/src && cargo fmt"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.4.0"
