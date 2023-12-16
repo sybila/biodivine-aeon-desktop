@@ -39,15 +39,15 @@ TAURI.window.appWindow.onMenuClicked(({ payload: menuItemId }) => {
 		LiveModel.handleAeonModelImport(Examples.buddingYeastIrons);
 		break;
 	case "aeon_export":
-		if (!isModelWindowAction()) break;
+		if (!exportModelAction()) break;
 		UI.downloadAeon();
 		break;
 	case "sbml_export_parametrized":
-		if (!isModelWindowAction()) break;
+		if (!exportModelAction()) break;
 		UI.downloadSBML();
 		break;
 	case "sbml_export_instantiated":
-		if (!isModelWindowAction()) break;
+		if (!exportModelAction()) break;
 		UI.downloadSBMLInstantiated();
 		break;
 	default:
@@ -60,6 +60,18 @@ TAURI.window.appWindow.onMenuClicked(({ payload: menuItemId }) => {
 function isModelWindowAction() {
 	let currentWindowLabel = TAURI.window.getCurrent().label;
 	if (!currentWindowLabel.startsWith("model-window")) {
+		Dialog.warningMessage(Strings.unsupportedAction);
+		return false;
+	}
+	return true;
+}
+
+// Check if export menu action is supported for current window.
+// If not, warn user with warning dialog.
+// Export is possible only from model and witness window.
+function exportModelAction() {
+	let currentWindowLabel = TAURI.window.getCurrent().label;
+	if (!currentWindowLabel.startsWith("model-window") && !currentWindowLabel.startsWith("witness-window")) {
 		Dialog.warningMessage(Strings.unsupportedAction);
 		return false;
 	}

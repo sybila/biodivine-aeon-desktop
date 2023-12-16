@@ -13,6 +13,9 @@ Simply run `cargo build --release` in the `src-tauri` directory. The binary will
 Installation files are located in the last [release](https://github.com/sybila/biodivine-aeon-desktop/releases).
 Supported OS systems are Windows, macOS and Linux.
 
+### Dependencies
+Run `npm install`
+
 ### App launch
 Run `npm run start`
 
