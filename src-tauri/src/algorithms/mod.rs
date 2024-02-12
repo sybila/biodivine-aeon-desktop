@@ -45,8 +45,7 @@ pub use symbolic_counter::SymbolicCounter;
 
 /// Identify the `VariableId` objects for which the given `stg` can perform *some* transition.
 pub fn non_constant_variables(stg: &SymbolicAsyncGraph) -> Vec<VariableId> {
-    stg.as_network()
-        .variables()
+    stg.variables()
         .filter(|var| {
             !stg.var_can_post(*var, stg.unit_colored_vertices())
                 .is_empty()

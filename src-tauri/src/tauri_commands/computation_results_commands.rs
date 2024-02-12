@@ -136,9 +136,8 @@ pub async fn get_stability_witness(
         };
         if let Some(graph) = &computation.graph {
             let variable = graph
-                .as_network()
-                .as_graph()
-                .find_variable(variable_str.as_str());
+                .symbolic_context()
+                .find_network_variable(variable_str.as_str());
             let variable = if let Some(variable) = variable {
                 variable
             } else {
@@ -295,9 +294,8 @@ pub async fn get_stability_attractors(
         };
         if let Some(graph) = &computation.graph {
             let variable = graph
-                .as_network()
-                .as_graph()
-                .find_variable(variable_str.as_str());
+                .symbolic_context()
+                .find_network_variable(variable_str.as_str());
             let variable = if let Some(variable) = variable {
                 variable
             } else {

@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@tauri-apps/cli": "^1.4.0",
+    "@tauri-apps/cli": "^2.0.0-beta.1",
     "eslint": "^8.55.0"
   },
   "scripts": {
@@ -12,6 +12,7 @@
     "rust-code-format": "cd ./src-tauri/src && cargo fmt"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.4.0"
+    "@tauri-apps/api": "^2.0.0-beta.0",
+    "@tauri-apps/plugin-fs": "^2.0.0-beta.0"
   }
 }

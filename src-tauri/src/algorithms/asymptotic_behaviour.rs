@@ -147,8 +147,7 @@ impl AsymptoticBehaviour {
     /// This method should be slightly faster than computing `AsymptoticBehaviour::classify`
     /// in full.
     pub fn check_stability(stg: &SymbolicAsyncGraph, set: &GraphColoredVertices) -> GraphColors {
-        stg.as_network()
-            .variables()
+        stg.variables()
             .map(|var| Self::check_variable_stability(stg, set, var))
             .fold(set.colors(), |a, b| a.intersect(&b))
     }
@@ -199,10 +198,10 @@ impl AsymptoticBehaviour {
         // transitions are discovered. Any color that appears in `successor_zero` or
         // `successor_more` is guaranteed to not have only deterministic cycles.
         let mut successors_zero = set.clone();
-        let mut successors_one = stg.mk_empty_vertices();
-        let mut successors_more = stg.mk_empty_vertices();
+        let mut successors_one = stg.mk_empty_colored_vertices();
+        let mut successors_more = stg.mk_empty_colored_vertices();
 
-        for var in stg.as_network().variables() {
+        for var in stg.variables() {
             let can_change = stg.var_can_post(var, set);
 
             let move_to_one = successors_zero.intersect(&can_change);
@@ -242,7 +241,7 @@ impl AsymptoticBehaviour {
         set: Arc<GraphColoredVertices>,
     ) -> AsymptoticBehaviourMap {
         let all_colors = set.colors();
-        let variables = stg.as_network().variables().collect();
+        let variables = stg.variables().collect();
         let [zero, one, more] = Self::classify_recursive(stg.clone(), set.clone(), variables).await;
 
         let stability = zero.colors().minus(&one.colors()).minus(&more.colors());
@@ -268,7 +267,7 @@ impl AsymptoticBehaviour {
             let var = variables[0];
             Box::pin(async move {
                 let can_post = stg.var_can_post(var, &set);
-                [set.minus(&can_post), can_post, stg.mk_empty_vertices()]
+                [set.minus(&can_post), can_post, stg.mk_empty_colored_vertices()]
             })
         } else {
             // If there are more variables, split into two branches and continue each
@@ -322,7 +321,7 @@ mod tests {
         )
         .unwrap();
 
-        let stg = SymbolicAsyncGraph::new(bn).unwrap();
+        let stg = SymbolicAsyncGraph::new(&bn).unwrap();
         let all_colors = stg.mk_unit_colors();
 
         let t_state = stg.vertex(&ArrayBitVector::from(vec![true, true]));
@@ -361,7 +360,7 @@ mod tests {
         )
         .unwrap();
 
-        let stg = SymbolicAsyncGraph::new(bn).unwrap();
+        let stg = SymbolicAsyncGraph::new(&bn).unwrap();
         let all_colors = stg.mk_unit_colors();
 
         let t_state = stg.vertex(&ArrayBitVector::from(vec![true, true]));
@@ -402,7 +401,7 @@ mod tests {
         )
         .unwrap();
 
-        let stg = SymbolicAsyncGraph::new(bn).unwrap();
+        let stg = SymbolicAsyncGraph::new(&bn).unwrap();
         let all_colors = stg.mk_unit_colors();
 
         let t_state = stg.vertex(&ArrayBitVector::from(vec![true, true]));
@@ -443,7 +442,7 @@ mod tests {
         )
         .unwrap();
 
-        let stg = SymbolicAsyncGraph::new(bn).unwrap();
+        let stg = SymbolicAsyncGraph::new(&bn).unwrap();
         let all_states = stg.mk_unit_colored_vertices();
         let all_colors = stg.mk_unit_colors();
 
@@ -480,7 +479,7 @@ mod tests {
         )
         .unwrap();
 
-        let stg = SymbolicAsyncGraph::new(bn).unwrap();
+        let stg = SymbolicAsyncGraph::new(&bn).unwrap();
         let all_states = stg.mk_unit_colored_vertices();
         let all_colors = stg.mk_unit_colors();
 

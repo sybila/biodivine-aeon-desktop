@@ -5,25 +5,31 @@
 let ModelCommands = {
 
 	checkUpdateFunction(modelFragment) {
-		return TAURI.invoke("check_update_function", {
+		return TAURI.core.invoke("check_update_function", {
 			data: modelFragment
 		});
 	},
 
 	sbmlToAeon(sbmlString) {
-		return TAURI.invoke("sbml_to_aeon", {
+		return TAURI.core.invoke("sbml_to_aeon", {
 			sbmlString: sbmlString
 		});
 	},
 
+	bnetToAeon(bnetString) {
+		return TAURI.core.invoke("bnet_to_aeon", {
+			bnetString: bnetString
+		})
+	},
+
 	aeonToSbml(aeonString) {
-		return TAURI.invoke("aeon_to_sbml", {
+		return TAURI.core.invoke("aeon_to_sbml", {
 			aeonString: aeonString
 		});
 	},
 
 	aeonToSbmlInstantiated(aeonString) {
-		return TAURI.invoke("aeon_to_sbml_instantiated", {
+		return TAURI.core.invoke("aeon_to_sbml_instantiated", {
 			aeonString: aeonString
 		});
 	},

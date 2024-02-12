@@ -11,17 +11,19 @@ let Windows = {
 
 	// Open model in new window and return label of this window
 	async openModelInNewWindow(modelString) {
-		let windowLabel = "model-window:" + Date.now();
+		let windowLabel = "model-window-" + Date.now();
 
-		await WindowsCommands.openModelWindow(windowLabel)
+		await WindowsCommands.openModelWindow(windowLabel, modelString)
 			.then(() => {
-				const newModelWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel);
+				/*console.log(windowLabel)
+				const newModelWindow = TAURI.window.Window.getByLabel(windowLabel);
+				console.log(newModelWindow)
 
 				// Wait until the new window is initialized
 				newModelWindow.once("ready", () => {
 					// Emit model string to the new window
 					newModelWindow.emit("import-model", { modelString: modelString });
-				});
+				});*/
 			}).catch((errorMessage) => {
 				Dialog.errorMessage(errorMessage);
 				windowLabel = null;
@@ -45,7 +47,7 @@ let Windows = {
 
 		WindowsCommands.openComputationWindow(windowLabel, windowTitle)
 			.then(() => {
-				const newComputationWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel);
+				const newComputationWindow = TAURI.window.Window.getByLabel(windowLabel);
 
 				// Wait until the new window is initialized
 				newComputationWindow.once("ready", () => {
@@ -65,7 +67,7 @@ let Windows = {
 
 		WindowsCommands.openWitnessWindow(windowLabel, windowTitle)
 			.then(() => {
-				const newWitnessWindow = TAURI.window.WebviewWindow.getByLabel(windowLabel);
+				const newWitnessWindow = TAURI.window.Window.getByLabel(windowLabel);
 
 				// Wait until the new window is initialized
 				newWitnessWindow.once("ready", () => {
@@ -131,7 +133,7 @@ let Windows = {
 
 		WindowsCommands.openExplorerWindow(explorerWindowLabel, explorerWindowTitle)
 			.then(() => {
-				const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel);
+				const newExplorerWindow = TAURI.window.Window.getByLabel(explorerWindowLabel);
 
 				// Wait until the new explorer window is initialized
 				newExplorerWindow.once("ready", () => {
@@ -153,7 +155,7 @@ let Windows = {
 
 		WindowsCommands.openExplorerWindow(explorerWindowLabel, explorerWindowTitle)
 			.then(() => {
-				const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel);
+				const newExplorerWindow = TAURI.window.Window.getByLabel(explorerWindowLabel);
 
 				// Wait until the new explorer window is initialized
 				newExplorerWindow.once("ready", () => {
@@ -175,7 +177,7 @@ let Windows = {
 
 		WindowsCommands.openExplorerWindow(explorerWindowLabel, explorerWindowTitle)
 			.then(() => {
-				const newExplorerWindow = TAURI.window.WebviewWindow.getByLabel(explorerWindowLabel);
+				const newExplorerWindow = TAURI.window.Window.getByLabel(explorerWindowLabel);
 
 				// Wait until the new explorer window is initialized
 				newExplorerWindow.once("ready", () => {
@@ -199,7 +201,7 @@ let Windows = {
 
 		// If the window is already opened, just focus on it
 		if (treeWindowLabel !== undefined) {
-			const treeWindow = TAURI.window.WebviewWindow.getByLabel(treeWindowLabel);
+			const treeWindow = TAURI.window.Window.getByLabel(treeWindowLabel);
 			treeWindow.setFocus();
 			return;
 		}
@@ -210,7 +212,7 @@ let Windows = {
 
 		WindowsCommands.openTreeExplorerWindow(treeWindowLabel, windowTitle)
 			.then(() => {
-				const newTreeWindow = TAURI.window.WebviewWindow.getByLabel(treeWindowLabel);
+				const newTreeWindow = TAURI.window.Window.getByLabel(treeWindowLabel);
 
 				// Wait until the new tree explorer window is initialized
 				newTreeWindow.once("ready", () => {
@@ -223,7 +225,7 @@ let Windows = {
 	},
 
 	openHelpWindow() {
-		const helpWindow = TAURI.window.WebviewWindow.getByLabel("help-window");
+		const helpWindow = TAURI.window.Window.getByLabel("help-window");
 
 		// If the window is already opened, just focus on it
 		if (helpWindow !== null) {
@@ -235,7 +237,7 @@ let Windows = {
 	},
 
 	openManualWindow() {
-		const manualWindow = TAURI.window.WebviewWindow.getByLabel("manual-window");
+		const manualWindow = TAURI.window.Window.getByLabel("manual-window");
 
 		// If the window is already opened, just focus on it
 		if (manualWindow !== null) {

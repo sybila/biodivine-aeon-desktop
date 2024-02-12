@@ -13,7 +13,6 @@ pub async fn schedule_reductions(
     fork_limit: usize,
 ) -> GraphColoredVertices {
     let mut processes = stg
-        .as_network()
         .variables()
         .map(|var| ItgrProcess::new(&stg, var))
         .collect::<Vec<_>>();

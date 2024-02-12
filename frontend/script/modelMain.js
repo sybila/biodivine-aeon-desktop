@@ -4,7 +4,7 @@ hasLocalStorage = false;
 async function init() {
 
 	// Set program version
-	let version = await TAURI.invoke("get_version", {});
+	let version = await TAURI.core.invoke("get_version", {});
 	document.title = document.title + " (" + version + ")";
 	document.getElementById("version").innerHTML = "v" + version;
 
@@ -22,7 +22,7 @@ async function init() {
 	CytoscapeEditor.init();
 
 	// Emit when the window is fully initialized and ready
-	TAURI.event.emit("ready", {});
+	await TAURI.event.emitTo(TAURI.window.getCurrent().label, "ready", {});
 }
 
 

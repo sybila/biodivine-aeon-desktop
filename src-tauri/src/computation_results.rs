@@ -85,7 +85,7 @@ pub fn get_witness_attractors(
                 if let Some(graph) = &computation.graph {
                     let f_witness_colour = f_colors.pick_singleton();
                     let witness_network: BooleanNetwork = graph.pick_witness(&f_witness_colour);
-                    let witness_graph = SymbolicAsyncGraph::new(witness_network.clone()).unwrap();
+                    let witness_graph = SymbolicAsyncGraph::new(&witness_network).unwrap();
                     let witness_str = witness_network.to_string();
                     let f_witness_attractors = f_classifier.attractors(&f_witness_colour);
                     let variable_name_strings = witness_network
@@ -121,10 +121,10 @@ pub fn get_witness_attractors(
                             has_large_attractors = true;
                             // For large attractors, only show fixed values.
                             let mut state_0 =
-                                ArrayBitVector::from(vec![false; graph.as_network().num_vars()]);
+                                ArrayBitVector::from(vec![false; graph.num_vars()]);
                             let mut state_1 =
-                                ArrayBitVector::from(vec![true; graph.as_network().num_vars()]);
-                            for var in graph.as_network().variables() {
+                                ArrayBitVector::from(vec![true; graph.num_vars()]);
+                            for var in graph.variables() {
                                 let f_var_true = graph.fix_network_variable(var, true).vertices();
                                 let f_var_false = graph.fix_network_variable(var, false).vertices();
                                 let f_always_one = f_attractor.intersect(&f_var_false).is_empty();
@@ -142,8 +142,8 @@ pub fn get_witness_attractors(
                         } else {
                             for source in f_attractor.materialize().iter() {
                                 let source_set = witness_graph.vertex(&source);
-                                let mut target_set = witness_graph.mk_empty_vertices();
-                                for v in witness_graph.as_network().variables() {
+                                let mut target_set = witness_graph.mk_empty_colored_vertices();
+                                for v in witness_graph.variables() {
                                     let post = witness_graph.var_post(v, &source_set);
                                     if !post.is_empty() {
                                         not_fixed_vars.insert(v.into());

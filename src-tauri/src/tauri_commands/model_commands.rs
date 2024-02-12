@@ -25,7 +25,7 @@ pub fn check_update_function(data: &str) -> Result<Cardinality, ErrorMessage> {
                 //     model.num_vars(),
                 //     max_size
                 // );
-                SymbolicAsyncGraph::new(model)
+                SymbolicAsyncGraph::new(&model)
             } else {
                 Err(String::from("Function too large for on-the-fly analysis."))
             }
@@ -38,6 +38,11 @@ pub fn check_update_function(data: &str) -> Result<Cardinality, ErrorMessage> {
 /// error if something fails.
 #[tauri::command]
 pub async fn sbml_to_aeon(sbml_string: &str) -> Result<String, ErrorMessage> {
+    _sbml_to_aeon(sbml_string)
+}
+
+/// An internal non-async helper for the async `sbml_to_aeon` Tauri command.
+pub fn _sbml_to_aeon(sbml_string: &str) -> Result<String, ErrorMessage> {
     match BooleanNetwork::try_from_sbml(sbml_string) {
         Ok((model, layout)) => {
             let mut model_string = format!("{}", model); // convert back to aeon
@@ -48,6 +53,15 @@ pub async fn sbml_to_aeon(sbml_string: &str) -> Result<String, ErrorMessage> {
             Ok(model_string)
         }
         Err(error) => Err(error),
+    }
+}
+
+/// The same as `sbml_to_aeon`, but for `.bnet` files.
+#[tauri::command]
+pub fn bnet_to_aeon(bnet_string: &str) -> Result<String, ErrorMessage> {
+    match BooleanNetwork::try_from_bnet(bnet_string) {
+        Ok(model) => Ok(model.to_string()),
+        Err(e) => Err(e),
     }
 }
 
@@ -71,7 +85,7 @@ pub async fn aeon_to_sbml(aeon_string: &str) -> Result<String, ErrorMessage> {
 /// the unit BDD right now (in the future, we might opt to use a SAT solver which might be faster).
 #[tauri::command]
 pub async fn aeon_to_sbml_instantiated(aeon_string: &str) -> Result<String, ErrorMessage> {
-    match BooleanNetwork::try_from(aeon_string).and_then(SymbolicAsyncGraph::new) {
+    match BooleanNetwork::try_from(aeon_string).and_then(|it| SymbolicAsyncGraph::new(&it)) {
         Ok(graph) => {
             let witness = graph.pick_witness(graph.unit_colors());
             let layout = read_layout(aeon_string);

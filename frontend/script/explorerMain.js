@@ -34,7 +34,7 @@ async function init() {
 	container = document.getElementById("visjs-container");
 
 	// Set program version
-	let version = await TAURI.invoke("get_version", {});
+	let version = await TAURI.core.invoke("get_version", {});
 	document.title = document.title + " (" + version + ")";
 	document.getElementById("version").innerHTML = "v" + version;
 

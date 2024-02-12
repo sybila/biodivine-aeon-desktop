@@ -162,7 +162,7 @@ impl Computation {
 pub fn prepare_computation_thread(session_key: String, network: BooleanNetwork) -> JoinHandle<()> {
     std::thread::spawn(move || {
         let cmp: Arc<RwLock<Option<Computation>>> = get_locked_computation(session_key.as_str());
-        match SymbolicAsyncGraph::new(network) {
+        match SymbolicAsyncGraph::new(&network) {
             Ok(graph) => {
                 // Now that we have graph, we can create classifier and progress
                 // and save them into the computation.

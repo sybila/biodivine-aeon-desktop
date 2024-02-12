@@ -348,13 +348,14 @@ let UI = {
 			}],
 			title: "Import .AEON"
 		});
+		console.log(filePath);
 		if (!filePath || filePath.length === 0) {
 			return;
 		}
 
-		ModelEditor.setModelFilePath(filePath);
+		ModelEditor.setModelFilePath(filePath.path);
 
-		const aeonFileContent = await TAURI.fs.readTextFile(filePath);
+		const aeonFileContent = await WindowsCommands.readTextFile(filePath.path);
 
 		let error = await LiveModel.handleAeonModelImport(aeonFileContent);
 		if (error !== undefined) {
@@ -378,10 +379,41 @@ let UI = {
 
 		ModelEditor.setModelFilePath(filePath);
 
-		const sbmlFileContent = await TAURI.fs.readTextFile(filePath);
+		const sbmlFileContent = await WindowsCommands.readTextFile(filePath.path);
 
 		this.isLoading(true);
 		ModelCommands.sbmlToAeon(sbmlFileContent)
+			.then((model) => {
+				this.isLoading(false);
+				LiveModel.handleAeonModelImport(model);
+			})
+			.catch((errorMessage) => {
+				this.isLoading(false);
+				Dialog.errorMessage(errorMessage);
+			});
+	},
+
+	async importBnet() {
+		const filePath = await TAURI.dialog.open({
+			multiple: false,
+			directory: false,
+			filters: [{
+				name: "Bnet file",
+				extensions: ["bnet"]
+			}],
+			title: "Import .bnet"
+		});
+
+		if (!filePath || filePath.length === 0) {
+			return;
+		}
+
+		ModelEditor.setModelFilePath(filePath);
+
+		const sbmlFileContent = await WindowsCommands.readTextFile(filePath.path);
+
+		this.isLoading(true);
+		ModelCommands.bnetToAeon(sbmlFileContent)
 			.then((model) => {
 				this.isLoading(false);
 				LiveModel.handleAeonModelImport(model);

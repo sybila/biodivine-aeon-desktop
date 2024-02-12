@@ -17,7 +17,7 @@ TAURI.window.getCurrent().listen("tauri://close-requested", async () => {
 	}
 
 	if (confirmClose) {
-		const computationWindow = TAURI.window.WebviewWindow.getByLabel(Computation.getSessionKey());
+		const computationWindow = TAURI.window.Window.getByLabel(Computation.getSessionKey());
 		computationWindow.emit("tree-explorer-window-closed", {});
 		TAURI.window.getCurrent().close();
 	}
